@@ -1,0 +1,54 @@
+steps:
+  - id: install-check-build
+    name: node:22-bookworm
+    entrypoint: bash
+    secretEnv:
+      - SITE_PASSWORD
+    env:
+      - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+    args:
+      - -ceu
+      - |
+        if [ -z "$${SITE_PASSWORD}" ]; then
+          echo "SITE_PASSWORD is empty; refusing to build"
+          exit 1
+        fi
+
+        corepack enable
+        corepack install --global pnpm@11.3.0
+
+        pnpm install --frozen-lockfile
+        pnpm run check
+        pnpm run build:firebase:preview
+
+  - id: check-indexing
+    name: python:3.12-slim
+    entrypoint: python3
+    args:
+      - scripts/check-indexable.py
+      - dist
+
+  - id: deploy
+    name: us-docker.pkg.dev/firebase-cli/us/firebase:15.28.1
+    entrypoint: firebase
+    env:
+      - FIREBASE_HOSTING_UPLOAD_CONCURRENCY=10
+    args:
+      - deploy
+      - --only
+      - hosting
+      - --project
+      - polaris-website-prod
+      - --non-interactive
+      - --message
+      - Cloud Build $SHORT_SHA
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/polaris-site-password/versions/latest
+      env: SITE_PASSWORD
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
