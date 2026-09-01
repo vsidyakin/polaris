@@ -42,7 +42,8 @@
     "check:provenance": "python3 scripts/check-provenance.py",
     "test:mars": "node scripts/test-mars.mjs",
     "mars:art": "python scripts/build-mars-art.py",
-    "mars:audio": "python scripts/build-mars-audio.py && python scripts/build-mars-sfx.py"
+    "mars:audio": "python scripts/build-mars-audio.py && python scripts/build-mars-sfx.py",
+    "build:firebase:preview": "SITE_URL=https://polaris-website-prod.web.app BASE_PATH=/ PUBLIC_NOINDEX=true SITE_PASSWORD=${SITE_PASSWORD:-preview} pnpm run build"
   },
   "dependencies": {
     "astro": "^7.2.0",

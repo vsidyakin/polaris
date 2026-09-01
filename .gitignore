@@ -127,3 +127,8 @@ Game art files/**
 # Mars QA scratch: regenerable audit renders from the art build and the
 # runtime harness. The few sheets worth keeping are exported to docs/mars-shots.
 docs/mars-qa/
+
+firebase-debug.log*
+
+# local Firebase CLI state
+.firebase/

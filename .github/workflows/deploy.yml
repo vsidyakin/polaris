@@ -1,0 +1,78 @@
+name: Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: firebase-hosting-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js and pnpm
+        uses: pnpm/setup@v2
+        with:
+          version: 11.3.0
+          runtime: node@22.12.0
+          cache: true
+          require-lockfile: true
+
+      - name: Require preview password
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: |
+          if [ -z "$SITE_PASSWORD" ]; then
+            echo "::error::SITE_PASSWORD is missing"
+            exit 1
+          fi
+
+      - name: Check project
+        run: pnpm run check
+
+      - name: Build website
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: pnpm run build:firebase:preview
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check indexing configuration
+        run: python3 scripts/check-indexable.py dist
+
+      - name: Authenticate to Google Cloud
+        if: github.event_name != 'pull_request'
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting
+        if: github.event_name != 'pull_request'
+        env:
+          FIREBASE_HOSTING_UPLOAD_CONCURRENCY: "10"
+        run: |
+          npx --yes firebase-tools@15.28.1 deploy \
+            --only hosting \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --non-interactive \
+            --message "GitHub Actions ${GITHUB_SHA}"
