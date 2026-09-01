@@ -1,0 +1,115 @@
+---
+/* The shared card grid for both the blog listing and the case-studies listing:
+   borderless editorial entries, art, a small topic label, a headline, and
+   either a dateline (blog) or a two-stat row (case studies, when statA/statB
+   are present). There is no card box: the negative space does the grouping,
+   which is the point of the 2026-08-20 hub redesign. A post without artwork
+   renders a typographic tile instead (its dek, set on the night gradient), so
+   the grid never shows an empty panel.
+
+   Shared by the blog hub, its numbered pages, its per-topic pages, AND the
+   case-studies hub — every listing lays out by the same rule with no hand
+   assignment anywhere. `basePath` decides which route family a card links
+   into; the two content pools are never mixed within one grid. */
+import { imgSrc } from "../lib/blog-img";
+import { href } from "../data/routes";
+import { shortDate } from "../lib/date";
+import { lockup } from "../lib/logo-lockup";
+import { BLOG_TOPICS } from "../data/blog";
+
+interface PostCardData {
+  slug: string;
+  topic: string;
+  topicLabel: string;
+  headline: string;
+  dek: string;
+  hero?: string;
+  heroRemote?: string;
+  card?: string;
+  cardRemote?: string;
+  published?: string;
+  readTime?: string;
+  /** Case-study-only furniture: a customer's mark and the two-stat lead. */
+  org?: string;
+  logo?: string;
+  logoAspect?: number;
+  statA?: string;
+  statALabel?: string;
+  statB?: string;
+  statBLabel?: string;
+}
+
+interface Props {
+  posts: PostCardData[];
+  basePath: "resources/blog" | "resources/cases";
+  /** Set only for the case-studies hub, which still filters client-side by
+      chip (scripts/pages/filters.ts's fxFilter) rather than by real subpages
+      the way blog's topic pages do — this is what that script targets. */
+  filterGroup?: string;
+}
+const { posts, basePath, filterGroup } = Astro.props;
+
+/* The kicker names the topic the post is filed under (the taxonomy the topic
+   pages navigate for blog; the sector for case studies), not any free-text
+   kicker: a "Workplace innovation" page must not list entries labelled
+   anything else. Case-study sectors aren't in BLOG_TOPICS, so a topic not
+   found there falls back to the label already carried on the entry. */
+const topicName = (p: PostCardData) => BLOG_TOPICS.find((t) => t.key === p.topic)?.label ?? p.topicLabel;
+
+const entries = posts.map((p) => ({
+  ...p,
+  art: imgSrc(p.card || p.hero, p.cardRemote || p.heroRemote),
+  url: `${href(basePath)}/${p.slug}`,
+  when: p.published ? shortDate(p.published) : "",
+  mark: p.logo ? lockup(p.logoAspect || 3.5) : null,
+}));
+---
+
+<div class="bhx-grid">
+  {
+    entries.map((p) => (
+      <a
+        class="bhx"
+        href={p.url}
+        aria-label={p.org ? `${p.org}: ${p.headline}` : p.headline}
+        data-fxg={filterGroup}
+        data-fxv={filterGroup ? p.topic : undefined}
+      >
+        {p.art ? (
+          <span class="bhx-shot">
+            <img src={p.art} alt="" loading="lazy" decoding="async" width="640" height="427" />
+            {p.mark && (
+              <span class="bhx-mark" style={`width:${p.mark.w}px;height:${p.mark.h}px`}>
+                <img src={p.logo} alt={p.org} loading="lazy" decoding="async" />
+              </span>
+            )}
+          </span>
+        ) : (
+          <span class="bhx-typeshot" aria-hidden="true">
+            <span>{p.dek}</span>
+          </span>
+        )}
+        <span class:list={["ik", `cat-${p.topic}`]}>{topicName(p)}</span>
+        <span class="bhx-h">{p.headline}</span>
+        {p.statA ? (
+          <span class="bhx-stats">
+            <span class="bhx-stat">
+              <b class:list={[`cat-${p.topic}`]}>{p.statA}</b>
+              <span>{p.statALabel}</span>
+            </span>
+            <span class="bhx-stat">
+              <b>{p.statB}</b>
+              <span>{p.statBLabel}</span>
+            </span>
+          </span>
+        ) : (
+          <span class="bhx-meta">
+            {p.when && <time datetime={p.published}>{p.when}</time>}
+            {p.when && p.readTime && " · "}
+            {p.readTime}
+          </span>
+        )}
+      </a>
+    ))
+  }
+</div>

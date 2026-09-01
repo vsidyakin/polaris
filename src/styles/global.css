@@ -1,0 +1,5091 @@
+@import "tailwindcss";
+@import "./pages.css";
+@import "./games.css";
+/* Temporary review chrome — delete this import with dev-panel.css at launch. */
+@import "./dev-panel.css";
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+/* Break out of the page measure and reach the window edge. See the note beside
+   .site-main in "page chrome" for why this exists and what it replaced.
+
+   @utility, not a class in @layer components, because it is @applied — by
+   .xhero and .skytail here and by .bpx-top and .vhero in pages.css — and in
+   Tailwind v4 @apply only accepts real utilities. Declared above @layer so it is
+   registered before either file's @apply reaches for it. */
+@utility bleed {
+  margin-inline: calc(50% - 50vw);
+}
+
+/* ==========================================================================
+   Design tokens
+   Exposed to Tailwind as utilities: bg-surface-4, text-bright, border-line, …
+   ========================================================================== */
+@theme {
+  --font-sans: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, Menlo, Consolas, monospace;
+
+  /* type */
+  --color-bright: #e2d9ff;
+  --color-ink: #eee9ff;
+  --color-ink-soft: #cfc7ec;
+  --color-ink-dim: #d6cdf2;
+  --color-lav: #cbc1ea;
+  --color-muted: #b8aede;
+  --color-muted-2: #a89fce;
+  --color-faint: #8a7fb8;
+  --color-faint-2: #8f85b8;
+
+  /* brand purple */
+  --color-accent: #6d5bb8;
+  --color-accent-hi: #8f7ae0;
+  --color-lilac: #a58cff;
+  --color-lilac-hi: #b09aff;
+  --color-plum: #4a3585;
+
+  /* status */
+  --color-go: #7ce3a8;
+  --color-go-mid: #4fb87d;
+  --color-go-deep: #2e7a4f;
+  --color-gold: #e8c76a;
+  --color-gold-deep: #b08a2e;
+  --color-warn: #e8a184;
+  --color-warn-deep: #e07856;
+  /* COPPER — the one warm accent that is NOT a warning.
+   *
+   * Chosen by Damian Blazy, 15 Aug 2026, at #e0895c. It is deliberately a
+   * separate token from --color-warn even though the two are 3° apart on the
+   * wheel, because they mean opposite things: warn says stop and read this,
+   * copper says you have arrived. Sharing a token would have blurred a
+   * semantic that twelve verify flags and every held page depend on.
+   *
+   * THE RULE, and it is the whole reason this reads as expensive rather than
+   * loud: ONE decorative use per page, at the arrival beat. Status indicators
+   * are a different job and do not count against it. If you find yourself
+   * reaching for copper a second time on the same page, the first use was in
+   * the wrong place.
+   *
+   * The deep end is the gradient's far stop. #c9603a holds 4.4:1 on the hero
+   * surface, so even the darkest pixel of gradient text clears large-text
+   * contrast with room to spare — a gradient is judged at its worst point,
+   * not its average.
+   *
+   * Scoped to the home page for now, on Damian's instruction: first pass,
+   * one page, look at it before it goes anywhere else. */
+  --color-copper: #e0895c;
+  --color-copper-deep: #c9603a;
+  --color-teal: #7fc6dd;
+  --color-teal-deep: #2f8aa8;
+
+  /* surfaces (dark sky, lightest → darkest) */
+  --color-surface-5: #241c45;
+  --color-surface-4: #1c1636;
+  --color-surface-3: #181330;
+  --color-surface-2: #171231;
+  --color-surface-1: #12102a;
+  --color-surface-0: #0b0918;
+  --color-screen: #0e0b1e;
+  /* The terminal colour of the page gradient in body{} below — the dark purple the
+     page settles on, as opposed to the near-black --color-screen. Named because the
+     hero display now uses it, and because "the dark purple at the bottom of the
+     hero" needs to resolve to one value rather than being eyeballed twice. */
+  --color-deep-purple: #140e28;
+  --color-field: #131024;
+
+  /* hairlines */
+  --color-line: #3a3160;
+  --color-line-dim: #2a2350;
+  --color-line-lilac: #4a3d7d;
+  --color-line-deep: #35304d;
+
+  /* frosted glass */
+  --color-glass: rgba(255, 255, 255, 0.032);
+  --color-glass-line: rgba(255, 255, 255, 0.1);
+
+  --radius-card: 14px;
+  --radius-band: 18px;
+
+  /* ---------- the page measure ----------
+     ONE number for how wide the site is, and the only place it is written.
+     Tailwind's --container-* namespace, so this is also the `max-w-page`
+     utility; use that rather than retyping a pixel value.
+
+     Everything that has to line up with the content column takes it: the
+     content itself, the nav, the footer, the pre-launch and shipping bands,
+     the pain strip and the review chrome. If a new full-width container is
+     added, give it max-w-page too, or it sits out of alignment with the first
+     card beneath it.
+
+     History, because this has been wrong twice. It was 1200px, then the cap was
+     removed to let the page breathe — but "removed" was written as a
+     `max-width: none` override block placed at line ~570, and .ftgrid,
+     .ftlegal, .plband and .shipband are all defined LATER in this file with
+     their own max-w-[1200px]. Later wins, so the override silently missed them:
+     the nav went full-bleed and the footer stayed at 1200, putting the footer's
+     first column 200px in from a logo sitting at the window edge. Hence one
+     token at each definition site instead of a second override block — an
+     override block is what broke it, and a token cannot be half-applied. */
+  --container-page: 1500px;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  html {
+    @apply scroll-smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) #0d0a1f;
+    /* .bleed reaches the window edge with calc(50% - 50vw), and 50vw counts the
+       vertical scrollbar while 50% does not — so on any platform with a classic
+       scrollbar (which this one asks for, just above) a bleeding element ends up
+       a scrollbar-width wider than the visible page and raises a horizontal
+       scrollbar. Clipping the overflow absorbs that.
+       clip, NOT hidden: hidden would make this a scroll container and break the
+       sticky table headers in .famtbl and the sticky page header. clip does not,
+       which is the entire reason it exists. */
+    overflow-x: clip;
+  }
+
+  body {
+    @apply m-0 font-sans text-ink;
+    line-height: 1.55;
+    background: #080611;
+    background-image:
+      linear-gradient(180deg, #07050f 0%, #0d0a1c 55%, #140e28 100%),
+      radial-gradient(1000px 700px at 15% 5%, rgba(109, 91, 184, 0.13), transparent 60%),
+      radial-gradient(900px 620px at 88% 28%, rgba(47, 138, 168, 0.07), transparent 62%);
+    background-attachment: fixed;
+  }
+
+  a {
+    @apply text-lilac-hi no-underline;
+  }
+  a:hover {
+    @apply underline;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  main a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  ::selection {
+    background: rgba(165, 140, 255, 0.38);
+    color: #f4f0ff;
+  }
+  input,
+  textarea {
+    caret-color: var(--color-lilac);
+  }
+
+  ::-webkit-scrollbar {
+    @apply h-[11px] w-[11px];
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d0a1f;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-md border-2;
+    background: var(--color-line);
+    border-color: #0d0a1f;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a3f78;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    @apply rounded outline-2 outline-offset-2;
+    outline-color: var(--color-lilac);
+  }
+  *:focus:not(:focus-visible) {
+    @apply outline-none;
+  }
+
+  /* base table shell — dark, hairline-ruled */
+  table {
+    @apply my-3.5 w-full border-collapse text-sm;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  th {
+    @apply px-3 py-2.5 text-left text-[13px] text-white;
+    background: rgba(74, 61, 125, 0.85);
+    backdrop-filter: blur(6px);
+  }
+  td {
+    @apply border px-3 py-2 align-top;
+    background: rgba(255, 255, 255, 0.022);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--color-ink-dim);
+  }
+  td.y {
+    @apply font-bold text-go;
+  }
+  td.n {
+    color: #7a6fa8;
+  }
+  td.p {
+    @apply font-semibold text-gold;
+  }
+  tr.grp td {
+    @apply text-xs font-bold uppercase tracking-wide;
+    background: rgba(165, 140, 255, 0.1);
+    color: #d9cdff;
+  }
+}
+
+/* ==========================================================================
+   Components — flattened from the POC's layered stylesheet
+   ========================================================================== */
+@layer components {
+  /* ---------- POC banner ---------- */
+  .pocbar {
+    @apply px-2.5 py-[5px] text-center text-xs text-white;
+    background: var(--color-gold-deep);
+  }
+  .pocbar b {
+    @apply tracking-[0.5px];
+  }
+
+  /* ---------- header / nav ---------- */
+  .site-header {
+    @apply sticky top-0 z-50 text-white;
+    background: rgba(16, 12, 32, 0.55);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 8px 32px rgba(5, 3, 14, 0.45);
+  }
+  .navrow {
+    @apply mx-auto flex max-w-page flex-nowrap items-center gap-0 px-[18px];
+  }
+  @media (max-width: 980px) {
+    .navrow {
+      @apply flex-wrap;
+    }
+  }
+  .logo {
+    @apply flex cursor-pointer items-center gap-[9px] py-2.5 pr-3.5 pl-0;
+  }
+  .logo svg {
+    @apply block h-9 w-auto;
+  }
+  .logo .logosub {
+    @apply border-l pl-2.5 text-[17px] leading-none font-semibold tracking-[0.3px] lowercase text-white;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  /* ---------- the tittle twinkle ----------
+     Every so often the dot of the `i` in "polaris" catches the light. The whole
+     effect is one pseudo-element that is invisible until `initLogoTwinkle` in
+     scripts/site.ts adds `.twinkle`, at a random interval measured in minutes.
+
+     It ADDS light over the real dot rather than replacing it, and that is what
+     makes it safe. The alternative — a dotless `ı` with our own dot drawn on top
+     — gives pixel control and costs the word: it would no longer read or copy as
+     "polaris", and it would need font metrics to be right or the dot lands in the
+     wrong place permanently. A glow that is a pixel off for 1.2 seconds is not a
+     defect; a dot that is a pixel off forever is.
+
+     `em` units throughout, so the glint tracks the 17px type if that ever
+     changes. `--tittle-y` is DERIVED, not eyeballed, and the arithmetic is worth
+     keeping because nothing about it is guessable from looking at the rule:
+
+       The containing block for the glint is the inline's content area, whose top
+       edge sits at the font's ascender — 1.050em above the baseline in Poppins
+       (unitsPerEm 1000, ascender 1050). Poppins' lowercase i carries its tittle
+       from 0.600em to 0.755em above the baseline, so the dot's centre is at
+       0.677em, i.e. 0.373em down from the content-area top. Half the glint's own
+       0.42em height comes back off that:  0.373 - 0.21 = 0.163em.
+
+     It is a custom property so it can be nudged in devtools without going
+     hunting, and because the number is only right for Poppins — the fallback
+     stack (Segoe UI, system-ui) has its own metrics, and on the one frame before
+     the webfont swaps the glint will be a pixel out. That is an acceptable price
+     for not hard-coding a second set of numbers for a font nobody will see. */
+  .logosub .lgi {
+    @apply relative;
+    --tittle-y: 0.163em;
+  }
+  .logosub .lgi::after {
+    content: "";
+    @apply pointer-events-none absolute left-1/2 h-[0.42em] w-[0.42em] rounded-full opacity-0;
+    top: var(--tittle-y);
+    margin-left: -0.21em;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(214, 200, 255, 0.7) 40%,
+      rgba(165, 140, 255, 0) 72%
+    );
+  }
+  /* Two beats rather than one: a star does not fade up and down symmetrically, it
+     catches and releases. 1.2s total, and the peak is barely a fifth of it. */
+  .logosub.twinkle .lgi::after {
+    animation: logoTwinkle 1200ms ease-out both;
+  }
+
+  .topitem {
+    @apply relative;
+  }
+  .topitem > button {
+    @apply inline-flex cursor-pointer items-center gap-[7px] border-none border-b-[3px] border-transparent bg-none px-2.5 py-5 font-[inherit] text-sm font-medium normal-case tracking-normal text-white;
+  }
+  .topitem > button:hover,
+  .topitem.openmenu > button,
+  .topitem.curtop > button {
+    border-bottom-color: var(--color-accent-hi);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  /* The glyph beside each menu word. 16px against 14px type — small enough to be
+     a mark on the label rather than a second object next to it, which is why the
+     drawings in `NIC` carry almost no interior detail. It started at 13px, which
+     read as soft rather than small: see the stroke-weight note in `icons.ts` for
+     why the two are the same problem.
+     It is dimmed at rest and comes up to full with its label on hover, on the
+     open menu and on the section you are in. That is the header's existing rule
+     — state is the only thing that varies — applied to the icon: `currentColor`
+     means the stroke is already following the label's colour, so opacity is the
+     only thing left to say "this one". */
+  .navic {
+    @apply block h-4 w-4 shrink-0 opacity-75;
+    transition: opacity 0.14s ease;
+  }
+  .navic svg {
+    @apply block h-full w-full;
+  }
+  .topitem > button:hover .navic,
+  .topitem.openmenu > button .navic,
+  .topitem.curtop > button .navic {
+    @apply opacity-100;
+  }
+  /* No marker on the top row. The + belongs to rows that expand in place inside a
+     panel, where without it there is nothing to say a row has children. These six
+     open a panel on hover and are marked by the underline that lights under the
+     word, so a + here would be a second affordance for something already
+     obvious — and it put a symbol on every word in the header. */
+
+  .drop {
+    @apply absolute top-full left-0 hidden min-w-[270px] rounded-b-xl border py-2;
+    background: rgba(16, 12, 32, 0.97);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e9e2ff;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  }
+  .topitem.openmenu .drop,
+  .topitem:hover .drop,
+  .topitem:focus-within .drop {
+    @apply block;
+    animation: dropPanelIn 110ms cubic-bezier(0.22, 0.75, 0.3, 1) both;
+  }
+  /* Each row slides in behind the panel, one beat after the last. The whole
+     cascade is over in ~250ms — quick enough to read as one motion. */
+  .topitem.openmenu .drop > *,
+  .topitem:hover .drop > *,
+  .topitem:focus-within .drop > * {
+    animation: dropRowIn 160ms cubic-bezier(0.22, 0.75, 0.3, 1) both;
+    animation-delay: calc(40ms + var(--row, 0) * 14ms);
+  }
+  .drop > *:nth-child(1) { --row: 0; }
+  .drop > *:nth-child(2) { --row: 1; }
+  .drop > *:nth-child(3) { --row: 2; }
+  .drop > *:nth-child(4) { --row: 3; }
+  .drop > *:nth-child(5) { --row: 4; }
+  .drop > *:nth-child(6) { --row: 5; }
+  .drop > *:nth-child(7) { --row: 6; }
+  .drop > *:nth-child(8) { --row: 7; }
+  .drop > *:nth-child(9) { --row: 8; }
+  .drop > *:nth-child(10) { --row: 9; }
+  .drop > *:nth-child(11) { --row: 10; }
+  .drop > *:nth-child(12) { --row: 11; }
+  /* everything past a dozen rows arrives together, so long menus don't crawl */
+  .drop > *:nth-child(n + 13) { --row: 12; }
+  /* the header naps for a beat after navigation so the pointer doesn't
+     re-open the menu you just clicked through */
+  .menusleep .topitem:hover .drop,
+  .menusleep .topitem.openmenu .drop {
+    @apply hidden;
+  }
+  /* ---------- one nav type ----------
+     Every row in every menu is the same face, size, weight, case and colour:
+     14px, weight 500, sentence case, ink-soft. Nothing in the navigation uses
+     type to rank itself. Before this, a single 270px panel mixed 11px bold
+     uppercase group headings — in three separate colour variants — with 14px
+     regular rows and a bold lilac current-page row, which read as four
+     different kinds of thing rather than one list.
+     State is the only thing that changes: hover and the current page go white,
+     and an expandable row carries the + set above. Depth is shown by the indent
+     and the hairline rule down the sub-group, not by shrinking the type. */
+  .drop a,
+  .drop .grp,
+  .drop a.grpa,
+  .drop .navparent > .grpbtn {
+    @apply block px-[18px] py-2 text-left text-sm font-medium normal-case tracking-normal;
+    color: var(--color-ink-soft);
+  }
+  .drop a:hover,
+  .drop a.grpa:hover {
+    @apply text-white no-underline;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  /* A text row leans 3px into the pointer. Anchors only, and not the cards: a
+     `.grp` or `.grpbtn` heading goes nowhere, so moving it would promise a
+     destination it does not have, and the cards answer with the lift set below.
+     `translate` rather than `transform`, for the reason spelled out on the card:
+     the entry stagger is `dropRowIn … both`, so its final `transform: none`
+     keeps filling for as long as the panel is open, and a filled animation
+     value beats a plain declaration — a `transform` here would never be seen. */
+  .drop a:not(.navcard) {
+    transition: translate 140ms cubic-bezier(0.22, 0.75, 0.3, 1);
+  }
+  .drop a:not(.navcard):hover,
+  .drop a:not(.navcard):focus-visible {
+    translate: 3px;
+  }
+  .drop a.ind {
+    @apply pl-9;
+  }
+  /* The mark on a Solutions root row. Inline rather than absolutely positioned
+     in the row's padding, which is what keeps it honest at every width: the
+     label wraps under itself and the glyph stays with the first line, and there
+     is no hand-tuned vertical offset to go stale when the row's type changes.
+     `align-[-3px]` rather than a transform for the same reason as the hover
+     nudge above — the row's entry animation fills `transform: none` for as long
+     as the panel is open and would eat it. */
+  .drop a > .nrow-ic {
+    @apply mr-2 inline-block h-[15px] w-[15px] shrink-0 align-[-3px] opacity-80;
+  }
+  .drop a > .nrow-ic svg {
+    @apply block h-full w-full;
+  }
+  /* The glyph is on `currentColor`, so it brightens with its label; this takes it
+     the rest of the way, from a mark beside the row to part of it. */
+  .drop a:hover > .nrow-ic,
+  .drop a.cur > .nrow-ic {
+    @apply opacity-100;
+  }
+  /* …except a FILLED glyph, which sits at full strength always. This is the
+     `.navic-solid` finding applied to the rows: opacity is the only thing dimming
+     a solid shape, and 0.8 of one reads as a printing error rather than as
+     restraint — where on a 2px stroke it reads as exactly the restraint intended.
+     The Polaris Family's north star (`SIC.star`, which IS `NIC.star`) is the only
+     filled mark in the set today.
+
+     Keyed off the drawing's own `fill` rather than a marker class, and the child
+     combinator matters: `cast` carries a filled dot INSIDE an unfilled svg, and
+     `> svg` is what keeps that from matching. Any filled glyph added later gets
+     this for free, which is the point — the alternative was a class in the markup
+     that a new icon would silently forget. */
+  .drop a > .nrow-ic:has(> svg[fill="currentColor"]) {
+    @apply opacity-100;
+  }
+  /* ---------- one row, one line ----------
+     A panel is absolutely positioned and therefore shrink-to-fit, so a row that
+     cannot break simply makes the panel as wide as its longest label. That is
+     the whole fix: `min-w-[270px]` was being read as a maximum, and "The
+     workspace: every share, side by side" and "Mersive Solstice Gen 3 → Polaris
+     transition" broke over two lines in a 270px panel with most of the window
+     unused beside it.
+
+     GATED AT 1024px, and the gate is load-bearing rather than cautious. The
+     phone layer (mobile.css, max-width 640px) makes `.drop` static and
+     `width: 100%`, and `white-space: nowrap` does not wrap-or-widen there — it
+     overflows the screen, horizontally, with no scroll container to catch it.
+     The 641–1023px band has the desktop header but not the room for a 420px
+     panel hanging off the rightmost menu, so it keeps wrapping too.
+
+     Cards are excluded: a blurb is a sentence and is meant to wrap. Only the
+     single-line rows and the group headings are held to one line. */
+  @media (min-width: 1024px) {
+    .drop a:not(.navcard),
+    .drop .grp,
+    .drop .navparent > .grpbtn {
+      white-space: nowrap;
+    }
+  }
+  .drop hr {
+    @apply my-1.5 border-none border-t;
+    border-top-color: var(--color-line);
+  }
+  /* The current page is marked by a dot, not by a different typeface: it keeps
+     the same size, weight and case as every other row and only brightens to the
+     hover colour, so the list still reads as one list. */
+  .drop a.cur {
+    @apply text-white;
+  }
+  .drop a.cur::before {
+    content: "● ";
+    @apply align-[2px] text-[8px];
+    color: var(--color-lilac);
+  }
+  /* Sub-groups: collapsed, and they stay open once you mean it.
+     Three rules make this behave, and the order they were arrived at matters:
+       1. Opening on bare :hover was the original bug. The submenu is in the
+          flow, so merely crossing a heading en route to a row below expanded
+          five children and dropped everything beneath by their height — the
+          target moved out from under the cursor.
+       2. So opening now needs INTENT: a short dwell on the heading, measured in
+          script. Passing through no longer triggers anything.
+       3. And once open it LATCHES until the pointer leaves the dropdown, so it
+          cannot collapse and re-expand while you travel down the list.
+       4. …with one deliberate exception to 3: clicking the heading of an open
+          group shuts it. Only a heading that is a button, never one that is a
+          page — see the click handler in scripts/site.ts.
+     Default here is open, and script adds .navjs to switch to collapsed —
+     without script there is no way to expand, and an unreachable menu is worse
+     than a long one.
+
+     `.nsopen` is the ONLY thing that opens a group here, and that is load-bearing
+     rather than tidy. These rules used to carry `:focus-within` alongside it as a
+     keyboard safety net, which quietly made point 4 impossible: clicking a
+     `<button>` focuses it, so a group collapsed by a click stayed visibly open
+     under `:focus-within` while `aria-expanded` said false — the state and the
+     screen disagreeing, from a rule meant to be redundant. Keyboard reach is
+     handled instead by the `focusin` listener in scripts/site.ts, which sets the
+     same class and keeps the two in step. Do not add it back. */
+  .drop .navsub {
+    @apply block bg-transparent;
+    border-left: 1px solid rgba(165, 140, 255, 0.22);
+    margin: 2px 0 4px 18px;
+  }
+  .navjs .drop .navsub {
+    @apply hidden;
+  }
+  .navjs .drop .navparent.nsopen .navsub {
+    @apply block;
+  }
+  /* Same marker as the top-level menus, in the same place: immediately after the
+     last word, in the row's own colour. It used to be a ▸ floated to the far
+     right of the panel, which put the affordance nowhere near the label it
+     belonged to and gave the row a second colour. */
+  .navjs .drop .navparent > a::after,
+  .navjs .drop .navparent > .grpbtn::after {
+    content: " +";
+    @apply ml-1 font-medium;
+  }
+  .navjs .drop .navparent.nsopen > a::after,
+  .navjs .drop .navparent.nsopen > .grpbtn::after {
+    content: " −";
+  }
+  .drop .navparent {
+    @apply relative;
+  }
+  /* the ▸ is added by the .navjs rules below, since without script nothing
+     collapses and the affordance would be lying */
+  /* A group heading that expands but is not a page. Button for keyboard reach.
+     Everything about its type now comes from the shared nav rule above; all this
+     adds is the button reset and the full-width hit area. `font-family: inherit`
+     stays because a bare <button> otherwise falls back to the UA's system font,
+     which is the one mismatch @apply cannot fix. */
+  .drop .navparent > .grpbtn {
+    @apply w-full cursor-pointer border-0 bg-transparent;
+    font-family: inherit;
+  }
+  .drop .navparent:hover > .grpbtn,
+  .drop .navparent:focus-within > .grpbtn {
+    @apply text-white;
+  }
+  /* ---------- …with one exception: the rows you cannot click ----------
+     The "one nav type" block above says every row is the same type, and it is
+     still right about every row that GOES somewhere. What it flattened along
+     with the noise was the difference between a destination and a label:
+     "Wireless collaboration" and "Hybrid and Software" are not pages, and at
+     14px sentence-case ink-soft they were indistinguishable from the nine rows
+     around them that are.
+
+     So the labels get their own voice, and it is the site's existing one for a
+     readout rather than a new invention — the Mission Control HUD in games.css
+     is monospace, uppercase and widely tracked, and this is that. Small, tight,
+     mint tick, quiet colour: a header on an instrument panel, not a row.
+
+     What the old ruling was protecting against was FOUR treatments in one panel.
+     There is one here. Every non-selectable label in every menu takes it — the
+     plain headings, the ones that expand, the bracket labels — and the only
+     thing that varies is the affordance on the right, because that difference is
+     real: a trailing hairline where nothing happens, the +/− the rest of the nav
+     already uses where the row opens.
+
+     It sits BELOW the button reset above rather than beside the shared type
+     rule, and it names the button explicitly. Both of those are specificity:
+     `.drop .navparent > .grpbtn` is three classes to `.drop .grp`'s two, so a
+     shorter selector earlier in the file loses on every property they share —
+     including the `font-family: inherit` that would otherwise put an expandable
+     heading back in Poppins while the plain one beside it is in mono. */
+  .drop .grp,
+  .drop .navparent > .grpbtn {
+    @apply flex items-center justify-start gap-2 px-[18px] pt-3 pb-1 text-[10px] font-bold uppercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.2em;
+    line-height: 1.2;
+    color: var(--color-faint);
+  }
+  .drop .grp::before {
+    content: "";
+    @apply block h-[5px] w-[5px] shrink-0 rounded-[1px];
+    background: var(--color-go);
+    box-shadow: 0 0 8px var(--color-go);
+  }
+  /* The hairline runs from the end of the label to the edge of the panel, and
+     only on labels that do nothing: an expandable heading's ::after is already
+     the +/− marker set above, and :not() keeps the two from meeting. */
+  .drop .grp:not(.grpbtn)::after {
+    content: "";
+    @apply block h-px flex-1;
+    background: linear-gradient(90deg, rgba(165, 140, 255, 0.34), transparent);
+  }
+  /* That marker belongs at the end of the label now, not adrift after a gap. */
+  .navjs .drop .navparent > .grpbtn::after {
+    @apply ml-0 text-[11px];
+  }
+  /* The vertical bracket label is the same kind of thing turned on its side, and
+     was already most of the way here — it only wanted the family. */
+  .navbkt-label em {
+    font-family: var(--font-mono);
+  }
+  /* The rows still stagger in with the panel, as every other row does. */
+  .topitem.openmenu .drop .navsub a,
+  .topitem:hover .drop .navsub a,
+  .topitem:focus-within .drop .navsub a {
+    animation: dropRowIn 150ms cubic-bezier(0.22, 0.75, 0.3, 1) both;
+    animation-delay: calc(var(--row, 0) * 12ms);
+  }
+  .drop .navsub a:nth-child(1) { --row: 0; }
+  .drop .navsub a:nth-child(2) { --row: 1; }
+  .drop .navsub a:nth-child(3) { --row: 2; }
+  .drop .navsub a:nth-child(4) { --row: 3; }
+  .drop .navsub a:nth-child(5) { --row: 4; }
+  .drop .navsub a:nth-child(n + 6) { --row: 5; }
+  /* Nested rows are the same type as every other row in the dropdown - only the
+     indent and the rule say they are nested. They were 13px against the 14px of
+     their siblings, which made the product names read as small print: "Polaris
+     Pro" and "Polaris Essentials" set smaller than "Which Polaris is right?"
+     directly below them. Nesting is a position, not a demotion. */
+  .drop .navsub a {
+    @apply pl-9;
+  }
+  /* A marked panel nests one step deeper, and this is not cosmetic. The glyph
+     puts a root row's label at 41px (18px padding + 15px mark + 8px gap), so a
+     child at the usual 36px sits LEFT of the row it hangs off — the hierarchy
+     reads backwards. Scoped to `.dropicons` exactly as the wider card panel is
+     scoped to `.dropcards`, so the menus without marks keep their tighter
+     nesting. Placed after the rule above because the two have equal specificity
+     and order is what decides them. */
+  .dropicons .navsub a {
+    @apply pl-[52px];
+  }
+
+  /* ---------- product cards in a dropdown ----------
+     The three hardware pods, drawn as cards inside the Products panel rather
+     than as three more 14px text rows. This is the one place in the navigation
+     that deliberately breaks the "one nav type" rule set above, and it earns it
+     by not being type: the card is a picture and a sentence, which is a
+     different kind of object from a list row, so it does not read as a fourth
+     weight of the same thing. The group heading above it is still a plain `.grp`
+     row in the shared nav face — a `.grpbtn` one, since the group collapses.
+     The panel keeps its 420px whether the cards are open or shut, so expanding
+     one does not resize the panel under the pointer. */
+  .drop.dropcards {
+    @apply min-w-[420px];
+  }
+  .navcards {
+    @apply grid gap-1.5 px-2 pt-1 pb-1.5;
+  }
+  /* Collapsed, on the same `.nsopen` latch the script already sets for every
+     other sub-group — `initNav` keys off `.navparent` and `.grpbtn`, both of
+     which the card group now carries, so this needs no script of its own.
+     It cannot simply reuse `.navsub`: those rules restore a hidden group with
+     `display: block`, and a card group is a grid. Hence its own pair, matching
+     the hairline and indent `.navsub` draws so the two kinds of sub-group sit on
+     the same line. */
+  .drop .navparent > .navcards {
+    border-left: 1px solid rgba(165, 140, 255, 0.22);
+    margin: 2px 0 4px 18px;
+  }
+  .navjs .drop .navparent > .navcards {
+    @apply hidden;
+  }
+  .navjs .drop .navparent.nsopen > .navcards {
+    @apply grid;
+  }
+  /* Out promptly: the same 9px slide the text rows use, on the same easing, one
+     card a beat behind the last so three read as a single motion instead of
+     three. Keyed to `.nsopen` rather than to the panel opening — that is the
+     moment the cards first render, and an animation declared on a `display: none`
+     element has already run to completion by the time anything reveals it.
+     The stagger is wider than the 12ms the text rows get (40ms), because a card
+     is four times a row's height and 12ms apart on objects that size reads as one
+     block twitching rather than three arriving. */
+  .navjs .drop .navparent.nsopen > .navcards a.navcard {
+    animation: dropRowIn 160ms cubic-bezier(0.22, 0.75, 0.3, 1) both;
+    animation-delay: calc(var(--row, 0) * 40ms);
+  }
+  /* `--row` inherits, and the wrapper already has one from the `.drop > *` panel
+     stagger — so without these every card in the group would take the group's
+     own row number and they would all arrive together, late. */
+  .drop .navcards a.navcard:nth-child(1) { --row: 0; }
+  .drop .navcards a.navcard:nth-child(2) { --row: 1; }
+  .drop .navcards a.navcard:nth-child(3) { --row: 2; }
+  .drop .navcards a.navcard:nth-child(n + 4) { --row: 3; }
+  .drop .navcards a.navcard {
+    @apply relative grid items-center gap-3 overflow-hidden rounded-[10px] border px-2.5 py-2.5;
+    grid-template-columns: 84px minmax(0, 1fr);
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(255, 255, 255, 0.07);
+    /* ---------- hover and press feedback ----------
+       The card is the only nav row that looks like a button, so it is the only
+       one that owes the pointer an answer: a lift and a light on hover, a press
+       on the way down. Everything here is 150ms or less — the point is that it
+       has already happened, not that it is happening.
+
+       The lift deliberately does NOT go through `transform`, and that is the one
+       thing to preserve if this is ever rewritten. The entry stagger above is
+       `dropRowIn … both`, and `.nsopen` stays set for as long as the group is
+       open — so the animation's final `transform: none` keeps filling
+       indefinitely, and a filled animation value beats a plain declaration in
+       the cascade. `transform: translateY(-1px)` on :hover here would simply
+       never be seen, with nothing in the CSS to say why. The individual
+       `translate` and `scale` properties are a different property entirely and
+       the animation never touches them, so the lift and the press land while the
+       stagger keeps `transform` to itself. */
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease,
+      translate 150ms cubic-bezier(0.22, 0.75, 0.3, 1),
+      scale 80ms ease;
+  }
+  /* The light that crosses the card. An animation rather than a transition, on
+     purpose: a transition reverses when the pointer leaves, which reads as the
+     light sliding back out of a card you have already left — motion pointing at
+     the wrong target. An animation runs once, forward, and the band is back at
+     opacity 0 the instant the rule stops applying. */
+  .drop .navcards a.navcard::after {
+    content: "";
+    @apply pointer-events-none absolute inset-y-0 left-0 w-[45%];
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.1) 45%,
+      rgba(190, 170, 255, 0.16) 58%,
+      transparent
+    );
+    opacity: 0;
+  }
+  .drop .navcards a.navcard:hover::after,
+  .drop .navcards a.navcard:focus-visible::after {
+    animation: navcardSweep 520ms cubic-bezier(0.32, 0.62, 0.3, 1);
+  }
+  .drop .navcards a.navcard:hover,
+  .drop .navcards a.navcard:focus-visible {
+    background: rgba(165, 140, 255, 0.1);
+    border-color: rgba(165, 140, 255, 0.38);
+    translate: 0 -1px;
+    box-shadow: 0 8px 20px -12px rgba(139, 106, 255, 0.55);
+  }
+  /* The press, and it is shorter than the hover it interrupts (60ms): a click
+     acknowledged on a 150ms curve does not feel like it registered. The card
+     drops back onto the panel, takes the brighter edge and loses its shadow,
+     then releases into hover on the way back up. */
+  .drop .navcards a.navcard:active {
+    background: rgba(165, 140, 255, 0.17);
+    border-color: rgba(165, 140, 255, 0.6);
+    translate: 0 0;
+    scale: 0.985;
+    box-shadow: none;
+    transition-duration: 60ms;
+  }
+  /* The current page keeps the dot the text rows use, so the marker means the
+     same thing everywhere in the panel; it just moves onto the product name. */
+  .drop .navcards a.navcard.cur::before {
+    content: none;
+  }
+  .drop .navcards a.navcard.cur {
+    border-color: rgba(165, 140, 255, 0.45);
+  }
+  .navcard-fig {
+    /* A fixed frame, because Element still has no render and a card that
+       collapses to the height of its text next to one that does not looks like a
+       bug rather than a gap. It also keeps Pro and Essentials level despite their
+       different heights. The empty frame is quiet, not dashed: it is a
+       photograph nobody has taken, not a placeholder to be reviewed. */
+    @apply flex h-[52px] w-full items-center justify-center overflow-hidden rounded-md;
+    background: rgba(9, 6, 22, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .navcard-fig img {
+    @apply block h-auto max-h-full w-full object-contain;
+    /* `scale` again rather than `transform`, for the same cascade reason as the
+       card above — the pod leans in a fraction, and the fixed frame clips it. */
+    transition: scale 220ms cubic-bezier(0.22, 0.75, 0.3, 1);
+  }
+  .drop .navcards a.navcard:hover .navcard-fig img,
+  .drop .navcards a.navcard:focus-visible .navcard-fig img {
+    scale: 1.045;
+  }
+  .drop .navcards a.navcard .navcard-txt {
+    @apply block min-w-0;
+  }
+  .drop .navcards a.navcard b {
+    @apply block text-sm font-semibold text-white;
+  }
+  .drop .navcards a.navcard em {
+    @apply mt-1 block text-xs leading-[1.45] not-italic;
+    color: var(--color-muted);
+  }
+  .drop .navcards a.navcard:hover em,
+  .drop .navcards a.navcard:focus-visible em {
+    color: var(--color-ink-soft);
+  }
+
+  /* bracketed sub-group ("one per display") inside a dropdown */
+  .navbkt {
+    @apply relative pr-[34px];
+  }
+  .navbkt-items {
+    @apply block;
+  }
+  .navbkt-label {
+    @apply pointer-events-none absolute top-[7px] right-2.5 bottom-[7px] w-4;
+  }
+  .navbkt-label i {
+    @apply absolute top-0 bottom-0 left-0 w-1.5 rounded-r-[5px] border-y border-r;
+    border-color: #4a3d7d;
+    border-width: 1.5px;
+    border-left: 0;
+  }
+  .navbkt-label em {
+    @apply absolute top-1/2 left-[9px] -translate-y-1/2 text-[8.5px] font-bold whitespace-nowrap uppercase not-italic;
+    writing-mode: vertical-rl;
+    letter-spacing: 2.2px;
+    color: #8a7fb8;
+  }
+
+  .ctas {
+    @apply ml-auto flex items-center gap-[7px] p-0;
+  }
+  .ctas .btn {
+    @apply px-[13px] py-[7px] text-[13px] whitespace-nowrap;
+  }
+  /* Contact used to be a 13px text link (`.ctalink`, now gone) sitting next to a
+     solid button. It is a `.btn.secondary.hasic` instead, so `.ctas .btn` above
+     gives it Try Polaris's metrics for free and the two line up without a single
+     number being restated here.
+
+     The hover is scoped to `.ctas` deliberately. `.btn.secondary` has six other
+     instances — the CTA band, the support page, the selector's result — and none
+     of them asked for a change; a bare `.btn.secondary:hover` would have restyled
+     all of them. What it adds is a background and border step, because the base
+     class has no hover of its own and would otherwise answer the pointer with
+     the shared lift and sheen alone, which on a translucent button is a
+     surprisingly weak signal next to the solid one beside it. */
+  .ctas .btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.62);
+  }
+  /* The envelope sits at `.navic`'s 0.75 like every glyph in the header bar and
+     comes up with its button, the way the menu words' glyphs come up with theirs.
+     Try Polaris's star is exempt from that dimming (see `.navic-solid`) because
+     it is a filled shape. */
+  .ctas .btn.secondary:hover .navic {
+    @apply opacity-100;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    @apply relative inline-block cursor-pointer overflow-hidden rounded-[7px] border-none px-[15px] py-2 text-sm font-semibold;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      background 0.3s;
+  }
+  .btn::before {
+    content: "";
+    @apply pointer-events-none absolute top-0 left-[-120%] h-full w-[55%];
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.55s ease;
+  }
+  .btn:hover::before {
+    @apply left-[150%];
+  }
+  .btn:hover {
+    @apply -translate-y-[1.5px];
+    box-shadow: 0 8px 24px rgba(143, 122, 224, 0.35);
+  }
+  /* A button that carries a glyph. `.btn` is `inline-block` and ~280 of them are
+     scattered across the site, so this is a modifier rather than a change to the
+     base: only the buttons that actually hold an icon become flex rows. */
+  .btn.hasic {
+    @apply inline-flex items-center gap-[7px];
+  }
+  /* The CTA's star is filled, so opacity is the only thing dimming it and 0.75
+     on a solid shape reads as a printing error rather than as restraint. It sits
+     at full strength, and the button's own hover carries the state. */
+  .navic-solid {
+    @apply opacity-100;
+  }
+  .btn.ghost {
+    @apply border bg-transparent text-white;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+  .btn.ghost:hover {
+    @apply no-underline;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  /* ── THE WARM MOMENT ─────────────────────────────────────────────────────────
+   * `.warm` is the ONLY class that may carry copper decoratively, anywhere on
+   * this site. One marker class rather than several, for one reason: it makes
+   * "keep it super restrained" countable. scripts/check-copper.py counts .warm
+   * elements per built page and fails the build past the limit — at most one
+   * per page, two on the home page, which opens and closes warm.
+   *
+   * Damian Blazy, 15 Aug 2026: "you may push the use of this warm color
+   * throughout but keep super restrained." Restraint stated as an intention
+   * erodes; restraint enforced by a build step does not.
+   *
+   * WHY THE BUTTON'S RAMP STOPS SHORT OF THE HEADLINE'S. Copper AS text and
+   * text ON copper have opposite contrast requirements. The headline can run to
+   * #c9603a because the pixels themselves only need 3:1 against the surface at
+   * 34-54px. A button needs its LABEL to clear 4.5:1 at 15px, and dark ink on
+   * #c9603a is 4.65:1 — passing, but with nothing in hand. Stopping the ramp at
+   * #cf6f42 buys 5.35:1 and costs nothing anyone can see. */
+  .btn.warm {
+    background: linear-gradient(96deg, var(--color-copper), #cf6f42);
+    color: var(--color-deep-purple);
+  }
+  .btn.warm:hover {
+    @apply no-underline;
+    background: linear-gradient(96deg, #eda07a, var(--color-copper));
+    color: var(--color-deep-purple);
+    box-shadow: 0 8px 24px rgba(224, 137, 92, 0.32);
+  }
+
+  .btn.primary {
+    @apply bg-white;
+    color: var(--color-plum);
+  }
+  .btn.primary:hover {
+    @apply no-underline;
+    background: linear-gradient(100deg, #fff, #e6ddff);
+    color: #3a2c72;
+  }
+  .btn.secondary {
+    @apply border;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #eee9ff;
+  }
+  .btn.accent {
+    @apply text-white;
+    background: linear-gradient(100deg, #6d5bb8, #8f7ae0);
+    background-size: 150% 100%;
+  }
+  .btn.accent:hover {
+    @apply text-white no-underline;
+    background-position: 90% 0;
+  }
+  .btn.big {
+    @apply px-[22px] py-3 text-[15px];
+  }
+
+  /* ---------- page chrome ---------- */
+  .site-main {
+    @apply mx-auto min-h-[60vh] max-w-page px-[18px] pt-0 pb-[70px];
+  }
+
+  /* ---------- escaping the measure ----------
+     Three things are meant to reach the window edge rather than stop at the
+     content column: the home hero (a film now, and its sky and .skytail went
+     with the night sky), the video hero on products/pro, and the band at the top
+     of a blog post.
+
+     They used to do it with mx-[-18px] / mx-[-28px] — pull out by exactly the
+     page gutter. That only worked while .site-main had no max-width, because
+     then the gutter was the ONLY thing holding the content in. With a real
+     measure in place those negative margins would leave a 1500px band sitting in
+     the middle of a wide window, which is not a bleed at all.
+
+     calc(50% - 50vw) generalises it: 50% is half the parent's content box, 50vw
+     is half the viewport, so the margin is whatever it takes to reach the edge at
+     any width. Below the measure it resolves to exactly the old -18/-28 and
+     nothing changes; above it, it keeps going. One rule replaces four, and it no
+     longer silently depends on an ancestor being uncapped.
+
+     The utility itself is `@utility bleed`, at the top of this file. */
+  /* Paragraphs with no role class of their own, which would otherwise be the one
+     thing on the page with no measure at all.
+     :not([class]) to match its two siblings below. Without it this also caught
+     .dek — a direct child of .site-main on most pages — and overrode .dek's own
+     720px with 78ch, so the same class measured 720 or 833 depending on whether
+     the page happened to wrap its content in anything. */
+  .site-main > p:not([class]),
+  .sect > p:not([class]),
+  .darkband > p:not([class]),
+  .fullw-prose {
+    max-width: 78ch;
+  }
+  /* ---------- 404: the sky IS the page ----------
+     Full bleed, no card. It was a rounded, bordered panel inset by the page
+     gutter, which framed the sky as something being looked at through a window;
+     at full width the frame is the only thing left saying "window", so it goes.
+     The measure is lifted as well as the gutter: capping the sky at 1500px would
+     put the frame back, just without the border. */
+  /* ---------- home runs at the window, not at the measure ----------
+     A0 opens on a full-bleed film, and at the 1500px measure everything under it
+     stepped inward by (100vw - 1500)/2 -- about 210px on a 1920 window -- so the
+     page read as a wide hero stitched to a narrower site. Released to the same
+     18/28px gutter the hero copy uses, the whole page shares one left edge.
+
+     Scoped to the route, the same way 404 is, because this is a decision about
+     the home page and NOT a change to `--container-page`. That token is still the
+     one number for how wide the site is, and the other 145 pages still use it --
+     a document page wants the measure; a shop window does not.
+
+     The gutter is the only thing holding content now, which is exactly the
+     condition the "escaping the measure" note above says `bleed` no longer
+     depends on: calc(50% - 50vw) still reaches the edge because 50% is half the
+     parent's content box whatever that box is.
+
+     Nothing here widens running text. .sdek stays at 640, .lead at 820 and a
+     bare <p> at 78ch, so the lines a person actually reads keep their measure
+     while the grids, bands and figures get the room. Releasing the container
+     without those caps is how a wide page becomes an unreadable one. */
+  body[data-route="home"] .site-main {
+    @apply max-w-none;
+    padding-inline: 18px;
+  }
+  @media (min-width: 900px) {
+    body[data-route="home"] .site-main {
+      padding-inline: 28px;
+    }
+  }
+  body[data-route="404"] .site-main {
+    @apply max-w-none px-0 pt-0 pb-0;
+  }
+  body[data-route="404"] .nf {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+  /* A little more air at the edges: 18px of gutter against the full measure reads
+     as no margin at all. The footer rows take it too, so their first column lines
+     up with the logo and the first card above them. */
+  @media (min-width: 900px) {
+    .site-main,
+    .navrow,
+    .ftgrid,
+    .ftlegal,
+    .plband,
+    .shipband {
+      @apply px-7;
+    }
+    /* …except on the 404, where the gutter is zero and the sky is the page. */
+    body[data-route="404"] .site-main {
+      @apply px-0;
+    }
+  }
+  /* Running text keeps a readable measure whatever the page does around it. The
+     home-only version of this rule is gone: the cap is now in the site-wide block
+     above, alongside the containers it protects. */
+  .site-main > section > p,
+  .site-main > section > .lead {
+    max-width: 78ch;
+  }
+  /* ---------- breadcrumb ----------
+     Orientation, not content. Uppercase and widely letter-spaced so it reads as
+     a label above the page rather than as a first sentence, and held back to 74%
+     so it never competes with the h1 beneath it. Hovering anywhere on the trail
+     — not just on a link, because what you are reaching for is the trail —
+     brings it to full strength and lifts it off the page with a soft lilac glow.
+     A drop shadow is the wrong tool on a near-black background: black behind
+     dark text is invisible, so the "shadow" here is light. .vhero .crumb keeps
+     its own dark shadow for legibility over film and adds this glow on top. */
+  .crumb {
+    @apply mt-4 mb-1 text-[12.5px] uppercase text-muted;
+    letter-spacing: 0.14em;
+    opacity: 0.74;
+    /* The trail is a label, not a paragraph: nothing here is meant to be
+       selected as prose, and an I-beam over a row of one-word links reads as a
+       text field. Arrow over the trail, hand over the parts that navigate. */
+    cursor: default;
+    transition:
+      opacity 0.18s ease,
+      text-shadow 0.18s ease;
+  }
+  .crumb:hover {
+    opacity: 1;
+    text-shadow: 0 0 14px rgba(165, 140, 255, 0.45);
+  }
+  .crumb a {
+    @apply text-muted;
+    cursor: pointer;
+  }
+  /* The underline is stated here rather than left to the base a:hover rule, so
+     it survives any later sheet that turns underlines off on a container these
+     trails sit in — and so it can be offset clear of the descenders that 0.14em
+     of tracking leaves plenty of room for. */
+  .crumb a:hover,
+  .bpx-crumbs a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  /* The separator between crumbs. It is an element rather than a " / " in the
+     text so the gap either side is controllable: the trail is tracked out by
+     0.14em, which already pushes the words apart, and a plain space on top of
+     that lands the slash nearer the label after it than the one before it.
+     Symmetrical margin fixes the asymmetry and buys the breathing room. */
+  .crumb-sep {
+    @apply inline-block;
+    margin-inline: 0.62em;
+    color: var(--color-faint);
+    /* Tracking applies to the character too, and on a single glyph it is pure
+       right-hand padding — which would put the slash off its own centre. */
+    letter-spacing: 0;
+  }
+  .pageinfo {
+    @apply mt-2 mb-1;
+  }
+  .tag {
+    @apply mr-1.5 inline-block rounded border px-2 py-0.5 align-middle text-[10px] font-bold tracking-[0.5px];
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .t-tpl {
+    background: rgba(176, 138, 46, 0.22);
+    color: var(--color-gold);
+  }
+  .t-open {
+    background: rgba(29, 122, 79, 0.25);
+    color: var(--color-go);
+  }
+  .t-gated {
+    background: rgba(176, 74, 46, 0.25);
+    color: var(--color-warn);
+  }
+  .t-pre {
+    background: rgba(122, 46, 168, 0.28);
+    color: #d9a8f0;
+  }
+  .t-blk {
+    background: rgba(176, 74, 46, 0.3);
+    color: #f0b09a;
+  }
+  .t-ship {
+    background: #fdf3d7;
+    color: #8a6d1a;
+    border: 1px solid #e8c76a;
+  }
+  h1.pg {
+    @apply mt-2.5 mb-1.5 text-[34px] leading-tight text-bright;
+  }
+  .dek {
+    @apply mt-0 mb-[22px] max-w-[720px] text-[17px] text-muted;
+  }
+  .lead {
+    @apply mt-0 mb-3.5 max-w-[820px] text-[21px] leading-[1.5] font-medium text-bright;
+  }
+  .note {
+    @apply text-[13px] text-muted italic;
+  }
+
+  /* pre-launch publish marker */
+  .plband {
+    @apply mx-auto mt-2.5 mb-[-4px] max-w-page rounded-xl px-4 py-2.5 text-[13px];
+    background: linear-gradient(90deg, rgba(232, 161, 132, 0.16), rgba(232, 199, 106, 0.1));
+    border: 1.5px dashed var(--color-warn);
+    color: #f0c9b8;
+  }
+  .plband b {
+    color: #ffd9c9;
+  }
+  .shipband {
+    @apply mx-auto mt-2.5 mb-0.5 max-w-page rounded-[10px] px-3.5 py-[9px] text-[13px];
+    background: rgba(232, 199, 106, 0.1);
+    border: 1px solid rgba(232, 199, 106, 0.5);
+    color: #e8ce8a;
+  }
+
+  /* ---------- sections ---------- */
+  .sect {
+    @apply pt-16 pb-[26px];
+  }
+  .sect.tight {
+    @apply pt-6;
+  }
+  .sect.flush {
+    @apply pt-2;
+  }
+  .sect h2 {
+    @apply mt-0 mb-2.5 text-[32px] tracking-[-0.5px] text-bright;
+  }
+  .sect .sdek {
+    @apply mt-0 mb-7 max-w-[640px] text-base text-muted;
+  }
+  .kicker {
+    @apply mb-2 text-xs font-extrabold tracking-[1.4px] uppercase;
+    color: var(--color-lilac-hi);
+  }
+  .tgroup {
+    @apply my-1.5 mb-3 pl-0.5 text-[13px] font-extrabold tracking-[1.2px] uppercase text-go;
+  }
+  .tgroup::after {
+    content: "";
+    @apply mt-1.5 block h-0.5 w-11 rounded-[1px];
+    background: linear-gradient(90deg, #7ce3a8, transparent);
+  }
+  .reveal {
+    @apply translate-y-[26px] opacity-0;
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+  .reveal.vis {
+    @apply translate-y-0 opacity-100;
+  }
+  /* WITH NO JAVASCRIPT, EVERY .reveal ON THE SITE IS INVISIBLE.
+     The rule above starts at opacity 0 and initReveal() in scripts/site.ts is
+     the only thing that ever adds .vis. So a visitor whose JavaScript is off,
+     blocked by policy, or simply broken by a failed asset gets the hero and
+     then a blank page — on the home page that is now everything below the
+     fold, the pillar band included.
+
+     `scripting: none` is the honest way to say "this needs a script that is not
+     going to run"; pages.css already uses the same query for the pinned scroll
+     stage. Reduced motion is deliberately NOT included here: that visitor does
+     have JavaScript, .vis still arrives, and the transition is theirs to
+     shorten rather than something to bypass.
+
+     This does not change what a crawler reads either way — text in the markup
+     is retrievable whatever the opacity — so it is a fix for people, not for
+     machines. */
+  @media (scripting: none) {
+    .reveal {
+      @apply translate-y-0 opacity-100;
+      transition: none;
+    }
+  }
+
+  /* ---------- placeholder blocks ---------- */
+  .ph {
+    @apply my-3.5 rounded-[10px] border-2 border-dashed px-[18px] py-4;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(165, 140, 255, 0.28);
+  }
+  .ph .lbl {
+    @apply text-[10.5px] font-bold tracking-[0.7px] uppercase;
+    color: var(--color-lilac-hi);
+  }
+  .ph h2 {
+    @apply mt-1.5 mb-1 text-[17px];
+    color: #d9cdff;
+  }
+  .ph p {
+    @apply my-1 text-sm text-muted;
+  }
+
+  .two {
+    @apply grid grid-cols-2 gap-3.5;
+  }
+  .three {
+    @apply grid grid-cols-3 gap-3.5;
+  }
+  @media (max-width: 800px) {
+    .two,
+    .three {
+      @apply grid-cols-1;
+    }
+  }
+
+  /* ---------- one card treatment across the problems/answers band ----------
+     The two halves of that section were drawn by different hands. .pain is a
+     hand-rolled rgba(255,255,255,.028) on a .09 border with 18/16 padding and a
+     15px heading; .e3 is the site's glass treatment -- --color-glass,
+     --color-glass-line, a 9px backdrop blur -- with 22/20 padding and a 21px
+     heading. Side by side under one title they read as two sections that had been
+     pushed together, which is exactly what they were.
+
+     Standardised on the glass treatment, because that is the card language the
+     rest of this page already speaks: .rs-card, .pillar and .card all use those
+     two tokens. .pain's literal rgbas were the outlier.
+
+     Headings meet in the middle at 17px. 21px is too heavy for "Dongles are lost,
+     creating an ongoing expense." and 15px too quiet for "Easy for the user".
+
+     SCOPED TO THIS SECTION, NOT TO .pain. That class is used by indPains() on
+     seven solutions pages, where the treatment it has is correct and matched to
+     its neighbours. Only the home page puts the two kinds of card in one band.
+
+     The rows also share a grid and a gap now, so the six cards read as one 3x2
+     block rather than two rows of three that happen to be adjacent. */
+  .pa-set .pain,
+  .pa-set .e3 {
+    @apply rounded-[14px] border px-5 py-[18px];
+    background: var(--color-glass);
+    border-color: var(--color-glass-line);
+    backdrop-filter: blur(9px);
+  }
+  .pa-set .pain h3,
+  .pa-set .e3 h3 {
+    @apply mt-0 mb-1.5 block text-[17px] leading-snug text-bright;
+  }
+  /* THE PROBLEM CARDS ARE PAIRED NOW. The kicker says "Problem and answer", so each
+     card carries both: the complaint, a dashed rule, then the fix. This is the shape
+     indPains() already uses on seven solution pages, borrowed here rather than
+     invented -- and the mark and rule are reinforcement only, never the sole carrier
+     of the distinction, since neither reaches a reader who gets this page as text. */
+  .pa-set .pain .px {
+    @apply mb-2.5 inline-flex h-[26px] w-[26px] items-center justify-center rounded-lg border text-[13px] font-extrabold;
+    background: rgba(176, 74, 46, 0.18);
+    border-color: rgba(224, 120, 86, 0.4);
+    color: var(--color-warn);
+  }
+  .pa-set .pain .fix {
+    @apply mt-3 border-t border-dashed pt-2.5 text-[13px] leading-[1.5] text-go;
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+  /* The link sits under the fix, so the card reads complaint -> answer -> where to
+     read more, in that order. */
+  .pa-set .pain > a {
+    @apply mt-2.5 inline-block text-[13px] font-semibold;
+  }
+
+  .pa-set .painrow,
+  .pa-set .easy3 {
+    @apply grid gap-3.5;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  /* The same gap the grid uses, so the seam between the two rows is the same
+     size as the gaps inside them and the six read as one block. */
+  .pa-set .easy3 {
+    @apply mt-3.5;
+  }
+  @media (max-width: 820px) {
+    .pa-set .painrow,
+    .pa-set .easy3 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ---------- the home page's four-pillar taxonomy band ----------
+     Four cards on the 1500px page measure at gap-3.5 is 364px each, and
+     pillarScene() is drawn on a 340x212 viewBox, so the diagrams sit at very
+     close to native scale rather than being shrunk into illegibility. That is
+     why the band is four-up and not a slider: at this measure all four fit,
+     and a control that hid three of them would defeat the one job the band has.
+
+     Two columns at 900px rather than one, because two 340-wide diagrams still
+     read at tablet width and a single column would make this band as tall as
+     the page it is supposed to summarise. Below 640px mobile.css turns it into
+     the same scroll-snap carousel the other card rows get.
+
+     The whole card is the anchor, so the figure, the heading and the blurb are
+     one hit target rather than three, and the row of them tabs as four stops
+     instead of twelve. */
+  /* ---------- the home page's four-workload showcase ----------
+     This replaced a 2x2 grid of .pillar cards on 27 Aug 2026. The grid said the
+     four workloads are peers, which is the ruling and is correct — but it spent
+     most of a screen saying it, and gave each of pillarScene()'s diagrams a
+     quarter of the row, which is the size those labels stop being readable at.
+     The showcase gives one workload the whole stage; the rail carries the
+     peerage instead of the layout.
+
+     IT LIVES INSIDE THE .pswstg PINNED TRACK NOW (27 Aug 2026, Matt — see the
+     block in pages.css): the scroll deals the slides instead of a clock, driven
+     by initShowcase() writing --psw-p on the track. Everything in this block is
+     the showcase's own anatomy — rail, bar, stage, slides, diagrams — and is
+     deliberately unchanged by that move; the track, its header, its ghost
+     numeral and its flatten states are all pages.css's.
+
+     TWO PANES, AND THE RAIL IS THE NARROW ONE. Above 900px the rail is a fixed
+     240-300px column and the stage takes the rest, so the diagram gets roughly
+     twice the width it had at two-up and about four times what it had at
+     four-up. Below 900px the rail becomes a 2x2 block of labels above the stage
+     rather than a scrolling strip — offsetLeft, which initShowcase() measures the
+     travelling bar from, does not account for a scroll offset, so a scrolling
+     rail would put the bar under the wrong label the moment anybody swiped it.
+
+     Every transform here is on `transform` or `opacity` only. The stage
+     cross-fades a full-width SVG against another one, and anything touching
+     layout per frame drops it. */
+  .pshow {
+    @apply mt-6 grid items-start gap-5;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 900px) {
+    .pshow {
+      @apply gap-8;
+      grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    }
+  }
+
+  /* ---- the rail ---- */
+  /* position:relative and nothing else: it is the offset parent both the bar's
+     absolute placement and initShowcase()'s offsetTop/offsetLeft measurements
+     resolve against, so the two cannot disagree about where a label is. */
+  .pshow-rail {
+    @apply relative;
+  }
+  .pshow-tabs {
+    @apply grid gap-2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 900px) {
+    .pshow-tabs {
+      @apply flex flex-col gap-1 pl-4;
+    }
+  }
+  .pshow-tab {
+    @apply flex w-full cursor-pointer items-start gap-3 rounded-[12px] border border-transparent bg-transparent px-3 py-2.5 text-left;
+    color: var(--color-muted);
+    transition:
+      color 0.26s,
+      background 0.26s,
+      border-color 0.26s;
+  }
+  .pshow-tab:hover {
+    color: var(--color-ink);
+    background: rgba(255, 255, 255, 0.045);
+  }
+  /* The tint is not decoration — it is the whole state indicator when the bar
+     has nothing to measure, which is every no-JavaScript render of this page. */
+  .pshow-tab.is-on {
+    color: var(--color-ink);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .pshow-tab:focus-visible {
+    outline: 2px solid var(--color-lilac);
+    outline-offset: 2px;
+  }
+  .pshow-n {
+    @apply pt-[3px] text-[11px] font-extrabold tracking-[0.18em];
+    font-variant-numeric: tabular-nums;
+    color: var(--color-faint);
+    transition: color 0.26s;
+  }
+  .pshow-tab.is-on .pshow-n {
+    color: var(--color-go);
+  }
+  .pshow-l {
+    @apply flex min-w-0 flex-col;
+  }
+  .pshow-lt {
+    @apply text-[15px] leading-snug font-semibold;
+  }
+  .pshow-ls {
+    @apply mt-0.5 text-[11.5px] leading-snug;
+    color: var(--color-faint);
+  }
+  /* ---- the travelling bar ---- */
+  /* An underline under the active label below 900px, a spine down the left of
+     the column above it. initShowcase() publishes all four of --bar-x/y/w/h on
+     every change and this decides which two matter, so the breakpoint needs no
+     JavaScript to know about it. */
+  .pshow-bar {
+    @apply pointer-events-none absolute overflow-hidden rounded-full;
+    background: rgba(255, 255, 255, 0.1);
+    left: var(--bar-x, 0px);
+    top: calc(var(--bar-y, 0px) + var(--bar-h, 0px) - 2px);
+    width: var(--bar-w, 0px);
+    height: 2px;
+    transition:
+      left 0.44s cubic-bezier(0.16, 1, 0.3, 1),
+      top 0.44s cubic-bezier(0.16, 1, 0.3, 1),
+      width 0.44s cubic-bezier(0.16, 1, 0.3, 1),
+      height 0.44s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (min-width: 900px) {
+    .pshow-bar {
+      left: 0;
+      top: var(--bar-y, 0px);
+      width: 3px;
+      height: var(--bar-h, 0px);
+    }
+  }
+  /* The slide's share of the scroll, scrubbed by initShowcase() rather than run
+     as a CSS animation: the same number decides the fill and decides when to
+     advance, so the bar cannot finish early or late, and it runs backwards when
+     the reader does. */
+  .pshow-fill {
+    @apply block h-full w-full origin-left;
+    background: linear-gradient(90deg, #a58cff, #7ce3a8);
+    transform: scaleX(var(--fill, 0));
+  }
+  @media (min-width: 900px) {
+    .pshow-fill {
+      @apply origin-top;
+      background: linear-gradient(180deg, #a58cff, #7ce3a8);
+      transform: scaleY(var(--fill, 0));
+    }
+  }
+
+  /* ---- the stage ---- */
+  /* One grid cell, four panels stacked in it. The stage is therefore as tall as
+     the tallest panel and never changes height between slides — the reason this
+     is a grid and not four absolutely-positioned children, which would collapse
+     it to nothing and need a min-height maintained by hand. */
+  .pshow-stage {
+    @apply relative grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* VISIBILITY IS NOT DECORATION HERE, same as the advantages deck: a slide
+     that is merely transparent is still a card-sized link in the tab order and
+     a full card read out by a screen reader. `visibility: hidden` takes the
+     three unseen slides out of both in one property — which replaced a baked
+     aria-hidden/tabindex pair the script had to keep in step, and which the
+     .pswstg flatten block undoes in one property for the readers who get all
+     four slides at once. The delay matches the exit transition, so the
+     outgoing slide finishes its fade before it stops existing; turning ON is
+     immediate. Relative, because the slide is the box the .psw-num ghost
+     numeral hangs off. */
+  .pshow-slide {
+    @apply relative min-w-0;
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translate3d(0, 10px, 0) scale(0.972);
+    transition:
+      opacity 0.32s ease,
+      transform 0.36s ease,
+      visibility 0s linear 0.36s;
+  }
+  /* ENTRANCE IS AN ANIMATION, EXIT IS THE TRANSITION ABOVE, and that asymmetry
+     is what gives the swap its direction. The outgoing panel settles back and
+     fades where it stands; the incoming one flies in from the side the sequence
+     is travelling. One `--slide-x` shared by both would send them the same way
+     and read as a shove rather than a change. */
+  .pshow-slide.is-on {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.32s ease,
+      transform 0.36s ease,
+      visibility 0s;
+    animation: psIn 0.54s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .pshow[data-dir="back"] .pshow-slide.is-on {
+    animation-name: psInBack;
+  }
+  @keyframes psIn {
+    from {
+      opacity: 0;
+      transform: translate3d(34px, 0, 0) scale(0.976);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes psInBack {
+    from {
+      opacity: 0;
+      transform: translate3d(-34px, 0, 0) scale(0.976);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .pshow-card {
+    @apply flex h-full flex-col rounded-[18px] border p-5 no-underline;
+    background:
+      linear-gradient(
+        158deg,
+        rgba(255, 255, 255, 0.058) 0%,
+        rgba(255, 255, 255, 0.014) 50%,
+        rgba(109, 91, 184, 0.15) 100%
+      ),
+      var(--color-surface-3);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 14px 34px rgba(0, 0, 0, 0.3);
+    transition:
+      border-color 0.28s,
+      box-shadow 0.28s,
+      transform 0.28s;
+  }
+  .pshow-card:hover,
+  .pshow-card:focus-visible {
+    border-color: rgba(176, 154, 255, 0.42);
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 22px 46px rgba(0, 0, 0, 0.45),
+      0 0 40px rgba(109, 91, 184, 0.2);
+  }
+  /* Green rather than --color-bright, for the reason the .pillar heading it
+     replaces was green: --color-go is what this site uses for the line that
+     names the block under it. Copper is not an option — check-copper allows the
+     home page two .warm elements and the hero and the CTA band spend both. */
+  .pshow-card h3 {
+    @apply mt-0 mb-3 text-[20px] leading-snug;
+    color: var(--color-go);
+  }
+  .pshow-card figure {
+    @apply m-0 mb-4;
+  }
+  /* Tighter than the sitewide figure ceiling. The stage is one panel wide now,
+     so the unbound diagram would render around 850px and make the card taller
+     than the rail beside it — the shape the four-up layout had, upside down.
+     Height first, as everywhere else: see the ceiling block in pages.css. */
+  .pshow-card .rs-svg {
+    --fig-h: 36vh;
+    --fig-w: 560px;
+  }
+  .pshow-card p {
+    @apply m-0 text-sm leading-relaxed text-muted;
+    max-width: 62ch;
+  }
+  /* Pushed to the bottom so the link sits on the card's own baseline whatever
+     depth the blurb above it runs to. */
+  .plk {
+    @apply mt-auto pt-3.5 text-[12.5px] font-semibold;
+    color: var(--color-go);
+  }
+  /* ---------- the diagrams play ----------
+     Each panel's figure acts out the sentence beside it as the panel arrives:
+     the devices land on the table and light their wireless links, a pulse runs
+     up each link to the pod, and the glass divides into a tile per share. The
+     hooks (.ps-*) and their per-element start times (--d) are in
+     src/lib/blocks.ts, beside the geometry they move; the choreography is here.
+
+     SCOPED TO `.pshow-slide.is-on`, WHICH IS THE WHOLE TRIGGER. A panel that
+     becomes active gains the class and every animation below starts from zero,
+     so the diagram replays each time its workload comes round — no script, no
+     observer, and no state to reset. It also means the three panels that are
+     not on are running nothing at all.
+
+     EVERY ANIMATION IS `backwards` AND SUPPLIES ITS OWN "from". None of these
+     elements is given a resting state, so the figure renders finished
+     everywhere it is not being played: on the inactive panels, before the class
+     lands, under reduced motion, in print, and on any other page that ever
+     calls pillarScene(). The one exception is .ps-pulse, below, and it is
+     marked as one.
+
+     transform-box: fill-box is not optional on any of these. An SVG child's
+     transform-origin resolves against the VIEWBOX origin by default, so
+     `scale(.7)` on a tile at x=203 flings it toward the top-left corner rather
+     than shrinking it in place. fill-box makes the origin the element's own
+     bounding box, which is what every keyframe here assumes. */
+  .ps-fig .ps-tile,
+  .ps-fig .ps-bar,
+  .ps-fig .ps-dev,
+  .ps-fig .ps-rise,
+  .ps-fig .ps-node,
+  .ps-fig .ps-hub,
+  .ps-fig .ps-led {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  /* A content bar wipes out from its left edge, so it reads as text arriving
+     rather than as a box appearing. */
+  .ps-fig .ps-bar {
+    transform-origin: left center;
+  }
+  /* THE ONE ELEMENT THAT DOES CARRY A RESTING STATE, and it has to. A pulse path
+     is a duplicate of the wire beneath it whose only job is to be swept along by
+     the keyframes below; standing still it is a fat bright line drawn over a
+     thin dashed one. There is nothing for it to show when it is not moving, so
+     it shows nothing — which is also exactly the right reduced-motion and
+     no-animation state. */
+  .ps-fig .ps-pulse {
+    opacity: 0;
+    /* .16 of the line visible, against a gap wider than the line itself so only
+       one dash can ever be on it. The 2.32 -> 1.16 sweep in the keyframes is
+       derived from this: 2.32 puts the dash just before the start and 1.16 just
+       past the end, and both are positive, which negative dashoffsets are not
+       reliably. Change one of these three numbers and change all three. */
+    stroke-dasharray: 0.16 2;
+  }
+
+  .pshow-slide.is-on .ps-rise {
+    animation: psRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+  }
+  .pshow-slide.is-on .ps-dev {
+    animation: psDev 0.66s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+  }
+  .pshow-slide.is-on .ps-node {
+    animation: psRise 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+  }
+  .pshow-slide.is-on .ps-hub {
+    animation: psHub 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+  }
+  /* A share landing on the glass. The overshoot is the point: a tile that eases
+     in reads as a fade, and a tile that lands reads as a share arriving. */
+  .pshow-slide.is-on .ps-tile {
+    animation: psTile 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards;
+  }
+  .pshow-slide.is-on .ps-bar {
+    animation: psBar 0.42s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+  }
+  .pshow-slide.is-on .ps-fade {
+    animation: psFade 0.5s ease var(--d, 0s) backwards;
+  }
+  /* A cable draws itself from the pod outward. pathLength="1" in the markup is
+     what lets one keyframe serve paths of five different lengths. */
+  .pshow-slide.is-on .ps-cable {
+    stroke-dasharray: 1;
+    animation: psDraw 0.5s ease-out var(--d, 0s) backwards;
+  }
+  /* Wireless: fades in, then drifts for as long as the panel is up. 14 is two
+     whole periods of the `3 4` dash the markup carries, so the loop is seamless
+     — change the dash pattern and this number changes with it. */
+  .pshow-slide.is-on .ps-flow {
+    animation:
+      psFade 0.45s ease var(--d, 0s) backwards,
+      psDrift 1.7s linear var(--d, 0s) infinite;
+  }
+  /* Twice, not forever. The pulse says "the share is going up this link"; on a
+     loop it says "this link is busy", and after the tiles have landed there is
+     nothing left to send. */
+  .pshow-slide.is-on .ps-pulse {
+    animation: psPulse 0.85s ease-in-out var(--d, 0s) 2;
+  }
+  .pshow-slide.is-on .ps-pulse.rev {
+    animation-name: psPulseRev;
+  }
+  /* Pops, then breathes. The second animation starts where the first ends, so
+     the two never fight over opacity. */
+  .pshow-slide.is-on .ps-led {
+    animation:
+      psPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards,
+      psBlink 2.6s ease-in-out calc(var(--d, 0s) + 0.45s) infinite;
+  }
+  /* The one room raising an alert. Faster and deeper than a health light,
+     because that is the difference the figure is drawing. */
+  .pshow-slide.is-on .ps-led.warn {
+    animation:
+      psPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards,
+      psAlert 1.15s ease-in-out calc(var(--d, 0s) + 0.45s) infinite;
+  }
+
+  @keyframes psRise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes psDev {
+    from {
+      opacity: 0;
+      transform: translateY(13px) scale(0.9);
+    }
+  }
+  @keyframes psHub {
+    from {
+      opacity: 0;
+      transform: scale(0.78);
+    }
+  }
+  @keyframes psTile {
+    from {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+  }
+  @keyframes psBar {
+    from {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+  }
+  @keyframes psFade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes psPop {
+    from {
+      opacity: 0;
+      transform: scale(0);
+    }
+  }
+  @keyframes psBlink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  @keyframes psAlert {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.12;
+    }
+  }
+  @keyframes psDraw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes psDrift {
+    from {
+      stroke-dashoffset: 14;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes psPulse {
+    0% {
+      opacity: 0;
+      stroke-dashoffset: 2.32;
+    }
+    14% {
+      opacity: 0.95;
+    }
+    86% {
+      opacity: 0.95;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 1.16;
+    }
+  }
+  @keyframes psPulseRev {
+    0% {
+      opacity: 0;
+      stroke-dashoffset: 1.16;
+    }
+    14% {
+      opacity: 0.95;
+    }
+    86% {
+      opacity: 0.95;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 2.32;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pshow-slide,
+    .pshow-bar,
+    .pshow-card,
+    .pshow-tab {
+      transition: none;
+    }
+    .pshow-slide.is-on {
+      animation: none;
+    }
+    .pshow-card:hover,
+    .pshow-card:focus-visible {
+      transform: none;
+    }
+    /* Three class selectors, so this ties `.pshow-slide.is-on .ps-*` above and
+       wins on source order. The figure is already drawn in its finished state by
+       its own attributes, so switching every animation off is the whole fix —
+       there is no second set of values to keep in step. */
+    .pshow-slide.is-on .ps-fig,
+    .pshow-slide.is-on .ps-fig * {
+      animation: none;
+    }
+  }
+  /* ---------- glass surfaces ---------- */
+  .card,
+  .diff,
+  .tiercard,
+  .selq,
+  .login,
+  .layer,
+  .taxdetail,
+  .calc,
+  .proto,
+  .wml-cell.wml-open {
+    @apply relative overflow-hidden border;
+    background: var(--color-glass);
+    border-color: var(--color-glass-line);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+  }
+  .cardrow {
+    @apply my-4 grid gap-3.5;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+  .card {
+    @apply rounded-[10px] p-[18px];
+  }
+  .card h3 {
+    @apply mt-0 mb-1.5 text-[16.5px] text-bright;
+  }
+  .card p {
+    @apply mt-0 mb-2.5 text-sm text-muted;
+  }
+
+  /* glass sheen sweep */
+  .card::after,
+  .diff::after,
+  .tiercard::after {
+    content: "";
+    @apply pointer-events-none absolute top-0 left-[-130%] h-full w-[60%];
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.09), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.7s ease;
+  }
+  .card:hover::after,
+  .diff:hover::after,
+  .tiercard:hover::after {
+    @apply left-[160%];
+  }
+  .card:hover,
+  .diff:hover,
+  .tiercard:hover {
+    border-color: rgba(165, 140, 255, 0.55);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ---------- CTA band ----------
+     The page closes in the sky it opened in, and as of this pass it closes in
+     the SAME sky: the band carries the home hero's own backdrop rather than a
+     glass panel over the page gradient — the vertical fade from .xhero, the
+     diagonal Milky Way wash from .milkyway, the field and the three figures.
+     One backdrop, two places, so arriving at the foot of a deep page reads as
+     coming back round to where the site started.
+
+     Opaque, for the reason .xhero is opaque: the body's two radial washes would
+     otherwise bleed through a translucent surface and put colour back behind
+     the stars. The gradient runs dark at the top to a shade lighter at the
+     bottom, the inverse of the hero's — the hero opens out of black, the band
+     settles back into it — and there is no backdrop-filter left to pay for,
+     since nothing behind it shows through. */
+  .ctaband {
+    @apply relative overflow-hidden rounded-xl border p-[26px] text-center;
+    margin: 30px 0 6px;
+    background: linear-gradient(180deg, #040309 0%, #07050f 54%, #0a0818 100%);
+    border-color: var(--color-glass-line);
+  }
+  .ctasky {
+    @apply pointer-events-none absolute inset-0 z-0;
+  }
+  .ctasky .star {
+    top: auto;
+  }
+  /* ---------- the sky turns, and it turns about Polaris ----------
+     Everything in the band's sky is inside this one layer, and the layer rotates
+     about the pole star: --pol-x/--pol-y come from bandSky(), derived from the
+     Ursa Minor figure's own placement. Polaris is an ordinary member of that
+     figure and needs nothing done to it — a point on the axis of a rotation
+     stays where it is, which is exactly the behaviour the pole star is supposed
+     to have and the reason the axis is here rather than at the centre of the
+     band. Every other star wheels around it.
+
+     `rotate` rather than a `transform`, and by now for the usual reason: the
+     stars and figures inside carry their own `translate` and `transform`, and
+     keeping the three individual properties apart is what lets the turn, the
+     drift and the scroll parallax all run on the same elements without one
+     quietly winning. This layer only ever owns `rotate`.
+
+     BAND_FIELD, BAND_SWING and BAND_SWEEP in data/cta-sky.ts carry the geometry
+     and the reasoning for the numbers — in particular why the sky oscillates
+     through six degrees instead of revolving. */
+  .ctaspin {
+    @apply pointer-events-none absolute inset-0;
+    transform-origin: var(--pol-x) var(--pol-y);
+    /* Not `ease-in-out`, and this matters now that the sweep is short enough to
+       see. An ease-in-out reaches zero velocity at both ends, so a noticeable
+       slice of every sweep is spent very nearly stopped — and a reader who lands
+       in that window is back to reporting that nothing moves, which is the whole
+       problem the sweep was shortened to fix. This bezier never stops: its
+       slope at each end is 0.2/0.3, so the slowest the sky ever turns is about
+       two thirds of its average rate. The reversal is still cushioned, which is
+       all `alternate` needed the easing for. */
+    animation: cbSpin var(--sweep, 20s) cubic-bezier(0.3, 0.2, 0.7, 0.8) infinite alternate;
+  }
+  @keyframes cbSpin {
+    from {
+      rotate: calc(-1 * var(--swing, 3deg));
+    }
+    to {
+      rotate: var(--swing, 3deg);
+    }
+  }
+  /* The Milky Way strip, same angle and same four stops as .milkyway on the
+     hero. It is oversized on both axes and drifts, which is the whole of the
+     "animated" in this band: the hero's sky moves because the page scrolls past
+     it, and a band that is already at the foot of the page has no scroll left
+     to move on. Inset negatively so the drift never pulls an edge of the
+     gradient into the frame, and translate-only so it stays on the compositor.
+
+     No mask, unlike the hero's: that one is masked because it has to dissolve
+     into the hero's own fade before the fade starts, and a wash that stops dead
+     on a horizontal line draws that line. Here the band's rounded overflow clip
+     is the edge, and an edge that is already a border needs no fade. */
+  .ctaway {
+    @apply pointer-events-none absolute;
+    inset: -30% -40%;
+    background: linear-gradient(
+      115deg,
+      transparent 24%,
+      rgba(200, 190, 255, 0.04) 36%,
+      rgba(210, 200, 255, 0.07) 46%,
+      rgba(200, 190, 255, 0.04) 56%,
+      transparent 68%
+    );
+    animation: cbWay 54s ease-in-out infinite alternate;
+  }
+  /* Ambient drift on the field. `translate` rather than `transform`, and that is
+     load-bearing: .star.d1-.d3 and .ctasky .cstgrp.d1-.d3 already own
+     `transform` for the scroll parallax initBandSky() writes, and the two are
+     separate properties — so the drift composes with the parallax instead of
+     one silently winning. (Same trick, same reason, as the nav card's lift.)
+
+     Depth decides rate and distance: the near layer travels furthest and
+     fastest, exactly as it does under the scroll parallax, so the two effects
+     agree about which stars are close. `alternate` rather than a three-keyframe
+     round trip, so the reversal is at the ends of the ease and reads as drift
+     rather than as a loop. */
+  .ctaspin > .star {
+    animation:
+      twk var(--tw, 4s) ease-in-out infinite,
+      cbDrift var(--dz, 34s) ease-in-out infinite alternate;
+  }
+  .ctaspin > .star.d1 {
+    --dz: 58s;
+    --dx: -3px;
+    --dy: 2px;
+  }
+  .ctaspin > .star.d2 {
+    --dz: 44s;
+    --dx: 6px;
+    --dy: -3px;
+  }
+  .ctaspin > .star.d3 {
+    --dz: 32s;
+    --dx: -10px;
+    --dy: 4px;
+  }
+  /* A constellation group: placed in percent, its stars offset inside it in
+     pixels. The band is ~5:1, so laying a figure out in percent would stretch
+     the Big Dipper into something else. The group carries the parallax layer,
+     which is what keeps the figure rigid instead of shearing as it drifts.
+
+     Both placements arrive as custom properties from bandFigures() and this is
+     where one is chosen — see the 640px block below. It used to be the other way
+     round, three per-figure overrides carrying !important to beat the inline
+     left/top; the properties took the !important with them. */
+  .ctasky .cstgrp {
+    @apply pointer-events-none absolute;
+    left: var(--fx);
+    top: var(--fy);
+    width: 0;
+    height: 0;
+  }
+  /* Ursa Minor's joining lines. Subtle on purpose: this is a sky behind copy,
+     not a chart. A hairline at 0.7 user units — which is 0.7px here, since the
+     viewBox is emitted 1:1 with the element's pixel size — and lilac at about a
+     third opacity, so the shape is legible when you look for it and is texture
+     when you do not.
+
+     No vector-effect: the SVG is never scaled on desktop, and on a phone the
+     whole group is scaled by --sm-scale, where a hairline thinning with the
+     figure it belongs to is the correct behaviour rather than a bug. */
+  .ctasky .cbln {
+    @apply pointer-events-none absolute;
+    overflow: visible;
+  }
+  /* Each edge carries its own dasharray, duration and two delays from
+     bandFigures(): draw, then fade. Dash values are in user units, and the
+     viewBox is emitted 1:1 with the element's pixel size, so a dash of L covers
+     exactly the line of length L. No vector-effect: non-scaling-stroke measures
+     dashes in screen pixels, which would truncate every edge the moment
+     --sm-scale shrinks the group on a phone. */
+  .ctasky .cbln .cbl {
+    fill: none;
+    stroke: rgba(203, 216, 255, 0.34);
+    stroke-width: 0.9;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  /* .lit arrives when the band enters view, so the trace is seen rather than
+     having already finished somewhere above the fold. Same pair of keyframes the
+     hero's map uses. */
+  .ctaband.lit .cbln .cbl {
+    animation-name: cstDraw, cstFade;
+    animation-timing-function: linear, ease-in;
+    animation-fill-mode: both, both;
+    animation-iteration-count: 1, 1;
+  }
+  /* The resting state has to be the drawn figure, not an empty box: with the
+     animation suppressed, an opacity of 0 and a full dashoffset would mean these
+     visitors get no constellation at all. Dash cleared, opacity at the value
+     cstDraw settles on. */
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .ctasky .cbln .cbl {
+      animation: none;
+      stroke-dashoffset: 0 !important;
+      opacity: 0.195;
+    }
+  }
+  .ctasky .cstgrp .star {
+    @apply absolute;
+    top: 0;
+    opacity: 1;
+    animation: cbTwk var(--tw, 4s) ease-in-out infinite;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  }
+  .ctasky .cstgrp.d1 {
+    transform: translate3d(0, var(--sy1, 0px), 0);
+  }
+  .ctasky .cstgrp.d2 {
+    transform: translate3d(0, var(--sy2, 0px), 0);
+  }
+  .ctasky .cstgrp.d3 {
+    transform: translate3d(0, var(--sy3, 0px), 0);
+  }
+  /* The figures drift too, and slower than anything in the field. Group-level,
+     so each shape stays rigid — a constellation split across depths shears
+     apart, which is the bug the percent-positioned version had, and drifting the
+     member stars individually would put it straight back. Declared after the
+     `transform` rules above so it is obvious the two are different properties
+     doing different jobs on the same element. */
+  .ctaspin > .cstgrp {
+    animation: cbDrift 72s ease-in-out infinite alternate;
+    --dx: -4px;
+    --dy: 2px;
+  }
+  /* The figures sit a touch above the scattered field so the shapes read
+     first; the field is texture, the constellations are the subject. */
+  @keyframes cbTwk {
+    0%,
+    100% {
+      opacity: 0.34;
+    }
+    46% {
+      opacity: 0.78;
+    }
+    54% {
+      opacity: 0.6;
+    }
+    70% {
+      opacity: 0.78;
+    }
+  }
+  /* The ambient drift, shared by the field and the figures. The distance is a
+     custom property so one keyframe pair serves four rates and four throws;
+     `translate` is the individual property, never the transform shorthand, for
+     the reason spelled out on .ctaspin > .star. */
+  @keyframes cbDrift {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: var(--dx, 0px) var(--dy, 0px);
+    }
+  }
+  /* The Milky Way's pass. Percentages of the strip's own oversized box, so the
+     travel scales with the band instead of being a figure tuned at one width. */
+  @keyframes cbWay {
+    from {
+      transform: translate3d(-4%, -1%, 0);
+    }
+    to {
+      transform: translate3d(4%, 1%, 0);
+    }
+  }
+  /* Transparent, and that is the point. The visible Polaris is an ordinary
+     member of the UMi figure down in the sky layer, at the axis of the rotation,
+     indistinguishable from every other star on a constellation line and holding
+     still because a point on an axis does not move. This is only the hit area
+     over it: 12px, which covers the 3.2px dot and its 6px glow and nothing
+     beyond them. No hover state, for the hero's reason — pointing at it must not
+     reveal it.
+
+     It rides UMi's own scroll-parallax layer via --pol-sy, which bandSky() wires
+     to the figure's depth. Without that the target holds still while the star it
+     covers slides, and the egg becomes unclickable halfway down the page. */
+  .ctapol {
+    @apply absolute rounded-full;
+    left: var(--pol-x);
+    top: var(--pol-y);
+    width: 12px;
+    height: 12px;
+    translate: -50% -50%;
+    transform: translate3d(0, var(--pol-sy, 0px), 0);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .ctapol:focus-visible {
+    outline: 2px solid rgba(165, 140, 255, 0.9);
+    outline-offset: 2px;
+  }
+  /* Phones: the band is barely wider than the Big Dipper, so the figures are
+     scaled down and pushed into the corners rather than dropped. The desktop
+     placement assumes copy in a centre column with clear space either side;
+     at 360px there are no sides, only corners. */
+  @media (max-width: 640px) {
+    .ctasky .cstgrp {
+      transform-origin: center;
+      scale: var(--sm-scale, 0.62);
+      left: var(--fx-sm);
+      top: var(--fy-sm);
+    }
+    /* The axis moves with the figure it is derived from. Miss this and the sky
+       turns about a point Polaris is no longer at, which puts the one star that
+       must hold still into the widest arc of all. */
+    .ctaspin {
+      transform-origin: var(--pol-x-sm) var(--pol-y-sm);
+    }
+    .ctapol {
+      left: var(--pol-x-sm);
+      top: var(--pol-y-sm);
+    }
+  }
+  /* Reduced motion keeps the whole backdrop and drops every bit of movement in
+     it: the gradient, the wash, the field and the figures are all still there,
+     and none of them travels or twinkles. Nothing in this band said anything by
+     moving, so there is nothing to replace. */
+  @media (prefers-reduced-motion: reduce) {
+    .ctasky .cstgrp.d1,
+    .ctasky .cstgrp.d2,
+    .ctasky .cstgrp.d3 {
+      transform: none !important;
+    }
+    .ctaspin,
+    .ctaspin > .star,
+    .ctaspin > .cstgrp,
+    .ctaway {
+      animation: none !important;
+    }
+    .ctaspin {
+      rotate: none !important;
+    }
+    .ctaspin > .star,
+    .ctaspin > .cstgrp {
+      translate: none !important;
+    }
+    .ctasky .cstgrp .star {
+      animation: none !important;
+      opacity: 0.6;
+    }
+  }
+  .ctaband > *:not(.ctasky) {
+    @apply relative z-[1];
+  }
+  /* The buttons outrank the star, and this is the one rule in the band that is
+     about consequences rather than looks. The hit layer spans the whole band at
+     z-3 so the target can sit over the copy; the copy is at z-1 and does not
+     mind. A CTA does mind. At 360px the star lands beside the button rows with
+     about 12px of clearance, and 12px is not a margin to bet a conversion on —
+     an off-target tap must go to /trial, not fetch 300KB of canvas engine.
+     Above the hit layer, the button takes the click wherever the two overlap and
+     the egg is simply unreachable at that spot, which is the correct trade. */
+  .ctaband .btn {
+    @apply relative z-[4];
+  }
+  /* Mission Control, from the pole star, on every page that closes with a band —
+     the same easter egg the hero's Polaris opens, and `window.eggMenu` is
+     published by scripts/site.ts on every page, so nothing else is needed to
+     make it work here.
+
+     Its own layer above the copy, at z-3, because the copy is at z-1 and an <h2>
+     or a <p> takes every click over its box whether or not there is a glyph
+     under the pointer — the dead click constStars() documents at length. The
+     layer passes events through; only the star takes them.
+
+     Placed after the z-1 rule above rather than merged into it: `:not(.ctasky)`
+     matches this element too, and the two selectors have equal specificity, so
+     order is the only thing that decides them. */
+  .ctaband > .ctapolhit {
+    @apply pointer-events-none absolute inset-0 z-[3];
+  }
+  /* The note used to carry `style="margin:0 0 12px"` inline, from the days the
+     band was a string in a builder. It is a component now, so the spacing
+     belongs here. */
+  .ctaband .note {
+    @apply mx-auto mt-0 mb-3;
+    max-width: 62ch;
+  }
+
+  /* Edge lighting: a hairline border that catches light on one corner and
+     fades out, as if the source were off-frame. No haze under the text, so
+     card copy keeps full contrast. */
+  .card,
+  .diffgrid .diff,
+  .tiercard,
+  .e3,
+  .pain {
+    position: relative;
+  }
+  .card::before,
+  .diffgrid .diff::before,
+  .tiercard::before,
+  .e3::before,
+  .pain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      145deg,
+      rgba(176, 154, 255, 0.55),
+      rgba(176, 154, 255, 0.08) 34%,
+      transparent 58%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.75;
+    transition: opacity 0.25s ease;
+  }
+  .card:hover::before,
+  .diffgrid .diff:hover::before,
+  .tiercard:hover::before,
+  .e3:hover::before,
+  .pain:hover::before {
+    opacity: 1;
+  }
+  .tiercard.hot::before {
+    background: linear-gradient(
+      145deg,
+      rgba(124, 227, 168, 0.6),
+      rgba(124, 227, 168, 0.09) 34%,
+      transparent 58%
+    );
+  }
+  .ctaband h2 {
+    @apply mt-0 mb-1.5 text-bright;
+  }
+
+  /* ---------- footer ---------- */
+  .site-footer {
+    @apply mt-[50px];
+    background: #1d1a2e;
+    color: #b9b3c9;
+  }
+  .ftgrid {
+    @apply mx-auto grid max-w-page gap-5 px-[18px] py-9 text-[13px];
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+  /* A flex row rather than a block, so the head can carry its menu's glyph to the
+     left of the word. Still full-width and still the same type. */
+  .ftgrid b {
+    @apply mb-2 flex items-center gap-2 text-xs tracking-[0.6px] uppercase text-white;
+  }
+  /* The same NIC drawings as the header bar, and deliberately the same treatment:
+     `currentColor` inherited from the head above — white here — held a little
+     under full strength, exactly as `.navic` does at 0.75. 14px against 12px type
+     rather than the header's 16px against 14px, so the mark sits in the same
+     proportion to its label as it does up there.
+
+     No hover states, and none are missing: a footer column head is a label, not a
+     link. That is also why a fixed colour would have been safe here where it is
+     not in the header — but matching means matching, and the drawing and the
+     colour are both part of that. */
+  .ftic {
+    @apply block h-[14px] w-[14px] shrink-0 opacity-80;
+  }
+  .ftic svg {
+    @apply block h-full w-full;
+  }
+  .ftgrid a {
+    @apply block py-0.5;
+    color: #b9b3c9;
+  }
+  .ftsocial {
+    @apply flex items-center justify-center gap-3.5 pt-[18px] pb-1;
+  }
+  .ftsocial a {
+    @apply flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+  .ftsocial a:hover {
+    @apply -translate-y-0.5;
+    background: rgba(143, 122, 224, 0.25);
+    border-color: var(--color-accent-hi);
+  }
+  .ftsocial svg {
+    @apply h-[19px] w-[19px];
+    fill: var(--color-ink-soft);
+  }
+  .ftlegal {
+    @apply mx-auto mt-3.5 flex max-w-page flex-wrap gap-x-[18px] gap-y-1.5 border-t px-[18px] pt-3 text-xs text-faint;
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+  .ftlegal a {
+    color: var(--color-muted-2);
+  }
+  .ftbase {
+    @apply border-t p-3.5 text-center text-[11.5px];
+    border-top-color: var(--color-line-deep);
+    color: #7d7794;
+  }
+
+  /* ---------- hero ---------- */
+  /* Night sky, not a gradient mesh.
+     This carried two large coloured blooms — a purple radial at 75% across and
+     a green one at 80% — plus a purple-to-green horizon glow along the bottom.
+     Between them they were the brightest thing on the site and they read as a
+     product gradient rather than a sky. Both blooms and the horizon are gone.
+     What is left is an opaque vertical fade, dark at the top and barely lifting
+     toward the bottom, so the stars, the constellations and the faint Milky Way
+     band carry the hero on their own. Opaque on purpose: the body's own two
+     radial washes would otherwise bleed through and put the colour back. */
+  .xhero {
+    @apply bleed relative overflow-hidden rounded-none text-white;
+    /* The last quarter ramps to fully TRANSPARENT rather than to a colour, and
+       that is the whole trick. The hero used to end on an opaque #100d21 butted
+       against the page, and the page's own gradient is background-attachment:
+       fixed — so the colour behind that seam changes with the window height and
+       the scroll position, and no fixed end colour can match it. A ramp to alpha
+       zero dissolves into whatever the page is showing at that moment, at any
+       size, at any scroll offset. */
+    background: linear-gradient(
+      180deg,
+      #07050f 0%,
+      #0b0918 52%,
+      #100d21 72%,
+      rgba(16, 13, 33, 0.72) 84%,
+      rgba(16, 13, 33, 0.3) 93%,
+      rgba(16, 13, 33, 0) 100%
+    );
+  }
+  /* ---------- .vhx: the home hero as a film ----------
+     Turns .xhero from the hand-built night sky into the same full-screen video
+     hero products/pro opens with. The class is added ALONGSIDE .xhero, not
+     instead of it, so every typographic rule above — .xhero h1's clamp, .xchip,
+     .xdek, .xtrust, the .grad.warm payoff line — keeps applying. This block only
+     changes the background, the box and the column count.
+
+     WHY min-height AND NOT height. .vhero on the product pages is height:100svh,
+     which is right for a title card: an eyebrow, three display lines and a pill.
+     This hero carries a chip, a three-line headline, a four-line deck, two big
+     buttons and a six-item trust row — comfortably twice that. .xhero is
+     overflow-hidden (it has to be, it is full-bleed), so a fixed height would
+     silently clip the trust row on a short laptop screen. min-height lets the
+     film fill the first screen when the copy is shorter than it and lets the
+     hero grow when it is not.
+
+     THE PULL-UP. The site header is position:sticky;top:0, so it occupies flow
+     space and the film would otherwise start below it. Pulling up by exactly the
+     header height puts the nav over the first frame. That height is not a
+     constant — the nav wraps at 980px and collapses to a burger at 640 — so
+     initVideoHero() measures it and republishes --hdr-h on :root. The 56px
+     fallback in pages.css is what renders before that script runs and with JS
+     off. The padding-top then adds the header height BACK, so the copy clears
+     the nav rather than starting underneath it.
+
+     The film and its scrims need no rules here: .vhero-vid and .vhero-shade in
+     pages.css are absolute inset-0 with no z-index, .xhero is position:relative,
+     and .xhero .xwrap already carries z-[2] — so the copy is above the film by
+     paint order and the two files do not have to agree about a stack. */
+  /* EVERY SELECTOR HERE IS COMPOUND (.xhero.vhx), AND THAT IS LOAD-BEARING.
+     `.xhero .xwrap` is defined ~100 lines BELOW this block, and `.vhx .xwrap`
+     would tie it on specificity (0,2,0) and lose on source order — so the film
+     hero silently kept the sky hero's two-column grid, its 1320px centred shell
+     and its 84px top padding, and none of the layout written here applied. The
+     same trap `.sect.how-sect` in pages.css carries a note about. A compound
+     selector outranks the single-class rule wherever either one is written, so
+     this cannot come apart again if either block moves. */
+  .xhero.vhx {
+    min-height: 100svh;
+    margin-top: calc(-1 * var(--hdr-h));
+    background: #07050f;
+  }
+  /* PLACED LIKE C2, AND THE WHOLE PAGE FOLLOWS IT.
+     .vh-copy on products/pro pins to the window's left gutter -- 18px, 28px from
+     900px up -- rather than to the centre of a measured shell. This hero does the
+     same, and (Damian, 24 Aug 2026) A0's content column is now released to the
+     same gutter, so the alignment holds without the copy having to move inward:
+     one left edge from the headline to the footer, at the window gutter rather
+     than at the page measure. See the `body[data-route="home"]` block beside
+     .site-main for the other half of it.
+
+     The 940px cap stays on the column. That is what stops the release from
+     turning the headline into a single 1800px line, and the reading measures on
+     .sdek, .lead and a bare <p> do the same job for the body below -- which is
+     the thing that makes a wide container safe rather than merely wide. */
+  .xhero.vhx .xwrap {
+    @apply mx-0 max-w-none gap-x-0;
+    grid-template-columns: minmax(0, 940px);
+    grid-template-rows: auto auto;
+    padding-inline: 18px;
+    padding-top: calc(var(--hdr-h) + clamp(46px, 8vh, 92px));
+    padding-bottom: clamp(48px, 9vh, 96px);
+    align-content: start;
+    /* The front plane of the parallax: the copy leaves upward about twice as
+       fast as the film drifts down, which is the whole depth effect. --vh-p is
+       written by initScrollScene() and is unset both before it runs and for the
+       entire session under prefers-reduced-motion, so the `, 0` fallback IS the
+       resting state and no second rule is needed to undo it. */
+    transform: translate3d(0, calc(var(--vh-p, 0) * -18vh), 0);
+    opacity: clamp(0, calc(1 - var(--vh-p, 0) * 2.1), 1);
+    will-change: transform, opacity;
+  }
+  @media (min-width: 900px) {
+    .xhero.vhx .xwrap {
+      padding-inline: 28px;
+    }
+  }
+  .xhero.vhx .xtop,
+  .xhero.vhx .xbody {
+    grid-area: auto;
+  }
+  /* Display type, at last. .xhero h1's clamp tops out at 54px because that hero
+     gave half its width to the device scene and the headline had a column to fit
+     inside. The film took the scene's place, the copy has the frame to itself,
+     and 54px in the middle of a 100svh video reads as a caption rather than a
+     promise. Tracking tightens as the size grows because -1px is a lot at 40px
+     and nothing at 78, and the shadow is legibility over footage whose
+     brightness changes shot to shot, not decoration. */
+  .xhero.vhx h1 {
+    @apply mb-5 tracking-[-0.028em];
+    font-size: clamp(40px, 6.4vw, 78px);
+    line-height: 1.02;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
+  }
+  /* A measure. Display-adjacent body text run the full 940px column is a
+     four-word-per-line paragraph; 46 characters is the readable band. */
+  .xhero.vhx .xdek {
+    @apply max-w-[46ch];
+  }
+  /* Legibility over footage whose brightness we do not control. The shade covers
+     the left of the frame, which is where this copy now sits, but a shadow costs
+     nothing and covers the frames where the scrim is not enough. */
+  .xhero.vhx .xdek,
+  .xhero.vhx .xtrust {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+  }
+  @media (max-width: 900px) {
+    .xhero.vhx .xwrap {
+      grid-template-columns: minmax(0, 1fr);
+      padding-top: calc(var(--hdr-h) + clamp(28px, 5vh, 56px));
+    }
+  }
+
+  /* ---------- the sky does not stop at the hero's edge ----------
+     It carries on for the height of the hero's own opening paragraph — four lines
+     of .xdek at 17.5px on 1.625 leading. Field stars only: the constellations stay
+     in the hero, where their geometry is anchored.
+
+     No background of its own, deliberately. It had one — a fade from the hero's
+     last colour down to transparent — and that is what read as a band across the
+     bottom of the hero: a 114px strip whose top was opaque and whose bottom was
+     not, sitting on a page gradient that is attachment:fixed and therefore never
+     quite the colour the strip was fading from. The fade now belongs to the hero
+     itself, and this element does nothing but hold stars over the page. */
+  .skytail {
+    @apply bleed pointer-events-none relative overflow-hidden;
+    height: calc(4 * 1.625 * 17.5px);
+  }
+  /* ---------- the zone, and the one star layer that covers it ----------
+     .skyzone wraps the hero and its tail so a single field can span both and so the
+     parallax offsets can be written once, to the zone, and inherited by everything
+     inside it. No background and no clipping of its own: it exists to be a
+     positioning context and a property holder.
+
+     .skyfield is the field. It sits ABOVE the hero's gradient and Milky Way and
+     BELOW the hero's copy and display, which is what z-1 buys against the z-2 on
+     .xhero .xwrap and .cstlines. Critically it is a sibling of .xhero rather than a
+     child, so .xhero's overflow-hidden does not clip it — which is the whole reason
+     stars stopped vanishing at the hero's lower edge on scroll. */
+  .skyzone {
+    @apply relative;
+  }
+  .skyfield {
+    @apply pointer-events-none absolute inset-0 z-[1] overflow-visible;
+  }
+  /* The hero runs wider than the 1200px shell the rest of the site uses.
+     Ruled by Damian 14 Aug 2026: the hero was still obeying the old column
+     measure after the full-width rollout, so it read as narrower than the
+     sections beneath it. 1320px is deliberately a nudge rather than a
+     full-bleed - the headline still wants a measure, and the two-column
+     grid needs the copy column to stay readable. Only the hero changes;
+     every other 1200px shell on the site is untouched. */
+  .xhero .xwrap {
+    @apply relative z-[2] mx-auto grid max-w-[1320px] items-start gap-x-10 px-10 pt-[84px] pb-16;
+    grid-template-columns: 1.05fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  /* Row one is the eyebrow and the headline, full-width-of-column; row two pairs
+     the rest of the copy with the device scene, both starting at the same line.
+     Placed explicitly so the scene cannot drift back to vertical centre. */
+  .xhero .xtop {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+  .xhero .xbody {
+    grid-area: 2 / 1 / 3 / 2;
+  }
+  .xhero .scene {
+    grid-area: 2 / 2 / 3 / 3;
+    /* Optical, not mathematical. Box-top to box-top puts the screen's border
+       level with the top of the paragraph's line box, which sits about 8px above
+       the actual top of the letters — so the frame reads as sitting high. This
+       lines the border up with the cap height of "Mersive Polaris", which is what
+       the eye is comparing it to. */
+    margin-top: 8px;
+  }
+  @media (max-width: 900px) {
+    .xhero .xwrap {
+      @apply grid-cols-1 px-6 pt-14 pb-[90px];
+      grid-template-rows: none;
+    }
+    /* One column: back to document order, or the scene lands on top of the copy */
+    .xhero .xtop,
+    .xhero .xbody,
+    .xhero .scene {
+      grid-area: auto;
+    }
+  }
+  /* Hero copy is display type, not a text field: an I-beam over it reads as an
+     edit affordance. Covers the eyebrow chip, headline, deck and trust row —
+     everything except the buttons, which keep their pointer. Text stays
+     selectable; only the cursor changes. */
+  .xhero .xchip,
+  .xhero h1,
+  .xhero .xdek,
+  .xhero .xtrust {
+    @apply cursor-default;
+  }
+  .xhero h1 {
+    @apply mt-0 mb-[18px] font-extrabold tracking-[-1px];
+    font-size: clamp(34px, 6vw, 54px);
+    line-height: 1.05;
+  }
+  /* The home page's one warm moment: the last line of the promise.
+   *
+   * This was lilac-to-mint, which is the same gradient the "Mersive Polaris
+   * Advantages" heading uses further down the page — so the hero's biggest
+   * typographic gesture was a repeat, and the page had no warm accent at all.
+   * Copper here does two things at once: it stops the repetition, and it puts
+   * the only warm pixels on the page on the words a reader is meant to leave
+   * with. Everything below it stays cool, which is what makes this land.
+   *
+   * `.xhero` appears in exactly one file, src/pages/index.astro, so this is
+   * scoped to the home page by construction rather than by convention. */
+  /* THE COPPER RAMP, for the home hero's payoff line and for the one phrase in
+     any other page's title that carries its point.
+
+     It was scoped to `.xhero h1 .warm` alone, which meant the marker class did
+     nothing outside the home page: a `.warm` span on another title rendered as
+     ordinary body colour, and check-copper counted a copper moment that was not
+     copper. Two selectors, one declaration, so the two cannot drift apart.
+
+     h1.pg is the heading PageIntro renders and the one every inline page
+     heading uses, so this reaches both without a per-page rule. */
+  .xhero h1 .warm,
+  h1.pg .warm {
+    background: linear-gradient(96deg, var(--color-copper), var(--color-copper-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .xhero .xdek,
+  .xdek {
+    @apply mt-0 mb-7 max-w-[520px] text-[17.5px] leading-relaxed;
+    color: #cfc6ee;
+  }
+  .xchip {
+    @apply mb-[22px] inline-flex items-center gap-2 rounded-[22px] border px-4 py-1.5 text-[13px];
+    background: rgba(143, 122, 224, 0.18);
+    border-color: rgba(143, 122, 224, 0.5);
+    color: #d9d1f7;
+  }
+  .xchip .dot {
+    @apply h-[7px] w-[7px] rounded-full;
+    background: var(--color-go);
+    box-shadow: 0 0 8px var(--color-go);
+  }
+  .xtrust {
+    @apply mt-[26px] flex flex-wrap gap-[18px] text-[13px];
+    color: #b0a6d6;
+  }
+  .xtrust span::before {
+    content: "✓ ";
+    color: var(--color-go);
+  }
+  .star {
+    @apply absolute rounded-full bg-white opacity-35;
+    animation: twk var(--tw, 4s) ease-in-out infinite;
+  }
+  /* a minority of the field runs cool, the way hotter stars actually do */
+  .star.cool {
+    background: #dfe9ff;
+  }
+  /* Depth: three layers drifting at different rates on scroll and against the
+     pointer. The offsets are set once per frame on .xhero as custom properties,
+     so this stays transform-only. Both are zeroed under reduced motion. */
+  /* HTML stars move in real pixels (--px*); the SVG sky moves in viewBox user
+     units (--sy*). Same scroll, two coordinate systems - mixing them is what
+     threw the constellation field off screen. */
+  .star.d1 {
+    transform: translate3d(0, var(--px1, 0px), 0);
+  }
+  .star.d2 {
+    transform: translate3d(0, var(--px2, 0px), 0);
+  }
+  .star.d3 {
+    transform: translate3d(0, var(--px3, 0px), 0);
+  }
+  /* the constellation links: drawn once on reveal, then held at a whisper */
+  /* ---------- why the sky is 700px and not 100% ----------
+     The crop is centred, so when the sky filled the hero its composition moved
+     with the hero's height: a taller hero showed more sky, which pushed the
+     middle of the composition — where the Little Dipper's bowl sits — further
+     down, until the bowl was behind the room display. Every change to the hero's
+     contents was therefore a change to the sky, and a 16:9 display made the hero
+     tall enough to lose the bowl outright.
+     A fixed 700px box breaks that coupling: the bowl and Polaris now sit at a
+     known distance from the top of the hero no matter what the hero contains, and
+     the display can be any size. Both SVGs must carry the same height or the
+     easter-egg target stops landing on the star.
+     Below 700px there are no constellations, which is where the display and the
+     fade are; the scattered <span> field covers the full height either way. */
+  .cstlines {
+    @apply pointer-events-none absolute top-0 right-0 left-0 z-[2] h-[700px] w-full;
+  }
+  /* Each edge carries its own dasharray, duration and two delays from
+     constStars: draw, then fade. Dash values are in user units, so no
+     vector-effect here - non-scaling-stroke measures dashes in screen pixels and
+     would truncate every long edge. */
+  .cstlines .cstl {
+    fill: none;
+    stroke: rgba(203, 216, 255, 0.34);
+    stroke-width: 0.09;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  .xhero.lit .cstlines .cstl {
+    animation-name: cstDraw, cstFade;
+    animation-timing-function: linear, ease-in;
+    animation-fill-mode: both, both;
+    animation-iteration-count: 1, 1;
+  }
+  /* Depth inside the hero SVG. The rewrite to a single SVG dropped the d1/d2/d3
+     classes the old span-based field carried, so the constellation sky had no
+     parallax at all — only the 12 scattered spans still moved. Three layers for
+     the anonymous field; the figures, their member stars and the pole star share
+     one slow layer, because a constellation split across depths shears apart as
+     you scroll. */
+  .cstlines .d1 {
+    transform: translate3d(0, var(--sy1, 0px), 0);
+  }
+  .cstlines .d2 {
+    transform: translate3d(0, var(--sy2, 0px), 0);
+  }
+  .cstlines .d3 {
+    transform: translate3d(0, var(--sy3, 0px), 0);
+  }
+  .cstlines .df {
+    transform: translate3d(0, var(--syf, 0px), 0);
+  }
+
+  /* Hero constellation stars, drawn inside the same SVG as the links so they
+     cannot drift off their own figures. Two tiers, the same hierarchy the 404
+     chart uses: a star a line runs through reads brighter than the field. */
+  .cstlines .hs {
+    fill: #fff;
+    opacity: 0.34;
+    animation: cstTwk 6s ease-in-out infinite;
+    animation-duration: var(--tw, 6s);
+    animation-delay: var(--td, 0s);
+  }
+  .cstlines .hs.hf {
+    animation-name: cstTwkF;
+    opacity: 0.62;
+    filter: drop-shadow(0 0 0.4px rgba(226, 236, 255, 0.7));
+  }
+  /* The trigger is indistinguishable from any other star on a constellation
+     line: same fill, same opacity, same twinkle. No glow, no extra size. It is
+     found by knowing where the pole star is, which is the whole joke. */
+  .cstlines .hpol {
+    fill: #fff;
+    opacity: 0.62;
+    filter: drop-shadow(0 0 0.4px rgba(226, 236, 255, 0.7));
+    animation: cstTwkF 6.4s ease-in-out infinite;
+  }
+  /* The trigger layer sits above the copy so the click actually lands; the
+     layer passes pointer events straight through and only the circle takes
+     them, so nothing below loses a click. */
+  .cstlines.cstlhit {
+    z-index: 4;
+  }
+  .cstlines .hpolhit {
+    fill: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  /* no hover brightening either: pointing at it must not reveal it */
+  .cstlines .hpolhit:focus-visible {
+    outline: none;
+    stroke: rgba(165, 140, 255, 0.9);
+    stroke-width: 0.16;
+  }
+  /* Masked off before the hero's own fade begins, or the band comes back in
+     miniature: a faint diagonal wash that stops dead on a horizontal line still
+     draws that line. */
+  .milkyway {
+    @apply pointer-events-none absolute inset-0 z-[1];
+    -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 88%);
+    mask-image: linear-gradient(180deg, #000 58%, transparent 88%);
+    background: linear-gradient(
+      115deg,
+      transparent 24%,
+      rgba(200, 190, 255, 0.04) 36%,
+      rgba(210, 200, 255, 0.065) 46%,
+      rgba(200, 190, 255, 0.04) 56%,
+      transparent 68%
+    );
+  }
+
+  /* hero device scene
+     360px of reserved height was sized for a vertically centred scene. Now that
+     the scene starts level with the deck, that reserve is what decides how tall
+     the hero is — and the hero's height decides how much of the sky is cropped,
+     because the crop is centred. At 360 the sky recentred far enough down to put
+     the fourth star of the Little Dipper's bowl back underneath the screen, which
+     is the thing this change exists to fix. 300 keeps the floating chips spread
+     around the display and the bowl clear of it. */
+  .scene {
+    @apply relative min-h-[300px] max-w-[760px];
+  }
+  /* ---------- home hero stage (replaces the old .dframe tile-carousel) ----------
+     A single SVG scene — room display, wire-frame connections, laptop/mobile/
+     guest-browser devices — swapped in whole for the card+glass
+     .dframe/.dcanvas/.tile rig the hero used to run.
+
+     Only the shell is styled here: the float, the glass panel and the labels.
+     Everything inside the SVG is driven from buildStage() in
+     scripts/pages/home.ts — devices fade in, wires flow, sparks ride them, and
+     the display re-divides as each share lands. The data-tile/-frame/-mark/
+     -wire/-dev/-spark/-idle/-glowline hooks in the markup are that function's
+     interface; the inline transform/opacity attributes on data-tile in
+     index.astro are dead leftovers from the design export and are overwritten
+     on the first frame. Don't restyle those hooks here — a CSS opacity or
+     transform on them fights the timeline. */
+  .hm-stage {
+    @apply relative m-0 rounded-[22px] border p-[18px] pb-5;
+    background: linear-gradient(165deg, rgba(26, 19, 60, 0.6), rgba(26, 19, 60, 0.42));
+    border-color: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 40px 90px -40px rgba(14, 10, 38, 0.85);
+    animation:
+      rise 1s ease 0.1s both,
+      hmfloat 6s ease-in-out infinite;
+  }
+  .hm-stage-svg {
+    @apply block w-full overflow-visible;
+    height: auto;
+  }
+  .hm-labels {
+    @apply mt-0.5 grid grid-cols-3 gap-3;
+  }
+  .hm-label {
+    @apply text-center text-xs font-semibold tracking-[0.08em];
+    color: #c4bfda;
+  }
+  .hm-label-guest {
+    color: #e8c6a8;
+  }
+  @keyframes hmfloat {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .dstand {
+    @apply mx-auto h-[26px] w-[90px] rounded-b-lg;
+    background: linear-gradient(#3a2f63, #241c45);
+  }
+  .dbase {
+    @apply mx-auto h-2 w-[170px] rounded-md;
+    background: var(--color-surface-5);
+  }
+  /* logo strip */
+  .logoband {
+    @apply flex flex-wrap items-center justify-center gap-[38px] pt-[34px] pb-1.5;
+  }
+  .lgsvg {
+    @apply h-[30px] w-auto opacity-85;
+    transition:
+      opacity 0.3s,
+      transform 0.3s;
+  }
+  .lgsvg:hover {
+    @apply -translate-y-0.5 opacity-100;
+  }
+  .lgchip {
+    @apply inline-flex h-[46px] items-center justify-center rounded-[10px] px-3.5 py-2;
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .lgchip svg {
+    @apply block h-[26px] w-auto;
+  }
+  .lgchip.sm {
+    @apply h-9 rounded-lg px-2.5 py-[5px];
+  }
+  .lgchip.sm svg {
+    @apply h-[22px];
+  }
+
+  /* ---------- the advantages ledger (home A0.4) ----------
+     Rows, deliberately not cards. This section sits third in a run of five card
+     grids, and it is the one whose content suffered most from the form: eight
+     boxes showing nine words each. A ledger carries the same eight claims at
+     roughly five times the density and gives the page a texture change halfway
+     down, which is what stops the run reading as a wall.
+
+     Hairlines rather than borders. A card says "I am a peer of the seven things
+     beside me"; a ruled row says "I am one line of an argument you are reading
+     down", which is the truer relationship between these eight claims. */
+  .advl {
+    @apply mt-4 mb-0 grid gap-0;
+  }
+  .advl-row {
+    @apply grid items-start gap-x-7 gap-y-1 border-t py-5;
+    grid-template-columns: minmax(0, 31%) minmax(0, 1fr);
+    border-color: var(--color-line);
+  }
+  .advl-row:last-child {
+    @apply border-b;
+    border-color: var(--color-line);
+  }
+  /* The term half: icon and claim, set as one unit so the eye reads left-to-right
+     from mark to claim to mechanism rather than scanning a column of icons. */
+  .advl-row dt {
+    @apply flex items-start gap-3;
+  }
+  .advl-row dt .ic {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border;
+    background: linear-gradient(135deg, #2a2153, #3a2d6e);
+    border-color: var(--color-line-lilac);
+  }
+  .advl-row dt .ic svg {
+    @apply h-[18px] w-[18px];
+  }
+  .advl-row dt h3 {
+    @apply m-0 text-[15px] leading-snug text-bright;
+  }
+  .advl-row dd {
+    @apply m-0;
+  }
+  /* The lead is the quotable sentence: brighter and a size up, because it is the
+     line a reader skimming the column reads, and the line an answer engine is
+     most likely to lift. The mechanism paragraph under it is the depth. */
+  .advl-lead {
+    @apply m-0 text-[15px] leading-[1.55] text-ink;
+  }
+  .advl-row dd p + p {
+    @apply mt-1.5 text-[13.5px] leading-[1.65] text-muted;
+  }
+  .advl-cta {
+    @apply mt-2 inline-block text-[13px] font-semibold no-underline;
+    color: var(--color-lilac);
+  }
+  .advl-cta:hover {
+    @apply underline;
+  }
+  @media (max-width: 780px) {
+    .advl-row {
+      @apply gap-y-2.5 py-4;
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ---------- differentiator cards ---------- */
+  .diffgrid {
+    @apply flex flex-wrap justify-center gap-4;
+  }
+  .diffgrid .diff {
+    @apply flex flex-col;
+    flex: 1 1 250px;
+    max-width: 275px;
+    min-width: 240px;
+  }
+  .diffgrid .diff > *:last-child {
+    @apply mt-auto;
+  }
+  .diffgrid.compact {
+    @apply gap-3;
+  }
+  .diffgrid.compact .diff {
+    @apply px-3.5 py-[18px];
+    flex: 1 1 22%;
+    min-width: 230px;
+    max-width: 272px;
+  }
+  .diffgrid.compact .diff .ic {
+    @apply mb-2.5 h-11 w-11;
+  }
+  .diffgrid.compact .diff .ic svg {
+    @apply h-6 w-6;
+  }
+  .diffgrid.compact .diff h3 {
+    @apply text-sm leading-tight;
+  }
+  .diffgrid.compact .diff p {
+    @apply text-[11.5px] leading-[1.5];
+  }
+  .diffgrid.compact .diff a {
+    @apply text-[11.5px];
+  }
+  @media (max-width: 1120px) {
+    .diffgrid.compact .diff {
+      max-width: 275px;
+      flex: 1 1 240px;
+    }
+  }
+  /* Left to flex-wrap, this grid breaks ragged at most desktop widths, so the
+     column count is pinned rather than left to the wrap. The number moves with
+     the card count, which is the whole reason this class is named for its shape:
+     it was .quad at eight cards (two rows of four) and is .trio at six (two rows
+     of three). Six in a four-column grid is 4+2, which is the ragged tail the
+     class exists to prevent -- so if cards are added or removed again, change
+     this with them rather than leaving a name that no longer describes it.
+
+     Phones are untouched: mobile.css turns .diffgrid.compact back into a swipe
+     carousel from an unlayered rule, which outranks this one. */
+  .diffgrid.compact.trio {
+    @apply mx-auto grid max-w-[1160px];
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .diffgrid.compact.trio .diff {
+    min-width: 0;
+    max-width: none;
+  }
+  @media (max-width: 1000px) {
+    .diffgrid.compact.trio {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .diff {
+    @apply rounded-[14px] p-[26px];
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .diff:hover {
+    @apply -translate-y-[5px];
+  }
+  .diff .ic {
+    @apply mb-3.5 flex h-[54px] w-[54px] items-center justify-center rounded-[14px] border;
+    background: linear-gradient(135deg, #2a2153, #3a2d6e);
+    border-color: var(--color-line-lilac);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+  .diff .ic svg {
+    @apply h-[29px] w-[29px];
+  }
+  .diff:hover .ic {
+    border-color: var(--color-accent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 0 18px rgba(143, 122, 224, 0.35);
+  }
+  .diff h3 {
+    @apply mt-0 mb-2 text-[17px] text-bright;
+  }
+  .diff p {
+    @apply mt-0 mb-2.5 text-sm text-muted;
+  }
+
+  /* ---------- stats ---------- */
+  .statband {
+    @apply mt-2 mb-2.5 grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .stat {
+    @apply px-2.5 py-5 text-center;
+  }
+  .stat b {
+    @apply block text-[44px] tracking-[-1px];
+    color: #d9cdff;
+  }
+  .stat span {
+    @apply text-[13px] text-muted;
+  }
+
+  /* ---------- layers diagram ---------- */
+  .layers {
+    @apply mt-[26px] mb-2 grid items-center;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr;
+  }
+  @media (max-width: 820px) {
+    .layers {
+      @apply grid-cols-1;
+    }
+  }
+  .layer {
+    @apply rounded-[14px] p-[22px] text-center;
+  }
+  .layer b {
+    @apply my-2 mb-1.5 block text-base text-bright;
+  }
+  .layer p {
+    @apply m-0 text-[13px] text-muted;
+  }
+  .layer .lyr {
+    @apply mx-auto block h-[46px] w-[46px];
+  }
+  .conn {
+    @apply relative h-[3px] overflow-visible rounded-[2px];
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hi));
+  }
+  .conn::after {
+    content: "";
+    @apply absolute top-[-4.5px] left-0 h-[9px] w-[9px] rounded-full border-[2.5px] bg-white;
+    border-color: var(--color-accent);
+    animation: beam 2.4s linear infinite;
+  }
+  @media (max-width: 820px) {
+    .conn {
+      @apply mx-auto h-[34px] w-[3px];
+      background: linear-gradient(180deg, var(--color-accent), var(--color-accent-hi));
+    }
+    .conn::after {
+      @apply top-0 left-[-4.5px];
+      animation: beamv 2.4s linear infinite;
+    }
+  }
+
+  /* ---------- dark bands ---------- */
+  .darkband {
+    @apply my-10 grid items-center gap-[30px] rounded-[18px] px-[42px] py-[46px] text-white;
+    background: linear-gradient(120deg, #221a44, #171231);
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+  @media (max-width: 820px) {
+    .darkband {
+      @apply grid-cols-1;
+    }
+  }
+  .darkband h2 {
+    @apply mt-0 mb-2.5 text-[26px] tracking-[-0.5px] text-white;
+  }
+  .darkband p {
+    @apply mt-0 mb-[18px] text-[15px] text-lav;
+  }
+  .darkband .n8 {
+    @apply text-center text-[96px] leading-none font-extrabold;
+    background: linear-gradient(180deg, #a58cff, #7ce3a8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .darkband .n8 small {
+    @apply mt-1.5 block text-sm font-semibold tracking-wide;
+    color: #9c92c6;
+    -webkit-text-fill-color: #9c92c6;
+  }
+
+  /* ---------- tier cards ---------- */
+  .tiercards {
+    @apply grid w-full gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .tiercards.duo {
+    grid-template-columns: repeat(2, minmax(240px, 420px));
+    @apply justify-center;
+  }
+  @media (max-width: 700px) {
+    .tiercards,
+    .tiercards.duo {
+      @apply grid-cols-1;
+    }
+  }
+  .tiercard {
+    @apply flex flex-col rounded-2xl p-7;
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s;
+  }
+  .tiercard:hover {
+    @apply -translate-y-[5px];
+  }
+  .tiercard.hot {
+    background: rgba(143, 122, 224, 0.07);
+    border-color: var(--color-accent);
+  }
+  .tiercard .tname {
+    @apply text-[21px] font-extrabold text-bright;
+  }
+  .tiercard .tfor {
+    @apply mt-1 mb-3.5 text-xs tracking-[0.8px] uppercase text-muted;
+  }
+  .tiercard ul {
+    @apply mt-0 mb-4 pl-[18px] text-sm text-ink-soft;
+  }
+  .tiercard li {
+    @apply my-[5px];
+  }
+  .tiercard .btn {
+    @apply mt-auto self-start;
+  }
+
+  /* ---------- price mode toggle ---------- */
+  .prmode {
+    @apply mt-0 mb-3 inline-flex gap-1.5;
+  }
+  .prmode .prlbl {
+    @apply mr-1.5 text-[10.5px] tracking-[1.2px] uppercase text-muted;
+  }
+  .prmode button {
+    @apply cursor-pointer rounded-2xl border px-3.5 py-[5px] font-[inherit] text-xs;
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-ink-dim);
+  }
+  .prmode button.on {
+    @apply text-white;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* ---------- media band ---------- */
+  .mediaband {
+    @apply relative my-1.5 mb-5 grid items-center gap-6 overflow-hidden rounded-2xl px-[30px] py-[38px] text-white;
+    grid-template-columns: 1fr 1fr;
+    background:
+      radial-gradient(600px 300px at 85% 0%, rgba(124, 227, 168, 0.14), transparent 60%),
+      linear-gradient(120deg, #2a1e52, #171231);
+    border: 1px solid var(--color-glass-line);
+  }
+  @media (max-width: 760px) {
+    .mediaband {
+      @apply grid-cols-1;
+    }
+  }
+  .mediaband .devwrap {
+    @apply flex justify-center;
+    animation: flt 6s ease-in-out infinite;
+  }
+  .mediaband svg.dev {
+    @apply h-auto;
+    width: min(300px, 80%);
+    filter: drop-shadow(0 22px 40px rgba(10, 6, 30, 0.55));
+  }
+  .mediaband .mnote {
+    @apply text-[13px] text-lav;
+  }
+  .mediaband .mnote b {
+    @apply mb-1.5 block text-sm tracking-[0.6px] text-white;
+  }
+  .mediaband .mnote li {
+    @apply my-[3px];
+  }
+
+  /* ---------- browser dock scene ---------- */
+  .bwin {
+    @apply relative overflow-hidden rounded-[14px] border-2;
+    background: var(--color-screen);
+    border-color: var(--color-line-lilac);
+    box-shadow: 0 26px 70px rgba(10, 6, 30, 0.4);
+  }
+  .btab {
+    @apply flex items-center gap-2 px-3.5 py-[9px];
+    background: #1c1636;
+  }
+  .btab .bd {
+    @apply h-[9px] w-[9px] rounded-full;
+  }
+  .burl {
+    @apply flex-1 rounded-[14px] border px-3.5 py-1 text-[11px];
+    background: var(--color-screen);
+    color: #9c92c6;
+    border-color: var(--color-line-deep);
+  }
+
+  /* ---------- taxonomy grid ---------- */
+  .tax {
+    @apply my-[18px] grid gap-2;
+    grid-template-columns: 215px 1fr 1fr;
+  }
+  .tax .hd {
+    @apply flex items-center rounded-lg px-3 py-2.5 text-[13px] font-bold text-white;
+    background: var(--color-plum);
+  }
+  .tax .rowhd {
+    @apply flex min-w-0 items-center rounded-lg border px-3 py-2.5 text-[13px] leading-[1.35] font-bold break-words;
+    background: var(--color-surface-4);
+    border-color: var(--color-line);
+    color: #d9cdff;
+  }
+  .tax .cell {
+    @apply cursor-pointer rounded-lg border p-3 text-[13px] text-muted transition-all duration-150;
+    background: rgba(255, 255, 255, 0.025);
+    border-width: 1.5px;
+    border-color: var(--color-glass-line);
+  }
+  .tax .cell:hover {
+    @apply -translate-y-px;
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 14px rgba(59, 42, 107, 0.12);
+  }
+  .tax .cell.us {
+    background: var(--color-surface-5);
+    border-color: var(--color-accent);
+  }
+  .tax .cell b {
+    @apply mb-[3px] block text-bright;
+  }
+  .tax .cell.sel {
+    outline: 3px solid var(--color-accent-hi);
+  }
+  .taxdetail {
+    @apply my-2.5 rounded-[10px] p-[18px] text-sm;
+  }
+  .taxdetail h3 {
+    @apply mt-0 mb-1.5 text-bright;
+  }
+  .taxq {
+    @apply mx-0 mt-0 mb-4 rounded-xl border px-[18px] py-4 text-sm text-muted;
+    border-color: var(--color-line);
+    background: var(--color-surface-4);
+  }
+  .taxq b {
+    @apply text-bright;
+  }
+
+  /* ---------- compare picker ---------- */
+  .pick {
+    @apply my-3.5 flex flex-wrap gap-2;
+  }
+  .pick button {
+    @apply cursor-pointer rounded-[20px] border px-4 py-[7px] font-[inherit] text-[13px];
+    background: var(--color-surface-4);
+    border-color: var(--color-glass-line);
+    color: var(--color-ink-dim);
+  }
+  .pick button.on {
+    @apply text-white;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  tr.cmpgrp {
+    @apply cursor-pointer select-none;
+  }
+  tr.cmpgrp .caret {
+    @apply inline-block text-[11px] transition-transform duration-200;
+    color: var(--color-lilac);
+  }
+  tr.cmpgrp.closed .caret {
+    @apply -rotate-90;
+  }
+  tr.cmpgrp:hover td {
+    background: rgba(165, 140, 255, 0.1);
+  }
+
+  /* ---------- comparison matrices: frozen header and row labels ----------
+     Fifteen columns and forty rows means both edges of the table leave the
+     screen, and a tick with no visible column heading and no visible row label
+     is worth nothing. The pane scrolls in both directions and keeps the brand
+     names across the top and the capability names down the left.
+     The pane owns the scrolling rather than the page, because `overflow-x:auto`
+     with `overflow-y:visible` is not a thing browsers honour: asking for one
+     axis gets you both, and a header sticky to the viewport then never sticks.
+     Backgrounds on the frozen cells must be opaque — the default td tint is 2%
+     white and rows would read straight through it.
+
+     ── COMPACT PASS, 16 Aug 2026 ─────────────────────────────────────────────
+     Until now these three tables inherited the site's general document-table
+     shell: 12px cell padding, a hairline box drawn around every one of 900-odd
+     cells, and no column widths at all — so a column holding a single tick was
+     as wide as "Extron ShareLink Pro" set at 13px, and the headline matrix ran
+     to roughly 2,400px. A reader saw six vendors and had to scroll for the rest,
+     which is the one thing a comparison table must not make you do.
+
+     Redrawn as a comparison GRID rather than a table of prose:
+
+       · fixed vendor columns (76px), so fifteen of them and the row labels fit
+         in ~1,440px and the whole field is nearly on screen at once;
+       · one horizontal rule per ROW instead of a box per cell, plus a much
+         fainter vertical rule, so the grid guides the eye without caging it;
+       · a whole-row highlight on hover — the single biggest legibility win at
+         this width, because crossing fifteen columns without losing the row is
+         the actual task;
+       · the Polaris column bracketed in lilac and tinted, because every other
+         column is read against it;
+       · grades set as compact marks: the tick and the dash at 13px, "partial"
+         as 9.5px tracked caps, so the cell reads at a glance and still carries
+         its word in the HTML for a plain fetch or a printout.
+
+     Palette is unchanged throughout — plum header, lilac rules, and the existing
+     --color-go / --color-gold / dim-violet grade colours. Nothing here is new
+     paint; it is the same paint on a tighter grid.
+
+     These rules are deliberately on .cmpscroll and therefore govern all THREE
+     matrices — the compare hub's headline and module tables and the Trust
+     Center's security slice. They share one renderer (src/lib/matrix.ts) on
+     purpose; styling one of them alone is how the two pages drifted last time. */
+  .cmpscroll {
+    @apply relative overflow-auto rounded-xl border;
+    max-height: min(74vh, 780px);
+    /* PER AXIS, and the two axes want opposite answers.
+     *
+     * This was `overscroll-behavior: contain` on both, added alongside the frozen
+     * headers in Aug 2026 as the boilerplate companion to a sticky-header scroll
+     * pane. On the Y axis that is a trap: `contain` switches OFF scroll chaining,
+     * so once a reader has scrolled this pane to its top or bottom, the wheel
+     * stops doing anything at all while the pointer is anywhere over the table.
+     * The page appears frozen — and the pane is up to 780px tall and 1,380px
+     * wide, so on a laptop it is most of the screen and easy to leave the pointer
+     * over. `auto` restores the default: the pane consumes the wheel until it
+     * hits its boundary, then the page takes over, which is what a reader expects
+     * and what happened before the pane existed.
+     *
+     * X keeps `contain`, for the reason the property was invented: without it a
+     * horizontal overscroll on a trackpad triggers the browser's swipe-to-go-back
+     * gesture, so flicking left off the last vendor column navigates away from
+     * the page. Nothing chains horizontally here anyway — the page does not
+     * scroll sideways — so containing X costs nothing. */
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+    border-color: var(--color-line-dim);
+    background: var(--color-surface-1);
+  }
+  /* ── THE REASON THE HOVER CARDS KEPT LANDING OFF THE TABLE ──────────────────
+     Three rounds of placement maths were spent on this and all three were
+     arguing with the wrong thing. The cards are position:fixed so they can
+     escape this pane's overflow — but .reveal, the scroll-in animation on almost
+     every section of this site, compiles to `translate: var(--tw-translate-x)
+     var(--tw-translate-y)`, and a `translate` other than `none` makes that
+     element the containing block for every fixed descendant. Even at 0px. Even
+     after the animation has finished.
+
+     Two consequences, both of which a reader sees as one bug:
+       1. Coordinates computed against the viewport were applied against the
+          section's box, so the card appeared offset by however far down the page
+          the section starts — "off the table".
+       2. A fixed element inside a containing block IS clipped by the scrolling
+          ancestors between the two, so .cmpscroll cropped the card. Which is the
+          exact problem position:fixed was chosen to avoid.
+
+     The Trust Center's matrix sits in <section class="sect reveal flush">, which
+     is why it was the page that showed it worst. So: any .reveal that contains a
+     matrix stops creating a containing block. Those sections fade in without the
+     26px rise; a table that big does not need to slide, and the alternative was a
+     citation the reader cannot see. :has() is the right tool because it fixes
+     every future matrix put inside a reveal without anyone remembering this.
+
+     ONE DECLARATION, DELIBERATELY. Writing `translate: none` and `transform:
+     none` together here is worse than writing neither: the CSS minifier folds
+     the pair into `transform: none` alone, which does not reset the `translate`
+     property and leaves the containing block exactly where it was. The first
+     version of this fix shipped that way and check-static-evidence.py caught it
+     in the built stylesheet, which is the only place it is visible. */
+  .reveal:has(.cmpscroll) {
+    translate: none;
+  }
+  /* `separate` rather than `collapse`. A collapsed table hands its borders to
+     the table itself, and a sticky cell carries its background but not a border
+     it no longer owns — which is why the frozen header used an inset box-shadow
+     to fake its underline. With one rule per row now doing structural work,
+     those rules have to survive being stuck. border-spacing:0 keeps the grid
+     tight; the shared edges below are drawn once each, never doubled. */
+  .cmpscroll table {
+    @apply my-0;
+    /* `fixed`, and it is load-bearing rather than a preference. In auto layout a
+       cell's max-width is ignored, so the label column takes its longest label —
+       "Multi-source workspace: laid out automatically, rearrangeable from any
+       seat, no fixed ceiling" — on ONE line and the table is 2,000px before a
+       single vendor column is drawn. Fixed layout takes its columns from the
+       header row, so the widths below are the widths you get and every label
+       wraps inside 300px. */
+    table-layout: fixed;
+    /* max-content is the FLOOR, min-width:100% is the fill. The two together are
+       what make one set of column widths serve both tables: the headline matrix
+       (fifteen vendors) comes to ~1,375px and effectively is the container, while
+       the module matrix (nine) would come to ~937px and sit at three-quarters
+       width with a bar of empty pane beside it. min-width:100% hands that
+       leftover back to the columns, so the module table fills the measure with
+       wider columns rather than shrinking the frame around itself. Below the
+       floor — a phone — max-content wins and the pane scrolls. */
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .cmpscroll th {
+    @apply sticky top-0 z-20 px-0.5 py-2 text-center align-bottom text-[10.5px] font-semibold;
+    background: #2f2755;
+    backdrop-filter: none;
+    line-height: 1.25;
+    box-shadow: inset 0 -1px rgba(255, 255, 255, 0.16);
+  }
+  /* THE COLUMN WIDTHS, and they live on the HEADER ROW because that is the row a
+     fixed-layout table reads them from — the same declarations on the body cells
+     are ignored, silently.
+
+     This is the whole compaction: without it every column is as wide as its
+     brand name set at body size, and fifteen of them do not fit on any laptop.
+     73px holds the longest unbreakable brand word — "DisplayNote" — on one line
+     at 10.5px, and any grade mark with room to spare.
+
+     280 + 15 × 73 = 1,375px, against roughly 2,400px before, which is what puts
+     the entire fourteen-vendor field on a 1440px screen with no horizontal
+     scroll at all. Narrower than that it scrolls, and the frozen header and
+     frozen label column below are what make that survivable — but the design
+     target is that a reader on a laptop never has to. */
+  .cmpscroll th:first-child {
+    width: 280px;
+  }
+  .cmpscroll th:not(:first-child) {
+    width: 73px;
+  }
+  .cmpscroll td {
+    @apply px-1 py-[5px] text-center align-middle text-[12px];
+    background: transparent;
+    color: var(--color-ink-dim);
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
+  }
+  /* the capability column, and the header cell where the two frozen edges meet */
+  .cmpscroll td:first-child {
+    @apply sticky left-0 z-10 px-3 py-[7px] text-left text-[12px] font-medium;
+    background: #15112c;
+    color: var(--color-ink-soft);
+    line-height: 1.35;
+    border-right: 1px solid rgba(165, 140, 255, 0.18);
+  }
+  /* The row-label header froze vertically but not horizontally, so "Capability"
+     slid away the moment a reader scrolled right while the labels it names
+     stayed put. Both edges now. */
+  .cmpscroll th:first-child {
+    @apply left-0 z-30 px-3 text-left text-[10px] uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-bright);
+    border-right: 1px solid rgba(165, 140, 255, 0.18);
+  }
+  /* THE REFERENCE COLUMN. Every other column in these tables is read against
+     Polaris, so it is bracketed in lilac and lifted a shade out of the field
+     rather than sitting in the run of vendors. tbody-qualified so it outranks
+     the evidence tint on td.pw further down — order in the file then stops
+     mattering, which it otherwise silently would. */
+  .cmpscroll th:nth-child(2) {
+    background: #3a2f68;
+    color: #fff;
+    border-right: 1px solid rgba(165, 140, 255, 0.18);
+  }
+  .cmpscroll tbody td:nth-child(2) {
+    background: rgba(109, 91, 184, 0.16);
+    border-right: 1px solid rgba(165, 140, 255, 0.18);
+  }
+  /* Grade marks. Tick and dash carry the cell at 13px; "partial" is the longest
+     mark and the most interesting one, so it is set as small tracked caps —
+     compact enough for a 76px column, and still the literal word "partial" in
+     the served HTML, which is what a plain fetch and a printout get. */
+  .cmpscroll td.y {
+    @apply font-bold;
+    color: var(--color-go);
+    font-size: 13px;
+  }
+  .cmpscroll td.n {
+    color: #6d6398;
+    font-size: 13px;
+  }
+  .cmpscroll td.p {
+    @apply font-bold uppercase;
+    color: var(--color-gold);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+  }
+  .cmpscroll td.u {
+    @apply uppercase;
+    color: var(--color-faint);
+    font-size: 8.5px;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .cmpscroll tr.grp td,
+  .cmpscroll tr.cmpgrp td {
+    @apply sticky left-0 z-10 px-3 py-[5px] text-left text-[10px] font-bold uppercase;
+    background: #241c46;
+    color: #cdbfff;
+    letter-spacing: 0.11em;
+    border-top: 1px solid rgba(165, 140, 255, 0.16);
+    border-bottom: 1px solid rgba(165, 140, 255, 0.16);
+  }
+  /* a group row spans every column, so it must not sit under the frozen label */
+  .cmpscroll tr.grp td[colspan],
+  .cmpscroll tr.cmpgrp td[colspan] {
+    @apply static;
+  }
+  /* ── ROW HOVER ────────────────────────────────────────────────────────────
+     The one thing a fifteen-column table has to give a reader: a lit row, so
+     the eye can travel from "Signed firmware / verified boot chain" to the
+     eleventh vendor and still be on the right line. Every selector here is
+     tbody-qualified for specificity (0,2,2) — one step above the frozen-column
+     and Polaris-column backgrounds it has to repaint, and one step BELOW
+     td.pw:hover, so hovering an individual cell still reads stronger than the
+     row it sits in. Nothing depends on where in this file the block sits. */
+  .cmpscroll tbody tr:hover td {
+    background-color: rgba(165, 140, 255, 0.075);
+  }
+  .cmpscroll tbody tr:hover td:first-child {
+    background-color: #221a45;
+    color: var(--color-ink);
+  }
+  .cmpscroll tbody tr:hover td:nth-child(2) {
+    background-color: rgba(109, 91, 184, 0.3);
+  }
+  @media (max-width: 640px) {
+    .cmpscroll {
+      max-height: 70vh;
+    }
+    /* 46% of a 360px screen for the label column leaves nothing for the grades */
+    .cmpscroll td:first-child {
+      @apply static;
+    }
+    .cmpscroll th:first-child {
+      @apply static;
+      width: 200px;
+    }
+  }
+
+  /* ---------- "partial" cells explain themselves ----------
+     A partial grade is the most interesting cell in a comparison table and the
+     least self-explanatory: it is where the ceiling, the licence gate or the
+     model restriction lives. Every one carries its reason from WHYP in a card
+     revealed on hover and on keyboard focus, so the answer is reachable without
+     a pointer. The cell is also the positioning context for the card. */
+  td.pw {
+    @apply relative cursor-help;
+  }
+  td.pw .pwl {
+    border-bottom: 1px dotted currentColor;
+  }
+  /* A dotted underline under the word "partial" reads as a hint. Under a tick or a
+     dash it does not, so glyph cells carry the affordance on the CELL instead.
+     
+     The first attempt at that was `box-shadow: inset 0 -2px 0 -1px currentColor`,
+     and currentColor is the glyph colour — so every sourced cell grew a hard green
+     or white line along its bottom edge. Damian reported exactly that on 14 Aug
+     2026: "green and white lines at the bottom of some cells". The comment above
+     it said "dotted ring"; the code drew a solid rule, which is the precise thing
+     the comment was trying to avoid.
+     
+     A tint instead of a line. It says "this cell has more behind it" without
+     drawing anything that can be mistaken for a border, a rule, or a rendering
+     fault — and it is colour-neutral, so it reads the same under a tick, a dash
+     and a word. */
+  td.y.pw .pwl,
+  td.n.pw .pwl {
+    border-bottom: 0;
+  }
+  td.y.pw,
+  td.n.pw,
+  td.p.pw {
+    background: rgba(255, 255, 255, 0.045);
+  }
+  td.y.pw:hover,
+  td.n.pw:hover,
+  td.p.pw:hover,
+  td.pw:focus-visible {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  /* Fixed, not absolute. The matrix now lives in a scrolling pane so its own
+     edges clip anything absolutely positioned inside it — the card would be cut
+     off exactly on the columns furthest from the centre. Script places it
+     against the cell's viewport rect instead. */
+  /* Vendor picker on the Trust Center matrix. Hidden columns are hidden with a
+     class, never removed: the full table stays in the served HTML so a scraper,
+     an answer engine, a printout and a script-off reader all still get all 140
+     sourced statements. See src/scripts/secpick.ts. */
+  .secpick,
+  .cmppick {
+    @apply mt-1 mb-2 gap-1.5;
+  }
+  /* Sixteen buttons at the generic .pick size took two full rows above the table
+     and read louder than the table they filter. Same shape, same colours, one
+     step down: the control sits under the heading as a strip rather than as a
+     second heading. */
+  .secpick button,
+  .cmppick button {
+    @apply px-2.5 py-[3px] text-[11.5px];
+  }
+  /* All three matrices now: the Trust Center's slice, the compare hub's headline
+     table and its module table. The hub's tables were rebuilt from data on every
+     click until 15 Aug 2026, which is why they served no HTML at all; they hide
+     by class like this one now. */
+  #sectable .cbhide,
+  #cmptable .cbhide,
+  #dpttable .cbhide {
+    @apply hidden;
+  }
+  /* Printing gets everything. A printed comparison with eleven columns silently
+     missing is a document that misleads the person holding it. */
+  @media print {
+    #sectable .cbhide,
+    #cmptable .cbhide,
+    #dpttable .cbhide {
+      display: table-cell !important;
+    }
+    .secpick,
+    .cmppick {
+      @apply hidden;
+    }
+  }
+
+  /* The pre-launch publish list under the security matrix. Sits to the right of
+     the table's left edge and stops short of full width, so it reads as an aside
+     to the table rather than the next section of the page. */
+  .pubneed {
+    @apply mt-4 mb-1 ml-auto max-w-[720px];
+  }
+  .pubneed mark.vflag {
+    @apply block rounded-[10px] p-3.5 text-[12.5px] leading-relaxed;
+  }
+  .pubneed ul {
+    @apply mt-2 mb-1 list-disc pl-5;
+  }
+  .pubneed li {
+    @apply mb-1.5;
+  }
+  .pubneed i {
+    @apply not-italic opacity-70;
+  }
+  @media (max-width: 860px) {
+    .pubneed {
+      @apply ml-0 max-w-none;
+    }
+  }
+
+  /* Row scope chips. A company certificate and a device property are different
+     kinds of evidence, and a reader handed "ISO 27001 certified" will read it as a
+     statement about the product unless told otherwise. Deliberately small and
+     unemphatic: this is a qualifier on the question, not a verdict on anyone. */
+  .scp {
+    @apply ml-1.5 inline-block rounded-[4px] px-1 py-px align-middle text-[9.5px] font-semibold not-italic uppercase tracking-[0.4px];
+    border: 1px solid var(--color-glass-line);
+  }
+  .scp-company {
+    color: #b9a9f0;
+  }
+  .scp-device {
+    color: #7fd8c0;
+  }
+
+  /* The matrix legend. Four marks, spelled out, because a table of ticks and
+     dashes with no key invites the reader to supply their own meaning — and the
+     meaning they supply for a dash is "this product cannot do it", which is not
+     what the dash records. */
+  .cmplegend .lg {
+    @apply mr-3 inline-block whitespace-nowrap;
+  }
+  .cmplegend .lg i {
+    @apply mr-1 inline-block font-semibold not-italic;
+  }
+  .cmplegend .lg-y {
+    color: #7ce3a8;
+  }
+  .cmplegend .lg-n,
+  .cmplegend .lg-u {
+    @apply text-muted;
+  }
+  /* The key has to be drawn the way the table draws it, or it stops being a key.
+     "partial" was set faint here while every partial cell in the table is gold,
+     so the one mark a reader most needs to look up was the one the legend did
+     not match. Same colour, same tracked caps. */
+  .cmplegend .lg i.lg-p {
+    @apply font-bold uppercase;
+    color: var(--color-gold);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+  }
+  /* "Not assessed" reads quieter than a dash: it records an absence of work, not
+     an absence of evidence, and it should not look like a finding. */
+  td.u {
+    @apply text-faint;
+    font-size: 11.5px;
+  }
+
+  td.pw .pwc {
+    @apply pointer-events-none invisible fixed z-[60] w-[340px] rounded-[9px] border p-3 text-left text-[12.5px] leading-snug opacity-0 transition-opacity duration-150;
+    color: var(--color-ink);
+    background: rgba(18, 14, 38, 0.98);
+    border-color: var(--color-glass-line);
+    box-shadow: 0 14px 34px rgba(5, 3, 14, 0.6);
+    white-space: normal;
+    font-weight: 400;
+  }
+  td.pw .pwc b {
+    @apply mb-1 block text-[11px] tracking-[0.4px] uppercase;
+    color: var(--color-lilac);
+  }
+  td.pw:hover .pwc,
+  td.pw:focus .pwc,
+  td.pw:focus-visible .pwc,
+  td.pw.pwpin .pwc {
+    @apply visible opacity-100;
+  }
+  /* PINNED, on click. A hover card cannot hold a link — the pointer has to leave
+     the cell to reach the anchor, and the card goes with it. Pinning gives the
+     card pointer events so the source is actually clickable, which is the whole
+     point of citing it. Touch never had hover at all, so before this every source
+     on this table was unreachable on a phone. See src/scripts/pwcard.ts. */
+  td.pw.pwpin .pwc {
+    @apply pointer-events-auto;
+    border-color: var(--color-lilac);
+  }
+  /* The source line inside the card. Deliberately quiet: it is a citation, not a
+     call to action, and it sits under the reasoning rather than competing with
+     it. */
+  td.pw .pwc .pws {
+    @apply mt-2 block border-t pt-1.5 text-[11.5px] font-medium no-underline;
+    border-color: var(--color-glass-line);
+    color: var(--color-lilac);
+  }
+  td.pw .pwc .pws:hover {
+    @apply underline;
+  }
+  td.pw .pwc .pwd {
+    @apply block font-normal;
+    color: var(--color-faint);
+  }
+  /* Provenance badge on a citation. Small, factual, and never coloured like a
+     warning — a distributor-hosted document is weaker evidence, not a scandal,
+     and an independent registry is stronger than the vendor's own page. */
+  td.pw .pwc .pwo {
+    @apply mt-1 inline-block rounded-[4px] px-1.5 py-px text-[9.5px] font-semibold tracking-[0.3px] uppercase;
+    border: 1px solid var(--color-glass-line);
+  }
+  td.pw .pwc .pwo-third {
+    color: #e8c76a;
+  }
+  td.pw .pwc .pwo-reg {
+    color: #7fd8c0;
+  }
+
+  /* An unpinned card must not eat clicks aimed at the cell underneath it. */
+  td.pw:not(.pwpin) .pwc {
+    @apply pointer-events-none;
+  }
+  @media (max-width: 640px) {
+    td.pw .pwc {
+      @apply w-[270px];
+    }
+  }
+  /* The pin affordance. Two lines, one shown at a time: what to do, then what
+     state you are in. Quiet enough not to compete with the reasoning. */
+  /* The "click to pin" affordance, as generated content rather than markup.
+     It used to be two <span>s per cell carrying the same two sentences: 706
+     copies on the compare hub, 109 KB of HTML and roughly 1,400 DOM nodes to
+     say a fixed thing. Nothing in it is evidence, nothing in it varies by cell,
+     and nothing in it needs to be selectable or crawlable — which is exactly
+     the test for whether text belongs in CSS instead. The citation, which fails
+     every part of that test, stays in the HTML. */
+  td.pw .pwc::after {
+    @apply mt-1.5 block text-[10.5px] tracking-[0.2px];
+    content: "Click to pin this card, then open the source";
+    color: var(--color-faint);
+  }
+  td.pw.pwpin .pwc::after {
+    content: "Pinned · Esc or click away to close";
+  }
+
+  /* ---------- selector quiz ---------- */
+  .selq {
+    @apply my-3 rounded-[10px] px-[18px] py-4;
+  }
+  .selq b {
+    color: #cfc2ff;
+  }
+  .selq label {
+    @apply my-[7px] block cursor-pointer text-sm text-muted;
+  }
+  .selresult {
+    @apply my-3.5 rounded-[10px] border-2 p-[18px] text-[15px];
+    background: var(--color-surface-5);
+    border-color: var(--color-accent);
+    color: #e9e2ff;
+  }
+
+  /* ---------- partner portal login ---------- */
+  .login {
+    @apply mx-auto my-[30px] max-w-[430px] rounded-xl p-7;
+    box-shadow: 0 8px 30px rgba(29, 26, 46, 0.08);
+  }
+  .login input {
+    @apply mt-2 mb-3.5 w-full rounded-[7px] border p-2.5 font-[inherit];
+    background: var(--color-field);
+    border-color: var(--color-line);
+    color: #e9e2ff;
+  }
+
+  /* ---------- TCO calculator ---------- */
+  .calc {
+    @apply my-[18px] rounded-2xl p-[22px];
+    border-width: 1.5px;
+  }
+  .calc-grid {
+    @apply grid items-start gap-[26px];
+    grid-template-columns: 1.3fr 1fr;
+  }
+  .calc-r {
+    @apply sticky top-[86px];
+  }
+  @media (max-width: 980px) {
+    .calc-grid {
+      @apply grid-cols-1;
+    }
+    .calc-r {
+      @apply static;
+    }
+  }
+  .calc .in {
+    @apply mb-3 grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  }
+  .calc label {
+    @apply mb-[5px] block text-xs font-bold;
+    color: #d9cdff;
+  }
+  .calc input,
+  .calc select {
+    @apply w-full rounded-[7px] border p-[9px] font-[inherit];
+    background: var(--color-field);
+    border-color: var(--color-line);
+    color: #e9e2ff;
+  }
+  .calc .out {
+    @apply grid grid-cols-1 gap-3;
+  }
+  .calc .res {
+    @apply rounded-xl px-4 py-3.5;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-glass-line);
+  }
+  .calc .res.win {
+    background: rgba(124, 227, 168, 0.06);
+    border-color: rgba(124, 227, 168, 0.4);
+  }
+  .calc .res b {
+    @apply block text-2xl;
+    color: #d9cdff;
+  }
+  .calc .bar {
+    @apply mt-2.5 h-3.5 overflow-hidden rounded-[7px];
+    background: var(--color-line-dim);
+  }
+  .calc .bar i {
+    @apply block h-full rounded-[7px];
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hi));
+    transition: width 0.6s ease;
+  }
+  .calc .save {
+    @apply mt-3.5 text-[15px] font-bold text-go;
+  }
+
+  /* tco delta chips */
+  .tco-delta {
+    @apply mt-5 mb-1 rounded-2xl border px-6 py-[22px];
+    background: linear-gradient(120deg, #1d2a24, #141a2e);
+    border-color: rgba(124, 227, 168, 0.3);
+  }
+  .tco-delta h3 {
+    @apply my-1 mb-3.5 text-[21px] text-bright;
+  }
+  .tco-chips {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+  .tco-chip {
+    @apply rounded-xl border px-[15px] py-3.5;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  a.tco-chip {
+    @apply block cursor-pointer text-[inherit];
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+  }
+  a.tco-chip:hover {
+    @apply -translate-y-0.5 no-underline;
+    border-color: var(--color-accent-hi);
+  }
+  .tco-chip .ic {
+    @apply mb-2 flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border;
+    background: rgba(124, 227, 168, 0.1);
+    border-color: rgba(124, 227, 168, 0.3);
+  }
+  .tco-chip .ic svg {
+    @apply h-[21px] w-[21px];
+  }
+  .tco-chip b {
+    @apply mb-1 block text-[13px];
+    color: #dff2e8;
+  }
+  .tco-chip p {
+    @apply m-0 text-[11.5px] leading-[1.5];
+    color: #a8c4b6;
+  }
+
+  /* vs columns */
+  .vs2 {
+    @apply my-3 grid grid-cols-2 gap-3.5;
+  }
+  @media (max-width: 860px) {
+    .vs2 {
+      @apply grid-cols-1;
+    }
+  }
+  .vs-col {
+    @apply rounded-xl border px-4 py-3.5;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--color-glass-line);
+  }
+  .vs-col b,
+  .vs-io > b {
+    @apply text-[13.5px] text-bright;
+  }
+  .vs-col ul {
+    @apply mt-2 mb-0 pl-[18px] text-[12.5px] leading-relaxed text-muted;
+  }
+  .vs-short {
+    @apply mt-2.5 block text-[12.5px] text-warn;
+  }
+  .vs-tbl {
+    @apply mt-2 w-full border-collapse text-xs;
+  }
+  .vs-tbl th {
+    @apply border-b bg-transparent px-2 py-1.5 text-left text-[10.5px] tracking-[0.8px] uppercase text-faint;
+    border-bottom-color: var(--color-line-dim);
+  }
+  .vs-tbl td {
+    @apply border-b border-dashed bg-transparent px-2 py-1.5 text-muted;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .vs-tbl td:first-child {
+    @apply text-[11px] text-faint;
+  }
+
+  /* ---------- connect widget (nav) ----------
+     The screen-key panel. It is the one piece of chrome on this site allowed to
+     behave like a piece of equipment rather than a web form: a labelled uplink
+     with a status readout, six character cells, a carrier line under them and a
+     commit button that is not there until there is something to commit. The
+     sci-fi is carried by mono type, the status line and the beam — all cheap —
+     and NOT by anything that delays or obstructs entering a key. Every effect
+     here is decoration over a plain six-box input that still works with the
+     stylesheet thrown away.
+     Palette is the site's own: lilac while you are typing, mint at the moment
+     the key is complete. Mint is the "go" colour everywhere else here, so the
+     lock-on is the same green as every other affirmative on the site. */
+  .connectitem {
+    @apply relative;
+  }
+  .connectitem > button {
+    @apply inline-flex cursor-pointer items-center gap-[7px] rounded-[7px] border px-[13px] py-[7px] font-[inherit] text-[13px] font-semibold text-go;
+    background: rgba(124, 227, 168, 0.1);
+    border-color: rgba(124, 227, 168, 0.4);
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .connectitem > button:hover,
+  .connectitem.openmenu > button {
+    background: rgba(124, 227, 168, 0.18);
+    border-color: rgba(124, 227, 168, 0.75);
+    box-shadow: 0 0 0 1px rgba(124, 227, 168, 0.18), 0 6px 18px rgba(124, 227, 168, 0.15);
+  }
+  .connectitem > button .navic {
+    @apply opacity-90;
+  }
+  .connectitem > button:hover .navic,
+  .connectitem.openmenu > button .navic {
+    @apply opacity-100;
+  }
+  .connectdrop {
+    @apply right-0 left-auto min-w-[326px] overflow-hidden rounded-xl p-0;
+  }
+  /* A faint grid behind the panel contents — the "instrument" texture. Two
+     repeating-linear-gradients rather than an image, so it costs nothing and
+     scales with the panel. */
+  .connectdrop::before {
+    content: "";
+    @apply pointer-events-none absolute inset-0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(165, 140, 255, 0.05) 0 1px, transparent 1px 22px),
+      repeating-linear-gradient(90deg, rgba(165, 140, 255, 0.05) 0 1px, transparent 1px 22px);
+    mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+  }
+  .cd-in {
+    @apply relative px-[18px] py-4;
+  }
+  .cd-in b {
+    @apply text-sm text-bright;
+  }
+  .cd-in p {
+    @apply mt-1.5 mb-2.5 text-xs text-muted;
+  }
+
+  /* the readout strip above the key */
+  .cd-head {
+    @apply mb-3 flex items-center justify-between gap-3 border-b pb-2.5;
+    border-bottom-color: rgba(165, 140, 255, 0.16);
+  }
+  .cd-tag {
+    @apply font-mono text-[10px] font-bold tracking-[0.16em] uppercase;
+    color: #8f7ae0;
+  }
+  .cd-tag::before {
+    content: "▸ ";
+    color: var(--color-lilac);
+  }
+  .cd-stat {
+    @apply inline-flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-[0.12em] uppercase;
+    color: #7a6fa8;
+  }
+  /* The state lamp. Amber-lilac while incomplete and breathing; solid mint the
+     instant the sixth character lands. */
+  .cd-stat i {
+    @apply block h-[6px] w-[6px] shrink-0 rounded-full;
+    background: #4a3d7d;
+    animation: cdPulse 2.2s ease-in-out infinite;
+  }
+  .cd-ready .cd-stat {
+    color: var(--color-go);
+  }
+  .cd-ready .cd-stat i {
+    background: var(--color-go);
+    box-shadow: 0 0 8px rgba(124, 227, 168, 0.9);
+    animation: none;
+  }
+
+  /* the six cells */
+  .cd-keys {
+    @apply relative grid gap-[7px] pb-3;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .cd-key {
+    @apply w-full rounded-[7px] border py-2.5 text-center font-mono text-[17px] font-bold uppercase caret-transparent;
+    background: rgba(9, 6, 22, 0.55);
+    border-color: rgba(165, 140, 255, 0.22);
+    color: var(--color-bright);
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease,
+      box-shadow 0.16s ease,
+      color 0.16s ease;
+  }
+  /* The native caret is hidden and replaced by the focused cell's own glow:
+     with one character per box the caret is a second, smaller indicator of the
+     thing the box is already indicating, and it jitters left and right as the
+     character centres. */
+  .cd-key:focus {
+    @apply outline-none;
+    border-color: var(--color-lilac);
+    background: rgba(165, 140, 255, 0.12);
+    box-shadow:
+      0 0 0 1px var(--color-lilac),
+      0 0 16px rgba(165, 140, 255, 0.35);
+  }
+  .cd-key.on {
+    border-color: rgba(165, 140, 255, 0.5);
+  }
+  /* The script selects a cell's character on focus so typing replaces it rather
+     than being refused by `maxlength`. That is the right behaviour and the wrong
+     appearance: a blue selection block on one of six characters reads as a
+     rendering fault. The selection stays — it is what makes overtyping work —
+     and only its highlight is suppressed. Focus is already unambiguous from the
+     cell's own glow. */
+  .cd-key::selection {
+    background: transparent;
+    color: inherit;
+  }
+  /* Every filled cell goes mint at once — one animation, no stagger, because
+     the lock is a single event and six staggered flashes would read as six. */
+  .cd-ready .cd-key {
+    border-color: var(--color-go);
+    background: rgba(124, 227, 168, 0.12);
+    color: var(--color-go);
+    box-shadow: 0 0 0 1px rgba(124, 227, 168, 0.45), 0 0 18px rgba(124, 227, 168, 0.25);
+    animation: cdLock 0.5s cubic-bezier(0.22, 0.75, 0.3, 1) both;
+  }
+  .cd-ready .cd-key:focus {
+    box-shadow: 0 0 0 2px var(--color-go), 0 0 22px rgba(124, 227, 168, 0.45);
+  }
+
+  /* the carrier line under the row: sweeping while searching, solid on lock */
+  .cd-beam {
+    @apply pointer-events-none absolute right-0 bottom-0 left-0 block h-px overflow-hidden;
+    background: rgba(165, 140, 255, 0.18);
+  }
+  .cd-beam::after {
+    content: "";
+    @apply absolute inset-y-0 left-0 w-2/5;
+    background: linear-gradient(90deg, transparent, var(--color-lilac), transparent);
+    animation: cdSweep 2.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+  .cd-ready .cd-beam {
+    background: var(--color-go);
+    box-shadow: 0 0 10px rgba(124, 227, 168, 0.7);
+  }
+  .cd-ready .cd-beam::after {
+    @apply hidden;
+  }
+
+  /* The commit button, absent until the key is complete. `grid-template-rows`
+     0fr → 1fr is what animates the panel's own height; the button then rides up
+     into the space that opened. Doing it with max-height would need a magic
+     pixel value that breaks the day the label wraps. */
+  .cd-go {
+    @apply grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.34s cubic-bezier(0.22, 0.75, 0.3, 1);
+  }
+  /* The clipped row. `min-h-0` is not decoration: a grid item's automatic
+     minimum size would otherwise hold the track open at the button's height and
+     0fr would collapse nothing. */
+  .cd-go-in {
+    @apply min-h-0 overflow-hidden;
+  }
+  .cd-gobtn {
+    @apply mt-3 inline-flex w-full items-center justify-center gap-1.5 font-mono tracking-[0.06em] uppercase opacity-0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.26s ease 0.08s,
+      transform 0.34s cubic-bezier(0.22, 0.75, 0.3, 1) 0.06s;
+  }
+  .cd-ready .cd-go {
+    grid-template-rows: 1fr;
+  }
+  .cd-ready .cd-gobtn {
+    @apply opacity-100;
+    transform: none;
+  }
+  /* Nothing inside a collapsed row should be reachable. `visibility` cannot be
+     used — it would kill the fade — so the script sets `disabled` in step with
+     the class, which takes it out of the tab order; this is the pointer half. */
+  .cd-gobtn:disabled {
+    @apply pointer-events-none;
+  }
+
+  /* ---------- site search overlay ---------- */
+  .ssbtn {
+    @apply mr-0.5 inline-flex h-8 w-[34px] cursor-pointer items-center justify-center rounded-[9px] border bg-none text-ink-soft;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  .ssbtn svg {
+    @apply h-4 w-4;
+  }
+  .ssbtn:hover {
+    @apply text-white;
+    border-color: var(--color-lilac);
+  }
+  /* The overlay fades both ways, which is why it is NOT display-toggled. `display`
+     is discrete: `hidden` → `flex` puts the panel on screen in one frame and takes
+     it off in one, and there is no frame in between for an opacity to run in. So
+     the layer is permanently laid out and switched on `opacity` + `visibility`
+     instead, and the two need each other — opacity alone leaves an invisible
+     full-screen layer in the tab order and over the page.
+
+     `visibility` is discrete too, so it is transitioned at 0s and DELAYED by the
+     fade on the way out: that keeps the panel visible for exactly as long as the
+     opacity takes to reach 0, then hides it. Opening cancels the delay (see
+     `.open`) — without that override the panel is still `visibility: hidden` when
+     `initSearch` focuses the field 30ms later, and the focus silently fails.
+     One duration drives all of it, hence the custom property. */
+  #ssearch {
+    --ss-fade: 120ms;
+    @apply pointer-events-none invisible fixed inset-0 z-[800] flex items-start justify-center opacity-0;
+    /* The scrim is lighter than it was (0.78) because at that alpha there was
+       almost nothing left to blur: the page behind read as flat near-black and
+       the filter was paying for an effect nobody could see. The dialog carries
+       its own opaque surface and shadow, so what this has to do is separate the
+       panel from the page, not hide the page. Same figures as the nav panels. */
+    background: rgba(10, 8, 22, 0.62);
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    padding-top: 9vh;
+    transition:
+      opacity var(--ss-fade) ease,
+      visibility 0s linear var(--ss-fade);
+  }
+  #ssearch.open {
+    @apply pointer-events-auto visible opacity-100;
+    transition:
+      opacity var(--ss-fade) ease,
+      visibility 0s;
+  }
+  .ssbox {
+    @apply rounded-2xl border p-3.5;
+    width: min(680px, 92vw);
+    background: var(--color-surface-2);
+    border-color: var(--color-line);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  }
+  .ssrow {
+    @apply flex gap-2;
+  }
+  #ssq {
+    @apply flex-1 rounded-[10px] px-3.5 py-[11px] font-[inherit] text-base text-white outline-none;
+    background: var(--color-screen);
+    border: 1.5px solid rgba(165, 140, 255, 0.5);
+  }
+  #ssq:focus {
+    border-color: var(--color-lilac);
+  }
+  .ssx {
+    @apply w-11 cursor-pointer rounded-[10px] border bg-none text-[15px] text-ink-soft;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  #ssr {
+    @apply mt-2.5 max-h-[52vh] overflow-y-auto;
+  }
+  #ssr a {
+    @apply block rounded-[10px] px-3 py-2.5 no-underline;
+    color: #e9e2ff;
+  }
+  #ssr a:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  #ssr a b {
+    @apply text-[14.5px];
+  }
+  #ssr a span {
+    @apply float-right font-mono text-[11px] text-faint;
+  }
+  #ssr a p {
+    @apply mt-[3px] mb-0 text-xs;
+    color: #9d92c8;
+  }
+  .ssnone {
+    @apply p-3.5 text-sm;
+    color: #9d92c8;
+  }
+
+  /* ---------- collab scene ---------- */
+  /* No card around the diagram (Damian, 27 Aug 2026). It used to be a full-bleed
+     panel -- 18px radius, a border, and a radial wash over #12102a -- holding an
+     860px figure, so on a wide window a third of the panel each side was empty
+     box. Two card treatments then stacked: that panel, and the three .clb-cap
+     legend cards below it at a different radius over a different background.
+     The diagram now sits on the page and the caps are the only carded thing in
+     the section.
+
+     This is not a new decision. /platform/how reached it first and carried
+     `background: none; border: none` as a page-scoped override, for the reason
+     its comment gives -- "a floating diagram rather than a box competing with
+     the layer cards underneath it". Same figure, same problem, so the treatment
+     is promoted to the shared rule and that override is deleted rather than a
+     second exception being added beside it.
+
+     `relative` stays: .clb-replay is positioned against this box. The padding
+     stays too -- with the figure capped it does nothing on desktop, but below
+     the cap the svg fills the width and the inset is what keeps it off the
+     edge. The print sheet still forces #100c22 with !important, which it has to:
+     these strokes are drawn for a dark ground and would vanish on paper. */
+  .clbwrap {
+    @apply relative my-5 mb-3.5 px-[18px] pt-[18px] pb-2;
+  }
+  /* A0.8.f1. The 860px measure this scene was designed at is now handed to the
+     figure ceiling in pages.css as --fig-w rather than set as max-width here.
+     It has to leave this file: global.css @imports pages.css at line 2, so a
+     max-width declared here beats the ceiling's and the figure stays ~527px tall
+     however short the window is. That is the bug Damian reported twice. */
+  .clbwrap svg {
+    @apply mx-auto block h-auto w-full;
+    --fig-w: 860px;
+  }
+  .clb-caps {
+    @apply mt-0 mb-2 grid grid-cols-3 gap-3.5;
+  }
+  @media (max-width: 820px) {
+    .clb-caps {
+      @apply grid-cols-1;
+    }
+  }
+  .clb-cap {
+    @apply rounded-xl border px-4 py-3.5;
+    background: var(--color-glass);
+    border-color: var(--color-glass-line);
+  }
+  /* <h3>, not <b>. These three name the layers the <h2> above announces, so
+     they belong in the heading outline rather than being bold text that only
+     looks like a heading. font-bold is doing real work: Tailwind's preflight
+     resets headings to font-weight: inherit while leaving b at bolder, so the
+     swap would silently drop the weight without it. Everything else is the
+     rule that was here, so the cards render identically. */
+  .clb-cap h3 {
+    @apply mt-0 mb-1 block text-[21px] font-bold text-bright;
+  }
+  .clb-cap p {
+    @apply m-0 text-[13px] text-muted;
+  }
+  /* The heading over the diagram. Left-aligned at the same 21px sub-head scale
+     the rest of the sheet uses, so it reads as a step down from the section's
+     <h2> and not as a second section opening.
+
+     mt-8 against .clb-caps' mb-2 gives 40px between the legend cards and this,
+     which is the gap that stops the diagram looking like a fourth card in the
+     grid above it. .clbwrap's own my-5 supplies the 20px beneath. */
+  .clb-how {
+    @apply mt-8 mb-0 text-[21px] font-bold text-bright;
+  }
+  .clb-replay {
+    @apply absolute top-2.5 right-3 h-8 w-8 cursor-pointer rounded-[9px] border text-[17px] leading-none;
+    background: rgba(143, 122, 224, 0.14);
+    border-color: rgba(165, 140, 255, 0.42);
+    color: #cfc2ff;
+    transition: background 0.2s;
+  }
+  .clb-replay:hover {
+    background: rgba(143, 122, 224, 0.3);
+  }
+
+  /* ---------- easy ×3 band ---------- */
+  .easy3 {
+    @apply grid grid-cols-3 gap-3.5;
+  }
+  @media (max-width: 820px) {
+    .easy3 {
+      @apply grid-cols-1;
+    }
+  }
+  .e3 {
+    @apply rounded-[14px] border px-[22px] py-5;
+    background: var(--color-glass);
+    border-color: var(--color-glass-line);
+    backdrop-filter: blur(9px);
+  }
+  .e3 .ic {
+    @apply mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl border;
+    background: linear-gradient(150deg, #2a2153, #1a1435);
+    border-color: var(--color-line-lilac);
+  }
+  .e3 .ic svg {
+    @apply h-6 w-6;
+  }
+  .e3 b,
+  .e3 h3 {
+    @apply mt-0 mb-[5px] block text-[21px] leading-tight text-bright;
+  }
+  .e3 p {
+    @apply m-0 text-[13px] text-muted;
+  }
+
+  /* ---------- "where the meeting lives" stage ---------- */
+  .wml {
+    @apply my-[22px] mb-1 grid gap-3 overflow-visible rounded-[18px] border p-[22px];
+    grid-template-columns: 200px 1fr 1.25fr;
+    background:
+      radial-gradient(700px 320px at 78% 0%, rgba(124, 227, 168, 0.06), transparent 60%),
+      linear-gradient(150deg, #171231, #100c22);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  @media (max-width: 860px) {
+    .wml {
+      @apply grid-cols-1 p-4;
+    }
+    .wml-rlbl {
+      @apply hidden;
+    }
+  }
+  .wml-hd {
+    @apply flex items-center gap-2 px-1.5 pt-1 pb-2.5 text-[13px] font-extrabold tracking-wide uppercase;
+  }
+  .wml-hd svg {
+    @apply h-[17px] w-[17px];
+  }
+  .wml-lock {
+    color: var(--color-warn);
+  }
+  .wml-agn {
+    color: var(--color-go);
+  }
+  .wml-rung {
+    @apply flex flex-col justify-center rounded-r-lg border-l-[3px] px-3 py-2.5;
+    border-left-color: var(--color-line);
+    transition:
+      border-color 0.5s,
+      background 0.5s;
+  }
+  .wml-rung b {
+    @apply text-base tracking-[0.5px] text-bright;
+  }
+  .wml-rung span {
+    @apply mt-[3px] text-xs leading-snug text-faint-2;
+  }
+  .wml-cell {
+    @apply relative min-h-[118px] min-w-0 rounded-xl px-4 pt-4 pb-3;
+    transition:
+      transform 0.6s,
+      box-shadow 0.6s,
+      border-color 0.6s;
+  }
+  .wml-cell p {
+    @apply my-1.5 text-[13px] leading-[1.5] text-muted-2;
+  }
+  .wml-locked {
+    @apply border opacity-[0.78];
+    background: rgba(255, 255, 255, 0.015);
+    border-color: var(--color-line-dim);
+  }
+  .wml-locked .wml-who {
+    color: #c9977f;
+  }
+  .wml-who {
+    @apply text-[11px] font-bold tracking-[0.6px] uppercase text-muted;
+  }
+  .wml-who.dim {
+    @apply mt-2 border-t border-dashed pt-[7px] text-[normal] font-semibold tracking-[0.2px] normal-case text-faint-2;
+    border-top-color: var(--color-line-dim);
+  }
+  .wml-eq {
+    @apply mt-0.5 text-[13px] leading-[1.35] font-extrabold tracking-[0.4px] break-words text-go;
+  }
+  .wml-eq i {
+    @apply text-xs font-semibold tracking-[0.2px] not-italic;
+    color: #bfe9d2;
+  }
+  .wml-badge {
+    @apply absolute top-[-11px] right-3 translate-y-1.5 rounded-xl px-[11px] py-[3px] text-[10.5px] font-bold tracking-[0.5px] text-white opacity-0;
+    background: linear-gradient(90deg, #6d5bb8, #8f7ae0);
+    box-shadow: 0 0 16px rgba(143, 122, 224, 0.55);
+  }
+  .wml-cell:hover {
+    @apply -translate-y-1;
+    border-color: var(--color-accent-hi);
+  }
+
+  /* ---------- mersive DNA callout ---------- */
+  .mdna {
+    @apply my-5 rounded-r-xl border-l-[3px] px-6 py-5;
+    border-left-color: var(--color-accent);
+    background: var(--color-surface-3);
+  }
+  .mdna h3 {
+    @apply mt-0 mb-2 text-[21px] text-bright;
+  }
+  .mdna p {
+    @apply my-2 text-sm text-lav;
+  }
+  .mdna .concede {
+    @apply mt-3 border-t border-dashed pt-2.5 text-[13px] text-muted-2 italic;
+    border-top-color: var(--color-line);
+  }
+
+  /* ---------- 10-year band ---------- */
+  .why8 {
+    @apply my-[18px] mb-[26px] grid gap-3;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  @media (max-width: 1080px) {
+    .why8 {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+  .why8 .w8 {
+    @apply relative overflow-hidden rounded-[14px] border px-4 py-[18px];
+    background: var(--color-glass);
+    border-color: var(--color-glass-line);
+    backdrop-filter: blur(9px);
+  }
+  .why8 .w8 .n {
+    @apply mb-[7px] text-[26px] leading-none font-extrabold text-bright;
+  }
+  .why8 .w8 b {
+    @apply mb-1.5 block text-sm text-bright;
+  }
+  .why8 .w8 p {
+    @apply m-0 text-[12.4px] leading-[1.5] text-muted;
+  }
+
+  /* ---------- review page IDs (pink = temporary) ---------- */
+  .pgid {
+    @apply mr-2 inline-block rounded-md px-2 py-px align-middle font-mono text-[11px] font-extrabold;
+    background: #ffb3e0;
+    color: #5c0f3d;
+    border: 1.5px solid #ff5cb8;
+    letter-spacing: 0.05em;
+  }
+  .pgid-s {
+    @apply absolute top-1.5 right-1.5 z-[5] opacity-90;
+  }
+  .pgid-host {
+    @apply relative;
+  }
+  .pgid-f {
+    @apply absolute top-1.5 left-1.5 z-[5] px-1.5 text-[10px] opacity-90;
+  }
+  .pgid-n {
+    @apply ml-1.5 inline-block rounded px-1 align-middle font-mono text-[9.5px] font-extrabold;
+    background: #ffb3e0;
+    color: #5c0f3d;
+    border: 1px solid #ff5cb8;
+  }
+  /* Review chrome: bracketed placeholders and verification notes, so nothing
+     unverified reaches production unnoticed. Delete with the other review
+     chrome at launch (see AGENTS.md). */
+  .vflag {
+    @apply rounded-[3px] px-1 font-semibold;
+    background: #ffe600;
+    color: #241c05;
+    box-shadow: 0 0 0 1px #b8a600;
+  }
+  .pgid-row {
+    @apply mx-auto mt-2 mb-[-6px] max-w-page px-1;
+  }
+}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+@keyframes cstDraw {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.195;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.195;
+  }
+}
+/* Once the figure is complete it fades out over two seconds and does not come
+   back: the trace is something the sky does once as you arrive, not a loop.
+   `both` holds the end state, so the lines stay gone rather than snapping back. */
+@keyframes cstFade {
+  from {
+    opacity: 0.195;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes twk {
+  0%,
+  100% {
+    opacity: var(--lo, 0.12);
+  }
+  46% {
+    opacity: var(--hi, 0.55);
+  }
+  54% {
+    opacity: calc(var(--hi, 0.55) * 0.82);
+  }
+  70% {
+    opacity: var(--hi, 0.55);
+  }
+}
+/* Two tiers, each looping on its own resting level so the handoff from the
+   opacity in the rule to the animation is seamless - the 404 chart had a
+   visible drop for exactly this reason. */
+@keyframes cstTwk {
+  0%,
+  100% {
+    opacity: 0.34;
+  }
+  50% {
+    opacity: 0.52;
+  }
+}
+@keyframes cstTwkF {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 0.82;
+  }
+}
+/* nav dropdown: panel drops, then its rows cascade in from the left */
+@keyframes dropPanelIn {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes dropRowIn {
+  from {
+    transform: translateX(-9px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+/* One pass of light across a nav product card. It fades in and out inside its
+   own timeline rather than at the edges of the card, so the band is never a hard
+   rectangle appearing at one border and disappearing at the other. */
+@keyframes navcardSweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  22% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+/* The tittle of the `i` in "polaris" catching the light. Deliberately lopsided:
+   up fast to a short peak at 18%, then a long tail out, which is how a specular
+   highlight behaves and is the difference between a twinkle and a pulse. Peak
+   opacity is 0.9 rather than 1 and the scale barely moves — the brief is
+   "very minimal", and at 7px anything more reads as a notification badge. */
+@keyframes logoTwinkle {
+  0% {
+    opacity: 0;
+    scale: 0.55;
+  }
+  18% {
+    opacity: 0.9;
+    scale: 1;
+  }
+  34% {
+    opacity: 0.55;
+    scale: 0.92;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+@keyframes rise {
+  from {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes tin {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes flt {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+@keyframes beam {
+  to {
+    left: calc(100% - 9px);
+  }
+}
+/* connect panel: the status lamp breathing while the key is incomplete */
+@keyframes cdPulse {
+  0%,
+  100% {
+    background: #4a3d7d;
+    box-shadow: 0 0 0 rgba(165, 140, 255, 0);
+  }
+  50% {
+    background: var(--color-lilac);
+    box-shadow: 0 0 7px rgba(165, 140, 255, 0.7);
+  }
+}
+/* the carrier line sweeping under the six cells, looking for a room */
+@keyframes cdSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+/* the lock-on: every cell takes this at the same moment, so the six read as one
+   event. A short overshoot rather than a flash — it lands, it does not blink. */
+@keyframes cdLock {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(1.13);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes beamv {
+  to {
+    top: calc(100% - 9px);
+  }
+}
+@keyframes lglow {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+@keyframes wsgrow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+@keyframes orb {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes wmlcell {
+  0%,
+  30% {
+    transform: translateY(-4px);
+    border-color: #8f7ae0;
+    box-shadow: 0 10px 34px rgba(143, 122, 224, 0.28);
+  }
+  36%,
+  100% {
+    transform: none;
+    border-color: #3a3160;
+    box-shadow: none;
+  }
+}
+@keyframes wmlbadge {
+  0%,
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  36%,
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes clbdash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+@keyframes clbp {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes clborb {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+/* animated layer icons */
+.lglow {
+  animation: lglow 3.2s ease-in-out infinite;
+}
+.wsgrow {
+  animation: wsgrow 4s ease-in-out infinite;
+  transform-origin: 33.5px 33px;
+  transform-box: view-box;
+}
+.orb {
+  animation: orb 5.5s linear infinite;
+  transform-origin: 24px 24px;
+  transform-box: view-box;
+}
+
+/* the meeting climbs: BYOD → BYOM → BY on a 13.5s loop */
+.wml-a1,
+.wml-a1 .wml-badge {
+  animation-duration: 13.5s;
+  animation-iteration-count: infinite;
+  animation-delay: 0s;
+}
+.wml-a2,
+.wml-a2 .wml-badge {
+  animation-duration: 13.5s;
+  animation-iteration-count: infinite;
+  animation-delay: 4.5s;
+}
+.wml-a3,
+.wml-a3 .wml-badge {
+  animation-duration: 13.5s;
+  animation-iteration-count: infinite;
+  animation-delay: 9s;
+}
+.wml-a1,
+.wml-a2,
+.wml-a3 {
+  animation-name: wmlcell;
+}
+.wml-a1 .wml-badge,
+.wml-a2 .wml-badge,
+.wml-a3 .wml-badge {
+  animation-name: wmlbadge;
+}
+
+/* collab scene motion */
+.clb-flow {
+  animation: clbdash 2.6s linear infinite;
+}
+.clb-pulse {
+  animation: clbp 3.4s ease-in-out infinite;
+}
+.clb-orb {
+  animation: clborb 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lglow,
+  .wsgrow,
+  .orb,
+  .clb-flow,
+  .clb-pulse,
+  .clb-orb,
+  .wml-a1,
+  .wml-a2,
+  .wml-a3,
+  .wml-badge,
+  .star,
+  .hm-stage,
+  .conn::after,
+  .mediaband .devwrap,
+  .topitem .drop,
+  .topitem .drop > *,
+  .drop .navsub a,
+  .drop .navcards a.navcard,
+  /* The card keeps its hover and press COLOURS and loses the movement: the sweep
+     never becomes visible (the band sits at opacity 0 until its animation runs),
+     the lift and the press-scale are dropped, and the border and background
+     still answer the pointer — instantly, since the transition goes with them. */
+  .drop .navcards a.navcard::after,
+  /* The connect panel keeps every colour change and loses every movement: the
+     lamp and the cells still go mint on lock, the beam still turns solid, the
+     sweep and the overshoot stop. Nothing here carried information by moving. */
+  .cd-stat i,
+  .cd-beam::after,
+  .cd-ready .cd-key {
+    animation: none !important;
+  }
+  .cd-go,
+  .cd-gobtn,
+  .drop a:not(.navcard),
+  .drop .navcards a.navcard,
+  .drop .navcards a.navcard .navcard-fig img,
+  /* The search overlay appears and goes instantly. Killing the transition takes
+     the `visibility` delay with it, which is what we want here — the panel hides
+     in the same frame it stops being open, so nothing is left half-faded. */
+  #ssearch,
+  #ssearch.open {
+    transition: none !important;
+  }
+  /* The text rows lose the 3px nudge and keep the colour change, exactly as the
+     card loses its lift and keeps its light: nothing here said anything by
+     moving. */
+  .drop a:not(.navcard):hover,
+  .drop a:not(.navcard):focus-visible,
+  .drop .navcards a.navcard,
+  .drop .navcards a.navcard:hover,
+  .drop .navcards a.navcard:active,
+  .drop .navcards a.navcard .navcard-fig img {
+    translate: none !important;
+    scale: none !important;
+  }
+  .cd-gobtn {
+    transform: none !important;
+  }
+  .star.d1,
+  .star.d2,
+  .star.d3,
+  .cstlines .d1,
+  .cstlines .d2,
+  .cstlines .d3,
+  .cstlines .df {
+    transform: none !important;
+  }
+  .cstlines .cstl,
+  .xhero.lit .cstlines .cstl {
+    animation: none !important;
+    opacity: 0.12;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  .wml-a3 .wml-badge {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .btn::before,
+  .card::after,
+  .diff::after,
+  .tiercard::after {
+    transition: none;
+    display: none;
+  }
+}

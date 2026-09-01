@@ -1,0 +1,201 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/cross-network">
+  <PageIntro
+    route={"platform/cross-network"}
+    tpl={"T5"}
+    title={"Screen sharing across guest Wi-Fi, VLANs, and networks nobody bridged."}
+    dek={"Subnets, VLANs, guest Wi-Fi, LTE, the building across town: one workspace, no VPN, no UC call, no cables. This is the capability that sets Polaris apart. Of the twelve competitors we checked in August 2026, only one documents an off-LAN path at all &mdash; and it routes signalling through Azure West Europe and needs two full ephemeral port ranges open. The vendor-by-vendor check lives in the <a href=\"/compare/hub\">compare matrix</a>."}
+  />
+
+    <div class="cnpwrap reveal">
+      <svg class="fig-desktop" viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sequence diagram, time running downward. Actors: guest device on guest Wi-Fi, Polaris Cloud, Polaris pod on the AV VLAN, with stateful firewalls between them. Step 1: both sides dial out over TLS 443; no inbound rules. Step 2: the guest's screen key resolves to this room. Step 3: SDP and ICE are exchanged so each side learns a direct path. Step 4: media flows peer-to-peer, encrypted, hopping over the cloud's lifeline, which goes idle. Step 5: an unsolicited packet is dropped at the firewall.">
+        <defs>
+          <pattern id="sqhatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(232,161,132,.30)" stroke-width="1.2"/></pattern>
+          <pattern id="sqgrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="rgba(165,140,255,.05)" stroke-width="1"/></pattern>
+        </defs>
+        <rect x="4" y="4" width="752" height="512" fill="url(#sqgrid)"/>
+        <rect x="4" y="4" width="752" height="512" fill="none" stroke="rgba(165,140,255,.18)" stroke-width="1"/>
+
+        <!-- actors -->
+        <rect x="88" y="26" width="124" height="42" rx="4" fill="#14102c" stroke="#4a8fb0" stroke-width="1.8"/>
+        <text x="150" y="44" text-anchor="middle" fill="#7fc6dd" font-size="11" font-weight="800" letter-spacing="1">GUEST DEVICE</text>
+        <text x="150" y="59" text-anchor="middle" fill="#6a9db0" font-size="9" font-family="ui-monospace,Menlo,monospace">guest Wi-Fi / LTE</text>
+        <rect x="310" y="26" width="140" height="42" rx="21" fill="rgba(143,122,224,.10)" stroke="#a58cff" stroke-width="1.8"/>
+        <text x="380" y="44" text-anchor="middle" fill="#e2d9ff" font-size="11" font-weight="800" letter-spacing="1">POLARIS CLOUD</text>
+        <text x="380" y="59" text-anchor="middle" fill="#8a7fb8" font-size="9" font-family="ui-monospace,Menlo,monospace">signaling broker</text>
+        <rect x="548" y="26" width="124" height="42" rx="4" fill="#14102c" stroke="#6d5bb8" stroke-width="1.8"/>
+        <text x="610" y="44" text-anchor="middle" fill="#b09aff" font-size="11" font-weight="800" letter-spacing="1">POLARIS POD</text>
+        <text x="610" y="59" text-anchor="middle" fill="#8a7fb8" font-size="9" font-family="ui-monospace,Menlo,monospace">display · AV VLAN</text>
+
+        <!-- lifelines -->
+        <path d="M150 76 V444" stroke="rgba(127,198,221,.35)" stroke-width="1.2" fill="none"/>
+        <path d="M380 76 V296" stroke="rgba(165,140,255,.45)" stroke-width="1.2" fill="none"/>
+        <path d="M380 296 V444" stroke="rgba(165,140,255,.22)" stroke-width="1.2" stroke-dasharray="2 6" fill="none"/>
+        <path d="M610 76 V444" stroke="rgba(165,140,255,.35)" stroke-width="1.2" fill="none"/>
+
+        <!-- firewalls -->
+        <rect x="258" y="76" width="14" height="368" fill="url(#sqhatch)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+        <rect x="488" y="76" width="14" height="368" fill="url(#sqhatch)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+
+        <!-- step 1: dial out -->
+        <g class="sq1">
+          <text x="265" y="104" text-anchor="middle" fill="#b09aff" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">1 · DIAL OUT · TLS 443</text>
+          <text x="495" y="104" text-anchor="middle" fill="#b09aff" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">1 · DIAL OUT · TLS 443</text>
+          <path d="M150 114 H370" stroke="#a58cff" stroke-width="1.6" fill="none"/><path d="M370 114 l-8 -4 v8 z" fill="#a58cff"/>
+          <path d="M610 114 H390" stroke="#a58cff" stroke-width="1.6" fill="none"/><path d="M390 114 l8 -4 v8 z" fill="#a58cff"/>
+          <text x="380" y="136" text-anchor="middle" fill="#8a7fb8" font-size="9">both connections start inside the network &#8212; no inbound rules, no open ports</text>
+        </g>
+
+        <!-- step 2: key resolves -->
+        <g class="sq2">
+          <text x="265" y="166" text-anchor="middle" fill="#7fc6dd" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">2 · SCREEN KEY · K7RM2X</text>
+          <path d="M150 176 H370" stroke="#4a8fb0" stroke-width="1.6" fill="none"/><path d="M370 176 l-8 -4 v8 z" fill="#4a8fb0"/>
+          <rect x="304" y="186" width="152" height="18" rx="3" fill="rgba(165,140,255,.12)" stroke="#a58cff" stroke-width="1"/>
+          <text x="380" y="198.5" text-anchor="middle" fill="#e2d9ff" font-size="8.5" letter-spacing=".8" font-family="ui-monospace,Menlo,monospace">KEY RESOLVES TO THIS ROOM</text>
+        </g>
+
+        <!-- step 3: introduction -->
+        <g class="sq3">
+          <text x="265" y="236" text-anchor="middle" fill="#b09aff" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">3 · SDP · ICE EXCHANGED</text>
+          <text x="495" y="236" text-anchor="middle" fill="#b09aff" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">3 · SDP · ICE EXCHANGED</text>
+          <path d="M158 246 H372" stroke="#a58cff" stroke-width="1.6" fill="none"/>
+          <path d="M158 246 l8 -4 v8 z" fill="#a58cff"/><path d="M372 246 l-8 -4 v8 z" fill="#a58cff"/>
+          <path d="M388 246 H602" stroke="#a58cff" stroke-width="1.6" fill="none"/>
+          <path d="M388 246 l8 -4 v8 z" fill="#a58cff"/><path d="M602 246 l-8 -4 v8 z" fill="#a58cff"/>
+          <text x="380" y="268" text-anchor="middle" fill="#8a7fb8" font-size="9">each side learns a direct path to the other</text>
+        </g>
+
+        <!-- step 4: direct media -->
+        <g class="sq4">
+          <text x="380" y="296" text-anchor="middle" fill="#7ce3a8" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">4 · DIRECT MEDIA · ENCRYPTED · DTLS-SRTP</text>
+          <rect x="256" y="300" width="18" height="24" fill="#100c22" stroke="rgba(124,227,168,.5)" stroke-width="1"/>
+          <rect x="486" y="300" width="18" height="24" fill="#100c22" stroke="rgba(124,227,168,.5)" stroke-width="1"/>
+          <path d="M156 312 H370 Q380 297 390 312 H604" stroke="#7ce3a8" stroke-width="3" fill="none"/>
+          <path d="M156 312 l10 -5 v10 z" fill="#7ce3a8"/><path d="M604 312 l-10 -5 v10 z" fill="#7ce3a8"/>
+          <text x="380" y="337" text-anchor="middle" fill="#5fae85" font-size="9" letter-spacing=".6" font-family="ui-monospace,Menlo,monospace">EPHEMERAL UDP · PEER-TO-PEER · SOLICITED FLOW PASSES THE STATEFUL FW</text>
+          <text x="380" y="358" text-anchor="middle" fill="#8a7fb8" font-size="9" letter-spacing="1" font-family="ui-monospace,Menlo,monospace" opacity=".8">CLOUD IDLE · OUT OF THE MEDIA PATH</text>
+        </g>
+
+        <!-- step 5: unsolicited drops -->
+        <g class="sq5">
+          <text x="300" y="390" text-anchor="middle" fill="#c98a72" font-size="9.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">5 · UNSOLICITED PACKET</text>
+          <path d="M150 400 H470" stroke="#e8a184" stroke-width="1.2" stroke-dasharray="3 5" opacity=".55" fill="none"/>
+          <circle cx="478" cy="400" r="8" fill="#0e0b1e" stroke="#e8a184" stroke-width="1.5"/>
+          <text x="478" y="404" text-anchor="middle" fill="#e8a184" font-size="10" font-weight="700">✕</text>
+          <text x="512" y="404" text-anchor="start" fill="#c98a72" font-size="9" letter-spacing=".6" font-family="ui-monospace,Menlo,monospace">DROPPED · NO RULE MATCHES</text>
+        </g>
+
+        <!-- footer -->
+        <text x="265" y="462" text-anchor="middle" fill="#c98a72" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">STATEFUL FW · OUTBOUND ONLY</text>
+        <text x="495" y="462" text-anchor="middle" fill="#c98a72" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">STATEFUL FW · OUTBOUND ONLY</text>
+        <line x1="40" y1="480" x2="720" y2="480" stroke="rgba(165,140,255,.14)" stroke-width="1"/>
+        <text x="40" y="496" fill="#8a7fb8" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">CNX-01 · CROSS-NETWORK DATA PATH · TIME RUNS DOWNWARD · CLOUD = SIGNALING ONLY</text>
+        <text x="720" y="496" text-anchor="end" fill="#8a7fb8" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">SHEET 1/1 · REV C</text>
+      </svg>
+      <svg class="fig-mobile" viewBox="0 0 360 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three steps: the guest device and the display sit on networks with no route between them; both sides dial out to Polaris Cloud for signaling only; the cloud introduces them and media then flows over a direct encrypted connection.">
+        <defs><pattern id="bphatchm" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(232,161,132,.30)" stroke-width="1.2"/></pattern></defs>
+
+        <!-- step 1: no route -->
+        <text x="14" y="24" fill="#c98a72" font-size="12" font-weight="800" letter-spacing="1.5">1 · NO ROUTE</text>
+        <text x="14" y="44" fill="#8a7fb8" font-size="11.5">Guest Wi-Fi and the display&#8217;s VLAN</text>
+        <text x="14" y="59" fill="#8a7fb8" font-size="11.5">have no route between them.</text>
+        <rect x="172" y="76" width="18" height="104" fill="url(#bphatchm)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+        <rect x="28" y="92" width="104" height="62" rx="4" fill="#14102c" stroke="#6d5bb8" stroke-width="1.8"/>
+        <rect x="36" y="100" width="42" height="46" rx="2" fill="rgba(165,140,255,.30)"/>
+        <rect x="84" y="100" width="40" height="46" rx="2" fill="rgba(79,166,199,.30)"/>
+        <rect x="62" y="158" width="36" height="9" rx="2" fill="#14102c" stroke="#6d5bb8" stroke-width="1.4"/>
+        <text x="80" y="182" text-anchor="middle" fill="#8a7fb8" font-size="9" font-family="ui-monospace,Menlo,monospace">DISPLAY · AV VLAN</text>
+        <rect x="300" y="90" width="34" height="66" rx="5" fill="#14102c" stroke="#4a8fb0" stroke-width="1.6"/>
+        <text x="317" y="182" text-anchor="middle" fill="#8a7fb8" font-size="9" font-family="ui-monospace,Menlo,monospace">GUEST DEVICE</text>
+        <path d="M300 122 H196" stroke="#e8a184" stroke-width="1.2" stroke-dasharray="3 5" opacity=".6" fill="none"/>
+        <circle cx="212" cy="122" r="8" fill="#0e0b1e" stroke="#e8a184" stroke-width="1.5"/>
+        <text x="212" y="126" text-anchor="middle" fill="#e8a184" font-size="10" font-weight="700">✕</text>
+
+        <!-- step 2: the handshake -->
+        <g transform="translate(0 200)">
+          <text x="14" y="24" fill="#b09aff" font-size="12" font-weight="800" letter-spacing="1.5">2 · THE HANDSHAKE</text>
+          <text x="14" y="44" fill="#8a7fb8" font-size="11.5">Both sides dial out to Polaris Cloud:</text>
+          <text x="14" y="59" fill="#8a7fb8" font-size="11.5">TLS 443, signaling only.</text>
+          <rect x="120" y="72" width="120" height="30" rx="15" fill="rgba(143,122,224,.10)" stroke="#a58cff" stroke-width="1.6"/>
+          <text x="180" y="91" text-anchor="middle" fill="#e2d9ff" font-size="9.5" font-weight="700" letter-spacing="1.2">POLARIS CLOUD</text>
+          <rect x="172" y="112" width="18" height="68" fill="url(#bphatchm)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+          <rect x="28" y="118" width="104" height="54" rx="4" fill="#14102c" stroke="#6d5bb8" stroke-width="1.8"/>
+          <rect x="300" y="114" width="34" height="60" rx="5" fill="#14102c" stroke="#4a8fb0" stroke-width="1.6"/>
+          <path d="M84 118 Q88 88 116 87" stroke="#a58cff" stroke-width="1.4" stroke-dasharray="4 5" opacity=".8" fill="none"/>
+          <path d="M312 114 Q306 86 244 86" stroke="#a58cff" stroke-width="1.4" stroke-dasharray="4 5" opacity=".8" fill="none"/>
+          <circle cx="116" cy="87" r="2.4" fill="#a58cff"/>
+          <circle cx="244" cy="86" r="2.4" fill="#a58cff"/>
+          <text x="180" y="110" text-anchor="middle" fill="#8a7fb8" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">SDP · ICE</text>
+        </g>
+
+        <!-- step 3: direct media -->
+        <g transform="translate(0 400)">
+          <text x="14" y="24" fill="#7ce3a8" font-size="12" font-weight="800" letter-spacing="1.5">3 · DIRECT MEDIA</text>
+          <text x="14" y="44" fill="#8a7fb8" font-size="11.5">The cloud introduces them, then steps away.</text>
+          <text x="14" y="59" fill="#8a7fb8" font-size="11.5">Media flows device-to-device, encrypted.</text>
+          <text x="180" y="84" text-anchor="middle" fill="#8a7fb8" font-size="8.5" letter-spacing="1" opacity=".65" font-family="ui-monospace,Menlo,monospace">CLOUD · OUT OF THE MEDIA PATH</text>
+          <rect x="172" y="96" width="18" height="26" fill="url(#bphatchm)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+          <rect x="172" y="152" width="18" height="28" fill="url(#bphatchm)" stroke="rgba(232,161,132,.25)" stroke-width="1"/>
+          <rect x="172" y="122" width="18" height="30" fill="#100c22" stroke="rgba(124,227,168,.45)" stroke-width="1"/>
+          <rect x="28" y="108" width="104" height="58" rx="4" fill="#14102c" stroke="#6d5bb8" stroke-width="1.8"/>
+          <rect x="36" y="116" width="42" height="42" rx="2" fill="rgba(165,140,255,.30)"/>
+          <rect x="84" y="116" width="40" height="42" rx="2" fill="rgba(79,166,199,.30)"/>
+          <rect x="300" y="106" width="34" height="62" rx="5" fill="#14102c" stroke="#4a8fb0" stroke-width="1.6"/>
+          <path d="M132 137 H300" stroke="#7ce3a8" stroke-width="3" fill="none"/>
+          <rect x="209" y="132" width="14" height="11" rx="2" fill="#0e0b1e" stroke="#7ce3a8" stroke-width="1.4"/>
+          <path d="M212.5 132 v-3.5 a3.5 3.5 0 0 1 7 0 v3.5" fill="none" stroke="#7ce3a8" stroke-width="1.4"/>
+          <text x="248" y="160" text-anchor="middle" fill="#7ce3a8" font-size="8.5" letter-spacing="1" font-family="ui-monospace,Menlo,monospace">ENCRYPTED · P2P</text>
+        </g>
+      </svg>
+      <div class="bp-caps">
+        <span class="bp-c1"><b>1.</b> A guest on LTE tries to reach the display directly. No route exists, and none will be created.</span>
+        <span class="bp-c2"><b>2.</b> The share leaves their browser instead: outbound TLS signaling on TCP 443 to webrtc.mersive.com.</span>
+        <span class="bp-c3"><b>3.</b> The cloud introduces the two endpoints; they negotiate a direct, encrypted WebRTC connection. Nothing routes through Mersive; nothing bridges.</span>
+        <span class="bp-c4"><b>4.</b> Content flows device-to-display over that direct connection. Signaling is outbound-only on both sides: no inbound firewall rules.</span>
+      </div>
+      <div class="bp-note">
+        <span><i style="background:#a58cff"></i>thin dashes: signaling to the cloud, outbound TLS</span>
+        <span><i style="background:#8f7ae0"></i>bold lines: media, direct between endpoints</span>
+        <span><i style="background:#7fc6dd"></i>guest shares from the browser, no app</span>
+        <span>hatched walls: routes that never exist; openings: negotiated flows only</span>
+      </div>
+    </div>
+
+    <section class="sect reveal tight">
+      <div class="kicker">Where this saves the day</div>
+      <h2>Three rooms that break a LAN-local system.</h2>
+      <div class="cardrow">
+        <div class="card"><h3>The guest presenter</h3><p>A board member walks in on LTE. No guest Wi-Fi ceremony, no VPN token, no dongle. They join the workspace from a browser and present in under a minute, with zero access to your network.</p><a href="/trial">Try it in your boardroom →</a></div>
+        <div class="card"><h3>The segmented enterprise</h3><p>Corp, guest, AV, and OT networks that must never route to each other, by policy. Polaris keeps the isolation intact and still lands every source on the same display.</p><a href="/solutions/enterprise">The enterprise story →</a></div>
+        <div class="card"><h3>The multi-building campus</h3><p>Engineering in Building C shares to the war room in Building A, across VLANs and fiber, without spinning up a UC call just to move pixels.</p><a href="/solutions/highered">Campus scale →</a></div>
+      </div>
+    </section>
+
+    <div class="cnp-honest reveal">
+      <div class="kicker" style="color:#7ce3a8">The honest part</div>
+      <h3>Where your content actually goes</h3>
+      <p>Polaris Cloud introduces the two ends of a share. It does not carry them.</p>
+      <p>When a source and a display sit on different networks, the signaling service at webrtc.mersive.com exchanges connection details between the sharing device and the display, and the two negotiate a direct, encrypted WebRTC connection between themselves. Your content travels from the device to the display. It does not pass through Mersive.</p>
+      <ul>
+        <li><b>What reaches our cloud:</b> session signaling — the connection details the two endpoints need to find each other. Not your screen.</li>
+        <li><b>What stays on your network:</b> when a source and a display are already on the same network, the connection is negotiated with local addresses only and never leaves the LAN.</li>
+        <li><b>What never happens:</b> no inbound firewall rules, no bridging of your networks. All cloud traffic is outbound TLS on TCP 443 from both sides. A guest device gets zero access to your network; the workspace is the only shared surface.</li>
+        <li><b>Where it doesn't work:</b> networks behind symmetric NAT, which assigns a different external port for every destination. A direct connection cannot be formed through it. Our diagnostic tool tests for this condition specifically and tells you before you deploy.</li>
+      </ul>
+      <p class="note">Candor is the differentiator: this section ships on the public page, not in a gated PDF. The full data-path narrative lives in the <a href="/platform/security">Trust Center</a>.</p>
+    </div>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">The category claim</div>
+      <h2>One competitor documents a version of this. The rest of the category is LAN-local.</h2>
+      <p>Cross-network sharing: across subnets, VLANs, and the internet, without VPN or a UC call. Checked in August 2026 against twelve named competitors, against their own published documentation; the vendor list, sources and retrieval dates are on the <a href="/compare/hub">compare matrix</a>. <b>[Claim pending canonical matrix + legal review.]</b></p>
+      <div class="chips"><span>✓ No VPN</span><span>✓ No UC call</span><span>✓ No inbound holes</span><span>✓ Guest gets zero network access</span><span>✓ Every Polaris tier</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/compare/hub">Check the matrix →</a> &nbsp; <a class="btn accent" href="/platform/security">The security read →</a></p>
+    </div>
+    <CtaBand variant="platform" />
+</BaseLayout>

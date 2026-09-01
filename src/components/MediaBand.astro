@@ -1,0 +1,42 @@
+---
+import { MEDIA_IMG } from "../data/media";
+import { DEV } from "../data/icons";
+
+interface Props {
+  /** Key into DEV for the silhouette fallback: pod | stick | toggle | tablet | al */
+  kind?: string;
+  /** Product name; if the hardware library has a photo for it, that wins. */
+  title: string;
+}
+const { kind = "pod", title } = Astro.props;
+const photo = (MEDIA_IMG as Record<string, string>)[title];
+const silhouette = (DEV as Record<string, string>)[kind] ?? DEV.pod;
+---
+
+{
+  photo ? (
+    <figure class="prodimg reveal">
+      <img src={photo} alt={`${title} hardware`} loading="lazy" />
+      <figcaption>
+        {title}. Real asset from the Mersive hardware library; production replaces with the 3D
+        turntable render (asset workbook).
+      </figcaption>
+    </figure>
+  ) : (
+    <div class="mediaband reveal">
+      <div class="devwrap" set:html={silhouette} />
+      <div class="mnote">
+        <b>PRODUCT MEDIA SLOT: {title}</b>
+        <ul>
+          <li>
+            Hero render: ¾ product view on aurora gradient (silhouette shown is placeholder art
+            direction)
+          </li>
+          <li>Lifestyle shot: the product in a real room, in use</li>
+          <li>Animation loop: the workspace / UI in motion (dock-style concept render)</li>
+        </ul>
+        Assets owed by design; silhouette conveys intended framing.
+      </div>
+    </div>
+  )
+}

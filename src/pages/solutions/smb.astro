@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/smb">
+  <Fragment set:html={indHead("solutions/smb","SMB & Mid-market","Meeting rooms that just work.<br>No AV department required.","You have 10 to 50 rooms, an IT team with a hundred other jobs, and zero patience for room systems that need babysitting. Polaris Essentials makes the room self-serve, for your people and for the guest who walked in two minutes ago.")} />
+    <p class="reveal" style="margin:6px 0 0"><a class="btn accent big" href="/trial">Start a free trial</a> &nbsp; <a class="btn ghost big" href="/partners/where">Find a partner</a></p>
+    <Fragment set:html={indPains("Four ways small estates bleed.","No integrator on retainer, no AV desk to call, so every room problem lands on whoever answers Slack first.",[
+      ["The 9:02 meltdown","The input is wrong, the cable died, and the one person who knew the remote left last year. There's no AV desk to call. The meeting just dies.","Essentials rooms self-serve: walk in, open a browser, share. Nothing to train, nothing to babysit."],
+      ["The guest who can't share","A client arrives with a locked-down laptop. Your room wants an app install, or a dongle from a drawer that's been empty since March.","Web-join: guests share from the browser in under a minute. No install, no admin rights, works on Chromebooks."],
+      ["The care-contract shell game","Hardware here, warranty there, a support contract renewing on a third date, multiplied by every room. You're 10 rooms, not a procurement department.","One annual subscription carries the warranty, updates, and new capabilities for its whole life. One line item, one renewal."],
+      ["Rooms nobody can see","Is Room 3 offline? You find out when the sales call starts. On one competing platform, cloud management is subscription-only with no published free tier; on another it went paid on 20 July 2026 for anything over 50 devices.","Polaris Cloud is included at every tier: every room's health, firmware, and usage on one pane, from a browser."]
+    ])} />
+    <Fragment set:html={indStack("Essentials, wall to wall.","One tier covers the whole estate, and because every Polaris runs the same platform, stepping any room up later is usually just a license change.",[
+      {hot:true,name:"Polaris Essentials",tfor:"Every meeting room",pts:["Full multi-source workspace: every share, side by side","Web-join for guests and Chromebooks: nothing to install","Polaris Cloud management included","Warranty for the life of the subscription: no care contract"],msrp:"from $287.86",msub:"/ room / year · annual subscription",link:"products/essentials",lbl:"See Essentials"},
+      {name:"Launch",ship:"Shipping Q1 2027",tfor:"Overflow spaces & spare displays",pts:["Share-first entry point: one-time hardware purchase","Same platform, same portal as the meeting rooms","Grows up later without a rip-and-replace"],msrp:"[MSRP placeholder]",msub:"one-time purchase · pre-launch",link:"products/element",lbl:"Launch placeholder"},
+      {name:"Polaris Pro",tfor:"When conferencing gets serious",pts:["True wireless BYOM: room camera and mic, no cable","HDMI input and dual 4K60 output, powered over one PoE+ cable","Step up room-by-room; management stays on the same pane"],msrp:"from $575.86",msub:"/ room / year · the step-up tier",link:"products/pro",lbl:"See Pro"}
+    ],"MSRP published on every product page; partner pricing lives in the portal. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Why SMBs pick Polaris","Built for buildings without an AV badge.","Three promises that matter most at this scale, and the trial that proves them on your own network.",[
+      {ic:XIC.webjoin,h:"Guest web-join",p:"The client shares from their own browser (laptop, phone, or Chromebook) with zero access to your network. No guest-Wi-Fi ceremony, no app, no dongle hunt in front of a customer.",link:"platform/how",lbl:"How web-join works"},
+      {ic:XIC.workspace,h:"Zero-training rooms",p:"The room code is on the display; type it into a browser and you're sharing, with the room's controls riding in the same tab. Nobody schedules 'AV training' for a conference room again.",link:"solutions/collab",lbl:"The workspace"},
+      {ic:XIC.shieldx,h:"Full warranty while on active subscription",p:"No care contract sold separately, and no year-four warranty cliff. The subscription carries the hardware warranty, security updates, and new capabilities the whole time you run it.",link:"platform/tco",lbl:"The 10-year math"},
+      {ic:XIC.persist,h:"A trial, not a leap of faith",p:"Real hardware ships to your rooms, direct from Mersive. Run it on your network, in your rooms, with your guests. Then decide. [Trial duration placeholder — Q14 ops.]",link:"trial",lbl:"Start a trial"}
+    ])} />
+    <div class="g3band reveal"><b>Fastest way to know:</b> put a pod on your own displays. Trials ship as real hardware and your reseller stays in the loop. <span class="btns"><a class="btn accent" href="/trial">Start a free trial</a></span></div>
+    <Fragment set:html={indProof("Our rooms went from the thing I dreaded to the thing I forgot about. Nobody's filed a ticket in months.","[Named SMB customer — placeholder]","Head of IT · [company, ~25 rooms placeholder]",[["0","room-support hires needed [placeholder]"],["<1 min","guest to screen [placeholder]"],["1","renewal date for the whole estate"]],"[Proof slot — 1–2 named SMB references with verified stats required before launch; figures shown are illustrative placeholders.]")} />
+    <Fragment set:html={indRes([
+      ["Essentials datasheet (PDF)","Full specs, ordering info, environmentals, ungated. [placeholder]","products/essentials"],
+      ["Which Polaris is right?","Four questions: the same triage our sales engineers run.","products/selector"],
+      ["The 10-year math","TCO calculator: Polaris vs dongles, buttons, and care contracts.","platform/tco"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

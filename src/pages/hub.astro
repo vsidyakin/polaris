@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+import PageIntro from "./../components/PageIntro.astro";
+---
+
+<BaseLayout route="hub">
+  <PageIntro
+    route={"hub"}
+    tpl={"T9"}
+    section={false}
+    title={"One door to everything you log into."}
+    dek={"Support, downloads, training, documentation, the partner portal: all of it, from one page you can bookmark."}
+  />
+
+    <section class="sect reveal tight">
+      <div class="two">
+        <h2 class="sr-only">Choose your hub</h2>
+        <div class="card" style="border-color:rgba(165,140,255,.4)"><div class="kicker">Customers</div><h3>Customer hub</h3><p>Room owners and admins: support, software, firmware, training, and the cloud console for your estate, Mersive Solstice Gen 3 and Polaris alike.</p><a class="btn accent" href="/resources/docs">Documentation &amp; downloads</a> <a class="btn ghost" href="https://mersive.com/support/" target="_blank" rel="noopener">Support ↗</a></div>
+        <div class="card" style="border-color:rgba(124,227,168,.4)"><div class="kicker" style="color:#7ce3a8">Partners</div><h3>Partner hub</h3><p>Resellers, integrators, and distributors: deal registration, pricing, collateral, training, and your directory profile.</p><a class="btn accent" href="https://mersive.my.site.com" target="_blank" rel="noopener">Partner portal ↗</a> <a class="btn ghost" href="/partners/become">Become a partner</a></div>
+      </div>
+    </section>
+
+    <section class="sect reveal tight">
+      <div class="kicker">Everything in one place</div>
+      <div class="three">
+        <div class="card"><h3>Support</h3><p>Tickets, knowledge base, contact.</p><a href="https://mersive.com/support/" target="_blank" rel="noopener">Open support ↗</a></div>
+        <div class="card"><h3>Downloads</h3><p>Apps, firmware, release files.</p><a href="/resources/docs">Documentation hub →</a></div>
+        <div class="card"><h3>Training</h3><p>Courses and certification. [LearnUpon link placeholder]</p><a href="/resources/docs">Learn →</a></div>
+        <div class="card"><h3>Documentation</h3><p>Deployment and admin guides, in the open.</p><a href="https://documentation.mersive.com" target="_blank" rel="noopener">Read the docs ↗</a></div>
+        <div class="card"><h3>Partner portal</h3><p>Deal reg, pricing, collateral.</p><a href="https://mersive.my.site.com" target="_blank" rel="noopener">Log in ↗</a></div>
+        <div class="card"><h3>Release notes</h3><p>What changed, and when.</p><a href="/resources/firmware">Release notes →</a></div>
+      </div>
+      <p class="note" style="margin-top:12px"><b style="color:#e2d9ff">Trouble logging in?</b> Password resets live in each portal; if you&rsquo;re stuck, <a href="/contact">contact us</a> or email support@mersive.com. A human answers. [Rescue-flow copy placeholder pending support-team review.]</p>
+    </section>
+    <CtaBand variant="story" />
+</BaseLayout>

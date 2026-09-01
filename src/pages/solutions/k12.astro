@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/k12">
+  <Fragment set:html={indHead("solutions/k12","K-12","Built for the classroom you actually run: the Chromebook one.","Roughly 60% of K-12 student devices are Chromebooks [placeholder], and Chromebooks don't Miracast. Polaris shares from the browser and Google Cast natively, hands teachers the room, and manages every classroom from the district office.")} />
+    <Fragment set:html={indPains("Where classroom AV loses the period.","Every minute spent on inputs, cables, and pairing comes out of the scarcest budget in the building: instructional time.",[
+      ["Chromebooks can't hit the display","The fleet is Chromebooks, and one vendor's own documentation says it plainly: 'Google (Pixel) Android and Chromebook devices do not support Miracast.' Another serves ChromeOS only through a mandatory Chrome extension, and its own documents disagree about what that can do: the receiver spec sheets list it as a multi-source canvas source, while the security reference guide says it 'is not supported and will only be allowed to present full screen.' Sharing becomes adapters, carts, and a teacher on their knees behind the display.","Web-join and native Google Cast (the two paths Chromebooks actually have) land on the same workspace, side by side."],
+      ["Five minutes of every period, gone","Fumbled inputs, re-pairing, 'can everyone see this?' Small frictions, forty times a week, in every room.","Walk-in-and-teach: the room code is on the display, sharing starts in seconds, from any device the district issues."],
+      ["Another app to deploy district-wide","Every classroom tool wants an extension pushed through MDM, a privacy review, and a PD day to train it.","The browser is the client. Nothing to package, nothing to push, nothing new to train."],
+      ["600 classrooms, one tech","Who's on old firmware? Which display died over break? Districts find out one work order at a time.","Polaris Cloud: every classroom's health, firmware, and usage from the district office: one pane, one login."]
+    ])} />
+    <Fragment set:html={indStack("Essentials + Route in the classroom.","The teaching stack is Essentials with the Route layer, and Engage for polling; Launch covers hallway and overflow displays on a one-time budget line.",[
+      {hot:true,name:"Essentials + Route <span class='tag t-ship al-flag'>SHIPS Q1 2027</span>",tfor:"The teaching classroom",pts:["Full workspace + web-join: every Chromebook reaches the display","Student screen routing with teacher moderation","Polling & engagement with Engage: anonymous or named, reviewable afterward","District pane in Polaris Cloud · warranty rides the subscription"],msrp:"[MSRP placeholder]",msub:"/ room / year · EDU packaging [bundled SKU vs add-on — pending confirmation]",link:"products/route",lbl:"Explore Route"},
+      {name:"Polaris Essentials",tfor:"Labs, libraries, shared spaces",pts:["The same workspace and web-join, without the teaching layer","Cloud-managed with the rest of the district","Add Route later with a license"],msrp:"from $287.86",msub:"/ room / year",link:"products/essentials",lbl:"See Essentials"},
+      {name:"Launch",ship:"Shipping Q1 2027",tfor:"Hallway & signage displays",pts:["Share-first device at entry price: one-time purchase","Idle-screen announcements from the same portal","Budget-cycle friendly: hardware line, not a subscription"],msrp:"[MSRP placeholder]",msub:"one-time purchase · pre-launch",link:"products/element",lbl:"Launch placeholder"}
+    ],"EDU pricing and packaging [placeholder — Q8 model]; district and co-op purchasing routes through education partners.")} />
+    <Fragment set:html={indHooks("Why districts pick Polaris","The Chromebook path, the teaching layer, the district pane.","Capabilities scoped to what ships: no roadmap promises, no funding-cycle fine print.",[
+      {ic:XIC.webjoin,h:"Two native paths for Chromebooks",p:"Web-join from any browser tab (no extension, no admin rights) plus native Google Cast on the LAN. Both land on the same workspace at the same time, next to the teacher's screen and the document camera.",link:"platform/how",lbl:"How web-join works"},
+      {ic:XIC.workspace,h:"Route &amp; Engage: the teaching layer <span class='tag t-ship al-flag'>SHIPS Q1 2027</span>",p:"Route sends any student's screen to any display in the room and moderates what reaches it from the teacher's device. Engage runs polls on the fly, anonymous for honest signals, named for formative assessment, every session reviewable afterward.",link:"products/route",lbl:"Explore Route"},
+      {ic:XIC.cloudx,h:"District-scale from day one",p:"Bulk configuration by school, staged firmware over breaks, usage analytics by building, and health alerts before first period finds the dead display. One pane for the whole district.",link:"platform/cloud",lbl:"Polaris Cloud"},
+      {ic:XIC.oneplat,h:"Not an education dead-end",p:"Education-only casting platforms grow sideways, not upward. One of the largest is adding captions, alerts and signage while staying LAN-only: its own FAQ says mirroring traffic does not hairpin through the internet, cross-VLAN works only if you open a twenty-port matrix between subnets, and split screen is unavailable entirely in its multi-display and combined-room modes. There is no BYOM and no room-hosted meeting. Polaris is the same platform enterprises run: Chromebook classrooms today, boardroom-grade admin rooms tomorrow, one portal for all of it.",link:"products/family",lbl:"The Polaris family"}
+    ])} />
+    <div class="g3band reveal"><b>Idle displays earn their keep.</b> Between classes, classroom and hallway displays run announcements: idle-screen signage managed from the same Polaris Cloud portal as every classroom. No separate CMS, no second vendor. <span class="btns"><a class="btn accent" href="/solutions/signage">Digital signage →</a></span></div>
+    <Fragment set:html={indProof("Teachers stopped asking for the cart with the special cable. They open a tab and teach.","[Named district — placeholder]","Director of Technology · [district, 40 schools placeholder]",[["~60%","of K-12 student devices are Chromebooks [placeholder]"],["0","apps pushed through MDM"],["5 min","instructional time reclaimed per period [placeholder]"]],"[Proof slot — named district reference + verified stats required before launch; figures shown are illustrative placeholders.]")} />
+    <Fragment set:html={indRes([
+      ["Active-learning room design guide · ships Q1 2027","Displays per room, network requirements, Chromebook support. [placeholder]","products/route"],
+      ["Deployment guide for districts","Network requirements, ports, managed-device notes, ungated. [placeholder]","resources/docs"],
+      ["Start a classroom trial","Real hardware in a real classroom, fulfilled with your education partner.","trial"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

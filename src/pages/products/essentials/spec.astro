@@ -1,0 +1,83 @@
+---
+/**
+ * /products/essentials/spec — the printable Polaris Essentials spec sheet.
+ *
+ * Content is the record in data/products/essentials-spec.ts; these three blocks stay as
+ * markup because every table row carries its own citation and several carry
+ * [verify:] flags that initVerifyFlags and scripts/check-claims.py look for.
+ */
+import SpecSheet from "../../../layouts/SpecSheet.astro";
+import { ESSENTIALS_SPEC } from "../../../data/products/essentials-spec";
+---
+
+<SpecSheet {...ESSENTIALS_SPEC}>
+  <Fragment slot="upsell">
+    <div class="g3band"><b>Where Essentials stops, Pro begins.</b> True wireless BYOM conferencing, HDMI input, USB peripherals, audio out, and dual 4K60 output live on Polaris Pro. When a room outgrows Essentials, stepping up is a pod swap, not a forklift: same platform, same muscle memory. <a class="btn accent" href="/products/pro">Step up to Pro &rarr;</a></div>
+  </Fragment>
+
+  <Fragment slot="spec-tables">
+      <h3>Sharing &amp; video</h3>
+      <div class="famtbl spx-t"><table>
+        <tr><th style="width:34%">Specification</th><th>Polaris Essentials</th></tr>
+        <tr><td>Simultaneous shares</td><td class="y">Multiple live sources composited side by side, laid out automatically as sources join and leave. The ceiling is 5, against 10 on Pro. It is the same compositor in both: the limit is memory on the smaller chassis, not a licence or a reduced build [Ruled by Damian Blazy 12 Aug 2026 - see src/data/rulings.ts]</td></tr>
+        <tr><td>Sharing paths</td><td>Browser web-join (no app) &middot; native AirPlay, Miracast, Google Cast (LAN) &middot; Polaris app for iOS and Android</td></tr>
+        <tr><td>Protocols</td><td>WebRTC, AirPlay, Miracast, Google Cast</td></tr>
+        <tr><td>Video codecs</td><td>H.264 encode and decode &middot; H.265 encode and decode &middot; VP8 decode &middot; AV1 decode &middot; JPEG/MJPEG decode &mdash; all required. VP9 decode is preferred rather than required. Hardware colour conversion: YUY2/YUYV [Mersive hardware requirement, rev. Nov 2024]</td></tr>
+        <tr><td>Resolution</td><td>4K (4096 &times; 2160 @ 30Hz) &middot; HD (1920 &times; 1080 @ up to 30Hz) &middot; (1280 &times; 720 @ up to 30Hz)</td></tr>
+        <tr><td>Content protection</td><td class="y">&#10003; HDCP 2.0 [Essentials data sheet DS-MCS.ESS-02192025]</td></tr>
+      </table></div>
+
+      <h3>Compute</h3>
+      <div class="famtbl spx-t"><table>
+        <tr><th style="width:34%">Specification</th><th>Polaris Essentials</th></tr>
+        <tr><td>Chipset / SoC</td><td>MediaTek MT8370 (Genio 510): ARM SoC with Mali GPU. The Gen&nbsp;4 Pod Mini ships as Polaris Essentials, and the shipping board identifies itself as MT8370 in its own kernel journal</td></tr>
+        <tr><td>NPU: on-device AI silicon</td><td>Requirement: minimum 2.0 TOPS, goal 3.0 TOPS [Mersive hardware requirement, rev. Nov 2024]. As built: 2 TOPS [confirmed by Damian Blazy 14 Aug 2026] &mdash; the SoC's APU. No inference runtime ships in the current image, so nothing on the device uses it yet [verify: the tflite DISTRO_FEATURE is commented out in mersive.inc:20-21 and is the only switch that pulls the runtime in. Confirm the roadmap for enabling it - engineering]</td></tr>
+        <tr><td>RAM &middot; storage</td><td>4 GB &middot; 32 GB eMMC &mdash; proven from the board device tree and the eMMC partition layout, and confirmed on a Mini in hand (board VEGA_DMS233)</td></tr>
+        <tr><td>Video pipeline: simultaneous decode</td><td>H.264 and H.265 encode and decode; VP8 and VP9 decode &mdash; the same codec surface as Pro, not a reduced one. Composites into a 4K (4096 &times; 2160) 30&nbsp;Hz output; 2+ concurrent 1080p30 decodes required, more supported; the ceiling is 5 simultaneous shares, set by memory on the smaller chassis rather than by licensing [Mersive hardware requirement, rev. Nov 2024: workload targets] [Ruled by Damian Blazy 12 Aug 2026 - see src/data/rulings.ts]</td></tr>
+      </table></div>
+
+      <h3>Network &amp; security</h3>
+      <div class="famtbl spx-t"><table>
+        <tr><th style="width:34%">Specification</th><th>Polaris Essentials</th></tr>
+        <tr><td>Ethernet</td><td>1&times; 10/100/1000 RJ-45. No PoE on Essentials &mdash; the Pod takes PoE+, the Mini does not [Essentials data sheet DS-MCS.ESS-02192025]</td></tr>
+        <tr><td>Wi-Fi</td><td>MediaTek MT7921: Wi-Fi 6 (802.11ax), 802.11 a/b/g/n/ac/ax compliant, 2.4 + 5 GHz, MIMO 2&times;2; Bluetooth (MediaTek MT7921)</td></tr>
+        <tr><td>Network protocols</td><td>TCP/IP, HTTP, HTTPS, SNTP/NTP, SSL, SSH, UDP &mdash; as published on the data sheet. These are the protocols the device speaks, not open listeners: the device exposes no TLS listener of its own</td></tr>
+        <tr><td>Wireless security</td><td>WEP, WPA2, WPA2 Enterprise or IEEE 802.1X [WEP is listed because the released Essentials data sheet lists it and the radio will still negotiate it for legacy equipment. It is not recommended and Mersive does not advise deploying it: WEP has been cryptographically broken since 2001 and is trivially recoverable. Use WPA2-Enterprise or 802.1X with EAP-TLS. Ruled by Damian Blazy 12 Aug 2026: keep the mode listed, carry the caveat, highlight it]</td></tr>
+        <tr><td>Cross-network sharing</td><td>&#10003; included on every Polaris tier. Cloud-negotiated direct connections; signalling is outbound-only TLS on TCP 443, so there are no inbound firewall rules to request, and no VPN</td></tr>
+        <tr><td>Device security</td><td>Mandatory secure boot on production firmware &middot; hardened, purpose-built Linux OS &middot; signed updates with downgrade protection &middot; A/B firmware partitions with automatic rollback on a failed load &middot; Kensington Nano Security Slot</td></tr>
+      </table></div>
+      <p class="note">Plain language: 802.1X means the network itself demands the device prove who it is before granting a port. An Essentials room authenticates to your NAC with a certificate, the same as any managed endpoint.</p>
+
+      <h3>Physical &amp; environmental</h3>
+      <div class="famtbl spx-t"><table>
+        <tr><th style="width:34%">Specification</th><th>Polaris Essentials</th></tr>
+        <tr><td>Rear panel</td><td>Kensington Nano Security Slot &middot; Ethernet &middot; HDMI 2.0 &middot; DC power</td></tr>
+        <tr><td>Power</td><td>12 VDC, 2 A, 24 W max from the barrel jack; no PoE on Essentials &mdash; the Pod takes PoE+, the Mini does not [Essentials data sheet DS-MCS.ESS-02192025]. <b>The power supply is in the box</b> &mdash; on Pro it is sold separately, because a Pro room is usually powered over Ethernet</td></tr>
+        <tr><td>Dimensions &middot; weight</td><td>58 &times; 140 &times; 30 mm [Mersive hardware requirement, rev. Nov 2024] &middot; [weight unverified - hardware team]. Essentials and Pro are <b>different chassis</b>: Pro is 86 &times; 184 &times; 30 mm [Ruled by Damian Blazy 26 Aug 2026]. Both released data sheets print 150 &times; 67 &times; 30 mm and 204 g for both products, which cannot be true of two different enclosures; the sheets are being reissued [verify: mounting options and bracket accessories - product marketing]</td></tr>
+        <tr><td>Operating environment</td><td>Indoor use only &middot; 0&deg;C (32&deg;F) to 35&deg;C (95&deg;F) &middot; 30% to 70% RH ambient [Essentials data sheet DS-MCS.ESS-02192025]</td></tr>
+        <tr><td>Storage environment</td><td>-20&deg;C (-4&deg;F) to 65&deg;C (149&deg;F) &middot; 10% to 90% RH [Mersive hardware requirement, rev. Nov 2024]</td></tr>
+        <tr><td>Drop durability</td><td>1 m onto concrete along any critical axis &mdash; face, corner or edge &mdash; with no cables connected [Mersive hardware requirement, rev. Nov 2024]</td></tr>
+        <tr><td>ESD</td><td>IEC 61000-4-2 Level 4 &middot; &plusmn;8 kV contact &middot; &plusmn;15 kV air discharge [Mersive hardware requirement, rev. Nov 2024]</td></tr>
+        <tr><td>Accessories</td><td>Power Supply Unit (included) &middot; HDMI cable (not included)</td></tr>
+        <tr><td>Regulatory</td><td>Required for launch: FCC (USA) &middot; UL (USA/Canada) &middot; CB Scheme / IECEE (international) &middot; UKCA (UK) &middot; CE (EU) &middot; RoHS (EU) &middot; SCIP (EU) [Mersive hardware requirement, rev. Nov 2024] [verify: IC (Innovation Canada) was published here but appears in neither hardware requirement document - regulatory and legal] [verify: no TAA or NDAA statement appears on either released data sheet - legal and supply chain]</td></tr>
+        <tr><td>Warranty</td><td>Full warranty while on active subscription &mdash; no separate care contract, no support tier to renew [Ruled by Damian Blazy 12 Aug 2026, superseding the &ldquo;Limited 3-year manufacturer&rsquo;s warranty&rdquo; on the released data sheets, which is dated and to be reissued. See src/data/rulings.ts]</td></tr>
+        <tr><td>Three horizons, kept apart</td><td>These are three different things and read as a contradiction when they sit unlabelled beside each other. <b>Manufacturing-defect warranty:</b> 1 year [Mersive hardware requirement, rev. Nov 2024]. <b>Commercial warranty:</b> runs with the subscription, and is capped at five years on a perpetual licence [Ruled by Damian Blazy 13 Aug 2026]. <b>Platform lifecycle:</b> 10 years [Ruling A, Damian Blazy, 26 Aug 2026 &mdash; <a href="#platform-lifecycle">the invariants</a>]. [verify: the five-year cap on a perpetual licence predates the 10-year platform lifecycle and now sits oddly beneath it. Flagged for CEO review; no commercial term is changed here - Damian Blazy]</td></tr>
+        <tr><td>Licensing</td><td>3-year, 5-year or perpetual; managed in Polaris Cloud. On subscription the warranty runs as long as the room is subscribed; on a perpetual licence it is capped at 5 years [Ruled by Damian Blazy 12&ndash;13 Aug 2026: all three terms are available on both tiers]</td></tr>
+      </table></div>
+  </Fragment>
+
+  <Fragment slot="tier-table">
+      <div class="famtbl spx-t"><table>
+        <tr><th style="width:44%"></th><th>Polaris Essentials</th><th>Polaris Pro</th></tr>
+        <tr><td>Simultaneous shares in the workspace</td><td class="y">Up to 5</td><td>Up to 10</td></tr>
+        <tr><td>HDMI output</td><td class="y">1&times; HDMI 2.0 out &middot; 4K (4096 &times; 2160) at 30&nbsp;Hz</td><td>2&times; HDMI 2.0 out &middot; dual 4K (3840 &times; 2160) at 60&nbsp;Hz</td></tr>
+        <tr><td>HDMI input (wired ingest)</td><td class="n">&mdash;</td><td>1&times; HDMI 2.0 in</td></tr>
+        <tr><td>True wireless BYOM conferencing</td><td class="n">&mdash;</td><td>Included</td></tr>
+        <tr><td>USB for room peripherals</td><td class="n">&mdash;</td><td class="y">2&times; USB 3.0 Type-C, host mode</td></tr>
+        <tr><td>Audio out (to soundbar / DSP)</td><td class="n">&mdash;</td><td>Included</td></tr>
+        <tr><td>Power over Ethernet</td><td class="n">&mdash;</td><td>PoE+</td></tr>
+        <tr><td>Power supply unit</td><td class="y">In the box</td><td>Sold separately; PoE+ is typical</td></tr>
+        <tr><td>Web-join, workspace, cross-network, Polaris Cloud</td><td class="y">Included</td><td class="y">Included</td></tr>
+      </table></div>
+  </Fragment>
+</SpecSheet>

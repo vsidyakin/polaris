@@ -1,0 +1,141 @@
+---
+/**
+ * /careers/<slug> — one open role, pre-rendered.
+ *
+ * `getStaticPaths` reads the roster fetched at build time, so each role becomes a
+ * real HTML file: readable with JavaScript off, indexable, no iframe and no
+ * client-side fetch. The description is Rippling's rich text put through
+ * `sanitizeJobHtml()`, which strips the ATS editor's inline styling so the copy
+ * inherits this site's typography instead of Rippling's.
+ *
+ * Applying is a handoff, never a form. `Apply now` opens `job.url` in a new tab;
+ * résumés, contact details and EEOC answers stay inside Rippling.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { JOBS, jobCountLabel, locationLabel, type Job } from "../../data/jobs";
+import { jobPostingSchema } from "../../data/schema";
+import { href } from "../../data/routes";
+
+export async function getStaticPaths() {
+  return JOBS.map((job) => ({ params: { slug: job.slug }, props: { job } }));
+}
+
+interface Props {
+  job: Job;
+}
+
+const { job } = Astro.props;
+
+/* No DESC entry exists for a dynamic page, so the description comes from the
+   posting itself: the opening of the role text, cut at a word boundary near the
+   ~155 characters seo.ts aims for. */
+const MAX_DESC = 155;
+const description = !job.summary
+  ? `${job.name} at Mersive — ${locationLabel(job)}. Read the role and apply through the Mersive job board.`
+  : job.summary.length <= MAX_DESC
+    ? job.summary
+    : `${job.summary.slice(0, MAX_DESC).replace(/\s+\S*$/, "")}…`;
+
+const canonical = new URL(`${href("careers")}/${job.slug}`, Astro.site).href;
+
+const postedLabel = job.postedOn
+  ? new Date(`${job.postedOn}T00:00:00Z`).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    })
+  : null;
+---
+
+<BaseLayout
+  route="careers"
+  child={{ path: job.slug, name: job.name }}
+  title={`${job.name} | Mersive`}
+  description={description}
+  schema={[jobPostingSchema(job, canonical)]}
+>
+  <Crumbs route="careers" section="Open roles" sectionHref="/careers" title={job.name} />
+
+  <h1 class="pg">{job.name}</h1>
+
+  <ul class="job-facts job-facts-lead">
+    <li class="job-fact job-fact-loc">{locationLabel(job)}</li>
+    {job.employmentType && <li class="job-fact">{job.employmentType}</li>}
+    {job.team && <li class="job-fact">{job.team}</li>}
+    {
+      postedLabel && (
+        <li class="job-fact">
+          Posted <time datetime={job.postedOn}>{postedLabel}</time>
+        </li>
+      )
+    }
+  </ul>
+
+  <div class="job-apply job-apply-lead">
+    <a class="btn accent big" href={job.url} target="_blank" rel="noopener noreferrer">
+      Apply now ↗
+    </a>
+  </div>
+
+  {
+    /* Rippling's two description fields are shown in the order HR writes them,
+       not the order the API names them: the `company` block is the posting's
+       lead-in ("The Opportunity… Who are we?"), and `role` carries the
+       responsibilities and qualifications that follow it. Neither gets a heading
+       of our own — the copy supplies its own, and labelling the first block
+       "About Mersive" would mis-title an opening paragraph about the job. */
+    job.companyHtml && <article class="job-body reveal" set:html={job.companyHtml} />
+  }
+
+  {
+    job.roleHtml ? (
+      <article class="job-body reveal" set:html={job.roleHtml} />
+    ) : (
+      !job.companyHtml && (
+        <div class="cnv-band reveal">
+          <h2>The full description could not be loaded.</h2>
+          <p style="margin:0">
+            Use <b>Apply now</b> above — the complete posting is on the application page.
+          </p>
+        </div>
+      )
+    )
+  }
+
+  <div class="cnv-band reveal">
+    <div class="kicker">Apply</div>
+    <h2>Ready when you are.</h2>
+    <p style="margin:0">
+      <a class="btn accent big" href={job.url} target="_blank" rel="noopener noreferrer">
+        Apply for {job.name} ↗
+      </a>
+    </p>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Every other open role</h3>
+      <p>
+        {
+          JOBS.length > 1
+            ? `${jobCountLabel()} open at Mersive right now, grouped by team.`
+            : "This is the only role open at Mersive right now."
+        }
+      </p>
+      <a href="/careers">Open roles →</a>
+    </div>
+    <div class="card">
+      <h3>Who you would be joining</h3>
+      <p>
+        Two offices, how hiring runs, and a company owned by the people who design, engineer, sell
+        and support Polaris.
+      </p>
+      <a href="/careers">Work at Mersive →</a>
+    </div>
+  </div>
+
+  <CtaBand variant="story" />
+</BaseLayout>

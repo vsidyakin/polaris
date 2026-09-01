@@ -1,0 +1,197 @@
+---
+/**
+ * NOT on ProductPage, and that is the point.
+ *
+ * The other five pages on that layout open on PageIntro: crumbs, chips, a 34px
+ * <h1> and a deck, in the flow, above whatever the page does next. This one
+ * opens on a hero that fills the first screen and carries the title INSIDE it,
+ * over the film — which is a different first screen, not a variant of that one.
+ * ProductPage is documented as a thin frame rather than a template precisely so
+ * that a page whose head does not fit it steps off rather than growing it a
+ * flag; ProductShowcase (products/pro, products/essentials) is the same move for
+ * the same reason. What is lost by stepping off is four lines — the crumb row,
+ * the chip row and the closing CtaBand — and they are below.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { DEV } from "../../data/icons";
+
+const ROUTE = "products/family" as const;
+---
+
+<BaseLayout route={ROUTE}>
+    <Crumbs route={ROUTE} />
+    <div class="pageinfo">
+      <span class="tag t-tpl">T3</span>
+      <span class="tag t-open">OPEN</span>
+    </div>
+
+    {/* The comic-book split hero. Three panels, two diagonal slashes, and the
+        slashes are the container's own gradient showing through a gap in the
+        clip paths rather than anything drawn — see the .cbk block in pages.css
+        for the geometry, for why a full-height hero cannot carry a true 45°
+        seam, and for how the hover grows a panel over its neighbours. Below
+        960px the same construction turns through 90°, the panels interleave down
+        the page, and the title drops out of the overlay into the flow.
+
+        Every line in here is already made in full further down the page: the
+        three one-liners are the .famlad rungs, trimmed to what fits inside a
+        parallelogram. A hero may compress a fact, it may not introduce one —
+        which is also why Pro's line stops at the two capabilities and leaves
+        "continues Mersive Solstice Gen 3" to the .g3band, where it arrives with
+        the trade-in offer that makes it useful.
+
+        The panel is the link — one <a> per product, so the whole parallelogram
+        is the target and there is no second tab stop inside it. Heading order is
+        the page's <h1> here, then the sr-only <h2>, then one <h3> per panel,
+        which is what keeps the outline unbroken for check-outline.py.
+
+        No .reveal on this section, deliberately: .reveal ships at opacity 0 and
+        waits for initReveal(), and the page's <h1> now lives in here. A heading
+        that needs JavaScript to become visible is not a heading. */}
+    <section class="cbk">
+      {/* One span per sentence, because the two arrive separately in the load
+          sequence and a transform does not apply to a bare inline. They are
+          inline-BLOCK rather than block, so the headline still sets on one line
+          where there is room for it and breaks between the two sentences where
+          there is not — which is where it would want to break anyway. Splitting
+          it does not split the text: the <h1> still reads as one sentence to a
+          crawler, a reader mode and a copy-paste. */}
+      <div class="cbk-lede">
+        <h1 class="cbk-t"
+          ><span class="cbk-l">One platform.</span> <span class="cbk-l">Choose your power.</span></h1
+        >
+        <p class="cbk-dek">
+          Right-sized hardware for every room, one platform underneath. Every tier is a full
+          Polaris citizen: web-join, workspace, cloud managed.
+        </p>
+      </div>
+
+      <h2 class="sr-only">The three Polaris tiers</h2>
+
+      {/* Launch has no render and no film, so its panel carries the same
+          placeholder silhouette as the ladder below rather than borrowing a
+          photograph of a different product. The chip says so; so does the note
+          under the hero. */}
+      <a class="cbk-p cbk-el" href="/products/launch">
+        <div class="cbk-cut">
+          <span class="cbk-art"><Fragment set:html={DEV.stick} /></span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <span class="tag t-ship">Shipping Q1 2027</span>
+            <h3 class="cbk-h">Launch</h3>
+            <span class="cbk-d">Share-first &middot; one-time purchase</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+
+      <a class="cbk-p cbk-es" href="/products/essentials">
+        <div class="cbk-cut">
+          <span class="cbk-art">
+            <video
+              class="cbk-vid"
+              data-src="/video/mersive-mini-2-optimized-5mb.mp4"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"></video>
+          </span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <h3 class="cbk-h">Essentials</h3>
+            <span class="cbk-d">The workspace for every room</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+
+      <a class="cbk-p cbk-pr" href="/products/pro">
+        <div class="cbk-cut">
+          <span class="cbk-art">
+            <video
+              class="cbk-vid"
+              data-src="/video/mersive-pro-optimized-2mb.mp4"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"></video>
+          </span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <h3 class="cbk-h">Pro</h3>
+            <span class="cbk-d">BYOM + enterprise networks</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+    </section>
+    <p class="note" style="margin:-8px 0 18px">[The Launch panel is the same placeholder silhouette as the ladder below — no Launch render or film exists yet. The Essentials and Pro panels are the films from their own product pages.]</p>
+
+    <p class="famstate reveal">Buy the tier your rooms need today. Every Polaris runs the same platform, and most upgrades are a license change. Where a higher tier needs more connectivity (dual networks, HDMI input, dual displays), your partner swaps the pod and the license moves with you. [Verify which step-ups are license-only: hardware team]</p>
+  
+
+    <p class="note" style="margin:14px 0 0">[C1.f1 — entire figure is pre-release art direction: silhouettes are placeholders, not final hardware.]</p>
+    <div class="famlad reveal">
+      <div class="rung"><span class="tag t-ship">Shipping Q1 2027</span><Fragment set:html={DEV.stick} /><b>Launch</b><p>Share-first · one-time purchase</p></div>
+      <div class="rung"><Fragment set:html={DEV.pod} /><b>Polaris Essentials</b><p>The workspace for every room</p></div>
+      <div class="rung hotr"><Fragment set:html={DEV.pod} /><b>Polaris Pro</b><p>BYOM + enterprise networks · continues Mersive Solstice Gen 3</p></div>
+      <div class="rung"><span class="tag t-ship">SHIPS Q3–Q4 2026</span><div class="duo"><Fragment set:html={DEV.toggle} /><Fragment set:html={DEV.tablet} /></div><b>Hybrid additions</b><p>Link &amp; Host: the pod hosts the call, then the whole meeting experience</p></div>
+    </div>
+    <p class="note" style="margin-top:-8px">The ladder climbs left to right: share-first displays → full workspace → enterprise conferencing → the room that joins and hosts. Silhouettes are placeholder art direction.</p>
+    <div class="cardrow">
+      <h2 class="sr-only">The Polaris family at a glance</h2>
+      <div class="card" style="border-style:dashed;opacity:.85"><h3>Launch <span class="tag t-ship">Shipping Q1 2027</span></h3><p>Share-first hardware at entry price: one-time purchase.</p><a href="/products/launch">Placeholder page →</a></div>
+      <div class="card"><h3>Polaris Essentials</h3><p>The workspace for every room. Annual subscription · warranty included.</p><a href="/products/essentials">Details →</a></div>
+      <div class="card"><h3>Polaris Pro</h3><p>Continues Mersive Solstice Gen 3. BYOM, dual-network, enterprise depth.</p><a href="/products/pro">Details →</a></div>
+      <div class="card" style="border-style:dashed;opacity:.85"><h3>Hybrid meetings <span class="tag t-ship">SHIPS Q3–Q4 2026</span></h3><p>The path from BYOM to hosted-BY-the-room: Link and Host placeholders live here.</p><a href="/products/hybrid">The hybrid family →</a></div>
+  
+  
+  </div>
+    <div class="minitbls reveal">
+    <details class="mtbl" open><summary><b>Wireless Collaboration / BYOD</b><span class="mtbl-n">2 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Wireless share + web-join (no install)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr><tr><td>Simultaneous shares in the workspace</td><td class="p">1 [scales over time]</td><td class="y">5 [scales over time]</td><td class="y">10 [scales over time]</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Conference: BYOM</b><span class="mtbl-n">2 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>True wireless BYOM (room AV bridged)</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr><tr><td>Link: the pod hosts the meeting <span class="tag t-ship">SHIPS Q3 2026</span></td><td class="n">—</td><td class="n">—</td><td class="p">add-on</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Hosted by the room (BYOM+) <span class="tag t-pre">PRE-LAUNCH</span></b><span class="mtbl-n">1 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Host: the room hosts, native clients <span class="tag t-ship">SHIPS Q4 2026</span></td><td class="n">—</td><td class="p">add-on</td><td class="p">add-on</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Network & scale</b><span class="mtbl-n">3 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Cross-network sharing (no VPN)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr><tr><td>802.1X network authentication</td><td class="p">[tier coverage unverified — flagged gap, do not guess]</td><td class="p">[tier coverage unverified — flagged gap, do not guess]</td><td class="y">✓ EAP-TLS / PEAP / TTLS, wired + Wi-Fi; device identity keys sealed to the secure element</td></tr><tr><td>Polaris Cloud management</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr></table><p class="note" style="margin:8px 4px 2px">Plain language: 802.1x means the network itself demands the device prove who it is before granting a port; EAP-TLS is the strongest way to prove it, with a certificate instead of a password. Dual-network posture means the device sits on two networks at once, corporate wired and guest wireless, kept isolated, so guests share without ever touching the corporate LAN.</p></div></details>
+    <details class="mtbl"><summary><b>Lifecycle</b><span class="mtbl-n">2 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Subscription incl. warranty & updates</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr><tr><td>Designed 10+ year platform lifecycle</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Workspace & sharing</b><span class="mtbl-n">3 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Simultaneous shares on the workspace</td><td class="p">1 [scales over time]</td><td class="y">5 [scales over time]</td><td class="y">10 [scales over time]</td></tr><tr><td>Native AirPlay · Miracast · Google Cast</td><td class="p">[Launch casting support pending the receiver-licensing decision]</td><td class="y">✓</td><td class="y">✓</td></tr><tr><td>Mobile sharing &middot; the Polaris app for iOS &amp; Android</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Silicon & compute</b><span class="mtbl-n">4 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>SoC class</td><td class="p"><mark class="vflag" title="Needs verification before publish">MediaTek MT8696T &middot; 4&times; Cortex-A55 @ 2.0 GHz [Amazon Fire TV Stick 4K Max figures, not a measured Mersive device. Kept with this flag by Damian Blazy 14 Aug 2026; must be replaced with the shipping Launch hardware, or removed, before this page is public]</mark></td><td class="p">MediaTek MT8370 (Genio 510): ARM SoC with Mali GPU and APU &middot; NPU requirement minimum 2.0 TOPS, goal 3.0 TOPS [Mersive hardware requirement, rev. Nov 2024]; silicon capability 2 TOPS [confirmed by Damian Blazy 14 Aug 2026]</td><td class="p">MediaTek MT8395 (Genio 1200): ARM SoC with Mali GPU and on-die APU &middot; NPU requirement minimum 4.0 TOPS, goal 5.0 TOPS [Mersive hardware requirement, rev. Nov 2024]; silicon capability 10+ TOPS [confirmed by Damian Blazy, 14 Aug 2026]. Requirement and silicon capability are different facts and both are published</td></tr><tr><td>RAM · storage</td><td class="p"><mark class="vflag" title="Needs verification before publish">2 GB &middot; 16 GB [Amazon Fire TV Stick 4K Max figures, not a measured Mersive device. Kept with this flag by Damian Blazy 14 Aug 2026; must be replaced with the shipping Launch hardware, or removed, before this page is public]</mark></td><td class="p">4 GB LPDDR4x &middot; 32 GB eMMC [verify: the "x" suffix is not distinguishable in source, where the board config states only lpddr4. Pro is published as LPDDR4 without the x, so as written this table implies a deliberate difference between the two tiers - hardware team]</td><td class="y">16 GB LPDDR4 &middot; 32 GB flash</td></tr><tr><td>Real-time encode (BYOM bridging)</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr><tr><td>On-device NPU</td><td class="n">—</td><td class="y">✓ 2 TOPS &mdash; no inference runtime ships in the current image yet</td><td class="y">✓ 10+ TOPS &mdash; no inference runtime ships in the current image yet</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>I/O</b><span class="mtbl-n">3 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>HDMI out</td><td class="p"><mark class="vflag" title="Needs verification before publish">1&times; HDMI, 4K60 HDR [Amazon Fire TV Stick 4K Max figures, not a measured Mersive device. Kept with this flag by Damian Blazy 14 Aug 2026; must be replaced with the shipping Launch hardware, or removed, before this page is public]</mark></td><td class="p">1&times; HDMI 2.0 out, 4K (4096 &times; 2160) at 30&nbsp;Hz, CEC</td><td class="y">2&times; HDMI 2.0 out, dual 4K (3840 &times; 2160) at 60&nbsp;Hz; CEC [verify: the Pro data sheet does not mention CEC - hardware team]</td></tr><tr><td>HDMI in (wired ingest / augmentation)</td><td class="n">—</td><td class="n">—</td><td class="y">1&times; HDMI 2.0 in, HDCP 2.0</td></tr><tr><td>Ethernet</td><td class="p"><mark class="vflag" title="Needs verification before publish">Wi-Fi 6E tri-band; no wired Ethernet [Amazon Fire TV Stick 4K Max figures, not a measured Mersive device. Kept with this flag by Damian Blazy 14 Aug 2026; must be replaced with the shipping Launch hardware, or removed, before this page is public]</mark></td><td class="p">1× GbE (12V barrel power)</td><td class="y">1× GbE with PoE+ (802.3at) [The Mersive hardware requirement, rev. Nov 2024, lists ONE wired port: dual-network posture is wired + wireless, correct all dual-NIC claims]</td></tr></table></div></details>
+    <details class="mtbl"><summary><b>Commercial</b><span class="mtbl-n">1 rows <i class="mtbl-c">▾</i></span></summary>
+      <div class="famtbl mtbl-t"><table><tr><th style="width:34%">Capability</th><th>Launch <span class='tag t-ship'>Shipping Q1 2027</span></th><th>Essentials</th><th>Pro</th></tr><tr><td>Model</td><td class="p">Hardware purchase, one-time. No subscription</td><td class="y">Subscription (3 or 5-year) or Perpetual</td><td class="y">Subscription (3 or 5-year) or Perpetual</td></tr></table></div></details>
+    </div>
+    <p class="note">[Canonical capability matrix — single source of truth owned by the review committee; also feeds selector + compare hub. Cross-network row updated Aug 2026: runs on ALL Polaris hardware (capability CEO-confirmed; packaging language to committee). Rows above are illustrative placeholders. Header stays pinned as you scroll the table.]</p>
+    <p class="note">Hardware that does not vary by tier &mdash; the 10-year platform lifecycle, the invariants it holds constant, and the current silicon &mdash; is documented once, on <a href="/products/pro/spec#platform-lifecycle">the Pro spec sheet</a>. Fungibility is <b>within</b> a tier: Pro and Essentials are not interchangeable, and the rows above are why.</p>
+  
+    <div class="g3band reveal"><b>Mersive Solstice Gen 3 owner?</b> Polaris Pro continues your line: same muscle memory, mixed estates supported, trade-in program in motion. <a class="btn accent" href="/products/transition">Mersive Solstice Gen 3 → Polaris →</a></div>
+    <div class="cardrow">
+      <div class="card"><h3>Route <span class="tag t-ship al-flag">SHIPS Q1 2027</span></h3><p>The teaching layer for education: student screen routing and moderation. Packs onto Essentials or Pro. Not orderable until Q1 2027.</p><a href="/products/route">Explore →</a></div>
+      <div class="card"><h3>Engage <span class="tag t-ship al-flag">SHIPS Q1 2027</span></h3><p>Polling, quizzing and participation records, answered from any browser. [Packaging open: subscription, bundled with Pro, or an Essentials upcharge.] Not orderable until Q1 2027.</p><a href="/products/engage">Explore →</a></div>
+      <div class="card"><h3>Hybrid additions <span class="tag t-ship">SHIPS Q3–Q4 2026</span></h3><p><b>Link</b> (the pod hosts the call) extends a <b>Pro</b> estate. Link is a software bridge between the laptop in BYOM and the pod, and the pod is what controls the room&rsquo;s cameras and peripherals &mdash; which is the Pro. <b>Host</b> (the room hosts the whole meeting) extends <b>either</b> tier, because Host can carry the peripherals itself: on Pro they connect directly to the pod and the cables stay at the front of the room; on Essentials they cable to the Host, which pairs with the Essentials unit, and that means a cable to the table. Larger rooms will usually want a Pro for exactly that reason. [Ruled by Damian Blazy 12 Aug 2026 &mdash; see src/data/rulings.ts]</p><a href="/products/hybrid">The hybrid family →</a></div>
+    </div>
+    <div class="two">
+      <div class="card"><h3>Not sure?</h3><p>Four questions route you to the right tier, the same triage our sales engineers run.</p><a href="/products/selector">Which Polaris is right? →</a></div>
+      <div class="card"><h3>Comparing vendors?</h3><p>Pick any competitor (or all of them) and read the matrix row by row.</p><a href="/compare/hub">The compare hub →</a></div>
+    </div>
+
+    <CtaBand />
+
+    <script>
+      import { initComicHero } from "../../scripts/pages/comic-hero";
+      initComicHero();
+    </script>
+</BaseLayout>

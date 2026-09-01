@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import { TIERS, WARRANTY, PARITY } from "../../data/rulings";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indProof, indRes } from "../../lib/blocks";
+
+/* Creative is the one industry page whose brief is about CONTENT rather than
+   room count or compliance regime, so the evidence it leans on is different:
+   decode density and output format (both sourced), content non-persistence
+   (architectural, from the Trust Center), and meeting parity WITH its exception.
+
+   Two things are deliberately not claimed here, and neither should be added
+   without engineering sign-off:
+
+   1. A FRAME RATE FOR THE REMOTE LEG. platform/how.astro carries an open flag:
+      whether remote seats receive an encoded canvas or the individual source
+      streams is unresolved, and no per-stream figure is published. The pod's
+      decode figures are published and sourced, so the page states those and
+      describes the remote leg the way how.astro does — same layout code, the
+      viewer's own screen resolution — without attaching a rate to it.
+   2. COLOUR ACCURACY. A creative buyer will ask, and nothing on this site
+      supports a colour-management or colour-fidelity claim. It is flagged as an
+      open question rather than answered with a plausible sentence. */
+---
+
+<BaseLayout route="solutions/creative">
+  <Fragment set:html={indHead("solutions/creative","Creative","The work is the meeting.","Studios, agencies and in-house creative teams don't review one deck. They review the cut against the boards against the reference against last week's version, from five different machines, with a client on the line and an embargo on the whole thing.")} />
+    <p class="reveal" style="margin:6px 0 0"><a class="btn accent big" href="/trial">Start a free trial</a> &nbsp; <a class="btn ghost big" href="/platform/workspace">See the workspace</a></p>
+    <Fragment set:html={indPains("Comparison is the work, and most rooms can't do it.","A creative review is not a presentation. Nobody is being talked at: the room is holding several things side by side and arguing about the differences. Rooms built for slides get in the way of exactly that.",[
+      ["One source at a time, so the room becomes a slideshow","The reference goes up. Then it comes down so the cut can go up. Then back. The comparison everyone came to make happens in memory, badly. Competing hardware publishes this ceiling plainly: one platform's spec sheet lists a maximum of one source simultaneously on screen, another caps on-screen windows at four.","Up to " + TIERS.shares.pro + " live sources composited side by side on Pro, laid out automatically as they join and leave. Put the cut, the boards and the reference up together and argue about the actual differences."],
+      ["The client who cannot get on the screen","An external creative director arrives with a locked-down laptop, no rights to install anything, and there is no version of this where they go on your corporate network. So they email the file and somebody else drives.","Web-join: they share from their own browser with a six-character key that expires ten minutes after it is issued. No install, no admin rights, and no network access granted to them at all."],
+      ["Unreleased work, sitting on somebody's server","An embargoed campaign, an unannounced product, a cut under NDA. The question from legal is not whether the room is convenient. It is where the file went, who kept a copy, and for how long.","Shared content travels directly between the devices in the meeting and never transits a Mersive server; the cloud brokers the session and does not store workspace content. On the pod it is composited on the fly rather than written to disk, and ephemeral session data is overwritten at the end of every session, including sessions that are abandoned rather than ended cleanly."],
+      ["The remote reviewer watching a webcam of a screen","The director in another city gets a screen-share of a screen-share, or worse, a camera pointed at the display. They are reviewing a compressed photograph of the work and giving notes on it.","The workspace is reproduced on their own screen at their own screen's resolution, laid out by the same code that lays out the room — not a video of the room's display. " + PARITY.workaround]
+    ])} />
+    <Fragment set:html={indStack("Pro where the review happens.","Creative rooms are the case where the Pro hardware earns its place: more simultaneous sources, two displays, and a wired input for the reference feed. Essentials runs the identical software everywhere else.",[
+      {hot:true,name:"Polaris Pro",tfor:"Review rooms · edit suites · client-facing spaces",pts:["Up to " + TIERS.shares.pro + " live sources composited side by side, laid out automatically","Decodes 2&times; 4K60 or 4&times; 1080p60 concurrently [PRD workload target]; the compositor imposes no cap at the layout layer","2&times; HDMI 2.0 out, dual 4K (3840 &times; 2160) at 60&nbsp;Hz &mdash; two displays, or the work on one and the notes on the other","1&times; HDMI 2.0 in with HDCP 2.0 for a wired reference feed or a colour-managed output","True wireless BYOM: the room's camera and mic on the client call, no cable on the table"],msrp:"from $575.86",msub:"/ room / year &middot; warranty included " + WARRANTY.short,link:"products/pro",lbl:"See Pro"},
+      {name:"Polaris Essentials",tfor:"Pin-up walls · breakout and overflow rooms",pts:[TIERS.sameSoftware,"Around " + TIERS.shares.essentials + " simultaneous sources: the ceiling is memory on the smaller chassis, not licensing","Drives a single display: 1&times; HDMI 2.0 out, 4K (4096 &times; 2160) at 30&nbsp;Hz","Same workspace, same web-join, same security posture as the review room"],msrp:"from $287.86",msub:"/ room / year &middot; warranty included " + WARRANTY.short,link:"products/essentials",lbl:"See Essentials"},
+      {name:"Hybrid additions",pre:true,tfor:"When the review is also the client call",pts:["Link: the pod hosts the call, with camera, mic and compute on the room","Host: the room hosts with native Teams/Zoom/Webex/Meet clients","Extend a Pro review room when they launch"],msrp:"[Pricing TBD]",msub:"pre-launch &middot; names pending Q12 workshop",link:"products/hybrid",lbl:"The hybrid path"}
+    ],"MSRP published on every product page; partner pricing lives in the portal. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Why creative teams pick Polaris","Four things a review room has to get right.","Density, access, custody and parity. The first three are what makes the review possible; the fourth is what stops the remote seats being second-class.",[
+      {ic:XIC.workspace,h:"Density, because comparison is the work",p:"Pro composites up to " + TIERS.shares.pro + " live sources at once and decodes 2&times; 4K60 or 4&times; 1080p60 concurrently [PRD workload target]. " + TIERS.sharesWhy + " It is a practical ceiling, in other words, not a licence tier you can be upsold out of.",link:"platform/workspace",lbl:"The workspace"},
+      {ic:XIC.webjoin,h:"Clients and directors share from a browser",p:"A six-character key on the display, globally unique, expiring ten minutes after it is issued. The client shares from their own laptop, phone or tablet at app.mersive.com with nothing installed and no admin rights &mdash; and no access to your network. Cross-network sharing carries it across subnets, VLANs and the internet on outbound-only TLS, with no inbound firewall rules to file.",link:"platform/cross-network",lbl:"Cross-network sharing"},
+      {ic:XIC.shieldx,h:"Custody of unreleased work",p:"Content travels directly between the devices in the meeting and never transits a Mersive server; the Polaris cloud brokers sessions and does not store workspace content. On the pod, content is composited on the fly rather than written to storage, and session data is overwritten when the session ends &mdash; including one that is abandoned. ISO/IEC 27001:2022 certified with no nonconformities at the June 2026 surveillance audit; SOC 2 Type 2 attested for the cloud.",link:"platform/security",lbl:"The Trust Center"},
+      {ic:XIC.persist,h:"Remote reviewers at parity &mdash; and the one exception",p:"Parity covers " + PARITY.covers + ", so a remote reviewer reproduces the canvas at their own screen's resolution instead of watching a video of the room. <b>Plan for one exception.</b> " + PARITY.exception + " " + PARITY.workaround + " In a creative room that matters more than most: a reference feed on the wired input is exactly the thing a remote colourist will ask to see.",link:"platform/how",lbl:"How parity works"}
+    ])} />
+    <div class="g3band reveal"><b>The honest gap:</b> colour accuracy. Polaris composites and delivers what a source sends it, and nothing on this site &mdash; or in the data sheets &mdash; characterises colour management, gamut or calibration end to end. If a graded reference has to be trusted on the room display, treat that as an open question and test it in the trial. [Colour-management position owed &mdash; product marketing and engineering.] <span class="btns"><a class="btn accent" href="/trial">Start a free trial</a></span></div>
+    <Fragment set:html={indProof("We stopped taking turns on the screen. The boards, the animatic and last week's cut go up together, and the argument finally happens in front of the work.","[Named creative customer — placeholder]","Executive Creative Director · [studio or agency placeholder]",[["10","sources side by side on Pro"],["0","copies left on the device after a session"],["&lt;1 min","client from arrival to on-screen [placeholder]"]],"[Proof slot — no named creative-sector reference exists yet. A studio, agency or in-house creative team with a verifiable multi-source review workflow is required before launch; the quote and the timing figure above are illustrative placeholders. The two unbracketed figures are sourced: the Pro share ceiling and content non-persistence are stated on the product and security pages.]")} />
+    <Fragment set:html={indRes([
+      ["The workspace: every share, side by side","What the canvas does, how layout travels, and what a remote seat receives.","platform/workspace"],
+      ["Security & Trust Center","Where content lives, what the cloud holds, and the certifications behind both.","platform/security"],
+      ["Polaris Pro","Decode density, dual 4K60 output, HDMI input and the full spec.","products/pro"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

@@ -1,0 +1,95 @@
+---
+import ProductPage from "../../layouts/ProductPage.astro";
+import { DEV } from "../../data/icons";
+import { MEDIA_IMG } from "../../data/media";
+import { RS_CAP } from "../../data/taxonomy";
+import { rsLegend, roomScene } from "../../lib/blocks";
+---
+
+<ProductPage
+  route="products/hybrid"
+  tpl="T7"
+  title={"The meeting is leaving the laptop."}
+  dek={"Hybrid rooms today come in two flavors: BYOM, or a vendor-locked room system. Mersive believes hybrid meeting systems should be VTC-client agnostic, and should let people collaborate without a laptop in the room."}
+  crumb={"Hybrid meetings"}
+>
+  <Fragment slot="head-banner">
+    <div class="shipband"><b>Availability:</b> Link ships Q3 2026 · Host ships Q4 2026. This page publishes at launch with those windows shown. [Confirm ship windows with the product team: stated by CEO 8/2026.]</div>
+  </Fragment>
+
+
+    <section class="sect reveal" style="padding:8px 0 6px">
+      <div class="kicker">Inside the room</div>
+      <h2>Three rooms, one question: who hosts the meeting?</h2>
+      <p class="sdek">Solid lines are cables into the Polaris pod; dashed lines are wireless. The purple ring marks the meeting host, where the meeting actually lives.</p>
+      <div class="rs-row">
+        <figure class="rs-card"><span class="rs-k">BYOD: where most rooms sit</span><Fragment set:html={roomScene(1)} /><figcaption class="rs-cap"><b>The meeting lives on the laptop, alone.</b> <Fragment set:html={RS_CAP[1]} /></figcaption></figure>
+        <figure class="rs-card"><span class="rs-k">BYOM: shipping today</span><Fragment set:html={roomScene(2)} /><figcaption class="rs-cap"><b>The room's AV, your meeting.</b> <Fragment set:html={RS_CAP[2]} /></figcaption></figure>
+        <figure class="rs-card rs-hot"><span class="rs-k">BYOM+: the room hosts</span><Fragment set:html={roomScene(3)} /><figcaption class="rs-cap"><b>No laptop in the room.</b> <Fragment set:html={RS_CAP[3]} /></figcaption></figure>
+      </div>
+      <Fragment set:html={rsLegend()} />
+    </section>
+
+    <section class="sect reveal tight">
+      <div class="kicker">The market map</div>
+      <h2>The other axis: locked, or agnostic.</h2>
+      <p class="sdek">Who hosts the meeting is only half the question. The other half is whether the room is bolted to one ecosystem. Every room system in the market lands on this grid; only one column takes whichever meeting walks in.</p>
+      <div class="wml">
+        <div class="wml-hd wml-rlbl"></div>
+        <div class="wml-hd wml-lock"><svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="8" rx="2" stroke="#e8a184" stroke-width="1.6"/><path d="M6.5 9V6.5a3.5 3.5 0 017 0V9" stroke="#e8a184" stroke-width="1.6"/></svg> Locked: one ecosystem</div>
+        <div class="wml-hd wml-agn"><svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="8" rx="2" stroke="#7ce3a8" stroke-width="1.6"/><path d="M6.5 9V6.5a3.5 3.5 0 017 0" stroke="#7ce3a8" stroke-width="1.6"/></svg> Agnostic: any meeting</div>
+
+        <div class="wml-rung wml-r3"><b>BYOM+</b><span>hosted by the room: walk in with nothing</span></div>
+        <div class="wml-cell wml-locked"><div class="wml-who">MTR · Zoom Rooms</div><p>A per-room platform license, one platform by default. Sharing is designed around the call, so heads drop into laptops instead of coming up to collaborate.</p></div>
+        <div class="wml-cell wml-open wml-a3"><span class="wml-badge">● the meeting lives here</span><div class="wml-eq">POLARIS <i>Host + Pro or Essentials</i></div><p>Native Teams/Zoom/Webex/Meet, chosen per meeting. Phone or nothing at all.</p><div class="wml-who dim">One vendor in our compare matrix also ships first-party native room clients &mdash; and it allocates one screen per source and can't start a share while someone else is sharing</div></div>
+
+        <div class="wml-rung wml-r2"><b>BYOM</b><span>your meeting, the room's AV</span></div>
+        <div class="wml-cell wml-locked"><div class="wml-who">certified bars: USB mode</div><p>The bar becomes a laptop peripheral, priced to pull the room into one ecosystem.</p></div>
+        <div class="wml-cell wml-open wml-a2"><span class="wml-badge">● the meeting lives here</span><div class="wml-eq">POLARIS <i>Pro (+ Link)</i></div><p>True multi-user wireless BYOM: room camera and mic bridged, no cable. Add Link and the pod hosts the call itself.</p><div class="wml-who dim">Dongle-based wireless BYOM: a transmitter in every laptop, and 30 Hz on the way in &middot; Web-client room systems: join Teams through a web client, not the platform's own</div></div>
+
+        <div class="wml-rung wml-r1"><b>BYOD</b><span>your device alone: pixels to the display</span></div>
+        <div class="wml-cell wml-locked"><div class="wml-who">Teams Cast · AirPlay-only</div><p>Sharing works, if everyone lives in one vendor's world.</p></div>
+        <div class="wml-cell wml-open wml-a1"><span class="wml-badge">● the meeting lives here</span><div class="wml-eq">POLARIS <i>every tier</i></div><p>Everyone plays on this rung. Polaris stands apart with the multi-share workspace and browser web-join.</p><div class="wml-who dim">The four other platform-agnostic vendors in our compare matrix also sell a conferencing tier, and all four hit the same wall: on one of them, multi-view is unavailable during a BYOM session</div></div>
+      </div>
+    </section>
+
+    <div class="hyb-steps reveal">
+      <div class="hyb-step now"><div class="stepk">Shipping today · Polaris Pro</div><Fragment set:html={DEV.pod} /><h3>The room's AV, bridged</h3><p>True wireless BYOM: your Teams/Zoom/Webex/Meet call borrows the room's camera and mic: no cable, multi-user. The meeting still lives on your laptop; the room does the heavy lifting.</p><p style="margin-top:10px"><a href="/products/pro">Polaris Pro →</a></p></div>
+      <div class="hyb-arrow">→</div>
+      <div class="hyb-step"><div class="stepk">Next rung · <span class="tag t-ship">SHIPS Q3 2026</span></div><Fragment set:html={DEV.toggle} /><h3>Link: the pod hosts the meeting</h3><p>Add Link to a Pro room and the meeting itself moves off the laptop: <b>the pod hosts the call</b>, carrying camera, mic, and the compute. You still start it from your own device. Then close the lid, and the meeting keeps running.</p><p style="margin-top:10px"><a href="/products/link">Link placeholder →</a></p></div>
+      <div class="hyb-arrow">→</div>
+      <div class="hyb-step"><div class="stepk">The summit · <span class="tag t-ship">SHIPS Q4 2026</span></div><img class="hybimg" src={`${MEDIA_IMG["Host"]}`} alt="Host tablet" loading="lazy"><h3>Host: the room hosts</h3><p>Walk in with nothing. The room starts, controls, and shares the meeting with the real Teams/Zoom/Webex/Meet client, chosen per meeting, locked to none.</p><p style="margin-top:10px"><a href="/products/host">Host placeholder →</a></p></div>
+    </div>
+    <p class="note">Link and Host are pre-launch placeholders: names pending the Q12 workshop; capabilities scoped, dates and pricing unset. Host shows the current mockup from the hardware library [production render owed: asset workbook]; the Link silhouette is placeholder art direction [no Link asset exists yet].</p>
+
+    <div class="hyb-band reveal">
+      <div class="kicker" style="color:#7ce3a8">The headline</div>
+      <h2>Start the meeting with your phone, or nothing at all.</h2>
+      <p>At the top of the ladder, no user device is load-bearing. The room launches the call, runs the workspace, and hands control to whoever walks in, from a browser tab, a phone, or the room's own surface.</p>
+      <p>And remote participants aren&rsquo;t second-class: the workspace on the display is mirrored live to app.mersive.com, so everyone in the meeting sees exactly the same content: meeting parity, wherever they sit. A wired HDMI source is the one exception, and it is worth knowing before you plan a room: it takes the screen over as a full-screen feed rather than joining the workspace, so it is a room behaviour rather than a canvas tile and the remote seats do not receive it. Share the same device wirelessly and it lands in the workspace like anything else. [Ruled by Damian Blazy 14 Aug 2026]</p>
+      <a class="btn primary" href="/platform/taxonomy">See where this sits on the ladder →</a>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The part everyone fudges</div>
+      <h2>Native clients vs web-wrapped rooms.</h2>
+      <p class="sdek">The other agnostic rooms reach &ldquo;the room hosts&rdquo; through a browser-based or in-unit client. One vendor&rsquo;s own copy has users start their call from the browser-based application; another&rsquo;s runs in-unit, certified by neither Microsoft nor Zoom.</p>
+      <div class="hyb-vs">
+        <div class="hyb-col win"><h3>✓ Polaris: the real client</h3><ul><li>Native Teams/Zoom/Webex/Meet app, chosen per meeting</li><li>Chat, reactions, and breakouts intact</li><li>Layouts and gallery views exactly as the platform designed them</li><li>Copilot / AI companion features present</li><li>New platform features arrive on the vendor's own schedule — no wrapper lag</li></ul></div>
+        <div class="hyb-col lose"><h3>✕ Browser-based and in-unit room clients</h3><ul><li>Browser-based: users &ldquo;start their call from the browser-based application&rdquo; &mdash; that vendor&rsquo;s own copy</li><li>In-unit: a client that neither Microsoft nor Zoom certifies; no model from that vendor appears on either certified-device list</li><li>Feature parity is whatever that client exposes, on its own release schedule</li><li>Platform updates reach the room when the client catches up</li></ul></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The obvious question</div>
+      <h2>"Why not just buy an MTR or a Zoom Room?"</h2>
+      <p class="sdek">Fair question, and an honest answer first: certified room systems are polished, and if your company will be single-platform forever, lock-in feels free. Until it isn't.</p>
+      <div class="cardrow">
+        <div class="card"><h3>One ecosystem per room</h3><p>An MTR is a Teams appliance; a Zoom Room hosts Zoom's meetings, by design: crossing over means a cut-down guest experience. Every certified room commits to one vendor&rsquo;s ecosystem and carries a per-room, per-year platform license &mdash; and one wireless-presentation vendor&rsquo;s own Teams Rooms spec sheet states it outright: &ldquo;Microsoft Teams Rooms license required: Yes.&rdquo; Named, with the spec sheet, on the <a href="/compare/mtr">room-system comparison</a>. At fleet scale, that recurring line item is the lock itself, renewed annually. <em>[License figures placeholder pending legal.]</em></p></div>
+        <div class="card"><h3>Spin up a call just to share</h3><p>A VTC room is designed around one path to the display: the meeting. Local inputs exist on some bundles, but the default motion is start-a-call. So five people in the same room launch a meeting to look at a document. The moment the call window opens, every head drops into a laptop. Polaris shares straight to the workspace, no call required. Heads up, screens shared, collaboration back in the room.</p></div>
+        <div class="card"><h3>Same summit, chosen per meeting</h3><p>Polaris reaches the same room-hosted summit (walk in and the room starts, controls, and shares the call), but the platform is chosen per meeting, not per room. Monday's Teams call and Tuesday's Zoom call happen in the same room, on the same hardware, with nothing re-provisioned.</p></div>
+        <div class="card"><h3>The native client, kept</h3><p>The other &ldquo;agnostic&rdquo; room-hosted systems get there through a browser-based or in-unit client: one vendor&rsquo;s own copy has users start their call from the browser-based application, and another&rsquo;s in-unit client is certified by neither Microsoft nor Zoom. Polaris runs the actual Teams/Zoom/Webex/Meet client, so going agnostic doesn't cost you the client.</p></div>
+      </div>
+      <p style="text-align:center;margin-top:18px"><a class="btn accent" href="/compare/mtr">The full argument: why not an MTR? →</a></p>
+    </section>
+</ProductPage>

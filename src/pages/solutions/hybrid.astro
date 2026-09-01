@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { RS_CAP } from "../../data/taxonomy";
+import CtaBand from "../../components/CtaBand.astro";
+import { rsLegend, roomScene, parityFig } from "../../lib/blocks";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="solutions/hybrid">
+  <PageIntro
+    route={"solutions/hybrid"}
+    tpl={"T7"}
+    pre={"PRE-RELEASE"}
+    section={"Use cases"}
+    title={"Hybrid meeting room solutions: from BYOM to rooms that host."}
+  />
+    <div class="g3band reveal" style="background:linear-gradient(90deg,rgba(232,199,106,.16),rgba(109,91,184,.10));border-color:#8a6d1a"><b>Pre-release.</b> The BYOM+ half of this page depends on Link and Host, which are not in the first build. Wireless BYOM on Polaris Pro ships today; the rest publishes as each capability releases. <a class="btn accent" href="/products/hybrid">The hybrid family &rarr;</a></div>
+    <p class="dek">If your hybrid meetings still live on somebody's laptop, this page is the way out: first the room's camera and mic join your call wirelessly (BYOM), then the room hosts the meeting itself, with the platform chosen per meeting, not bolted to the room.</p>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The problem, told in order</div>
+      <h2>Your meeting rooms are stuck on rung one.</h2>
+      <p class="sdek">Most "hybrid rooms" are a display and a prayer: the meeting runs on one person's laptop, the laptop's webcam stares up one nostril, and remote participants hear the room through a laptop mic. Every meeting room climbs the same three rungs. The question is where yours stopped.</p>
+      <div class="cardrow">
+        <div class="card"><h3>Rung 1: BYOD</h3><p>You share your screen to the display; the meeting stays on your laptop. Fine for presenting. For hybrid, the room's camera and mic aren't even in the call.</p></div>
+        <div class="card"><h3>Rung 2: BYOM, shipping today</h3><p>Bring your own meeting: your Teams/Zoom/Webex call borrows the room's camera and mic: with Polaris Pro, wirelessly and multi-user, no cable on the table.</p><a href="/products/pro">Polaris Pro →</a></div>
+        <div class="card"><h3>Rung 3: the room hosts</h3><p>Walk in with a phone or nothing at all: the room starts, controls, and shares the meeting with native clients. <span class="tag t-pre">Polaris Host: PRE-LAUNCH</span></p><a href="/products/hybrid">The hybrid family →</a></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Inside the rooms</div>
+      <h2>Rung two and rung three, drawn honestly.</h2>
+      <p class="sdek">Solid lines are cables into the Polaris pod; dashed lines are wireless. The purple ring marks the meeting host, where the meeting actually lives.</p>
+      <div class="rs-row" style="grid-template-columns:1fr 1fr">
+        <figure class="rs-card"><span class="rs-k">BYOM: shipping today</span><Fragment set:html={roomScene(2)} /><figcaption class="rs-cap"><b>The room's AV, your meeting.</b> <Fragment set:html={RS_CAP[2]} /></figcaption></figure>
+        <figure class="rs-card rs-hot"><span class="rs-k">BYOM+: the summit</span><Fragment set:html={roomScene(3)} /><figcaption class="rs-cap"><b>No laptop in the room.</b> <Fragment set:html={RS_CAP[3]} /></figcaption></figure>
+      </div>
+      <Fragment set:html={rsLegend()} />
+    </section>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">The part that keeps you free</div>
+      <h2>Platform-agnostic: works with Teams, Zoom, Webex, and Meet.</h2>
+      <p>The platform is chosen per meeting, not per room: Monday's Teams call, Tuesday's Zoom call, Wednesday's Webex with the client who insists: same room, same hardware, native clients, nothing re-provisioned. Certified rooms make that choice at purchase. One wireless-presentation vendor&rsquo;s own Teams Rooms spec sheet puts it plainly &mdash; &ldquo;Microsoft Teams Rooms license required: Yes&rdquo; &mdash; so the hardware is one purchase and the platform licence is another, annually. Named, with the spec sheet, on the <a href="/compare/mtr">room-system comparison</a>. [Broader MTR and Zoom Rooms licence terms pending wave-4 verification.]</p>
+      <div class="chips"><span>✓ Microsoft Teams</span><span>✓ Zoom</span><span>✓ Webex</span><span>✓ Google Meet</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/compare/mtr">The Microsoft Teams Rooms alternative →</a></p>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Remote seats</div>
+      <h2>Meeting parity: every seat sees the same screen.</h2>
+      <p class="sdek">Hybrid fails when remote participants see less than the room does. The workspace on the room&rsquo;s display is mirrored live to app.mersive.com: everyone in the meeting sees the same content on their own screen, wherever they sit. No second-class seats. A wired HDMI source is the one exception, and it is worth knowing before you plan a room: it takes the screen over as a full-screen feed rather than joining the workspace, so it is a room behaviour rather than a canvas tile and the remote seats do not receive it. Share the same device wirelessly and it lands in the workspace like anything else. [Ruled by Damian Blazy 14 Aug 2026]</p>
+      <Fragment set:html={parityFig()} />
+    </section>
+
+    <div class="two">
+      <div class="card"><h3>The products behind the rungs</h3><p>Pro ships true wireless BYOM today; Link and Host carry the room to the summit.</p><a href="/products/hybrid">The hybrid family →</a></div>
+      <div class="card"><h3>"We were just going to roll out MTRs"</h3><p>Expensive per-room licenses, one vendor forever, and a call required just to share: the full argument, with the honest concessions.</p><a href="/compare/mtr">The Microsoft Teams Rooms alternative →</a></div>
+    </div>
+    <CtaBand />
+</BaseLayout>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { face } from "../../lib/pages/resources-who";
+import { CNVIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { crumbs } from "../../lib/blocks";
+---
+
+<BaseLayout route="resources/who">
+  <Fragment set:html={crumbs("resources/who","Who we are")} />
+    <div class="pageinfo"><span class="tag t-tpl">T9</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Owned by the people who build it.</h1>
+    <p class="dek">In December 2025, Mersive&rsquo;s management team bought the company. [Verify date and wording with legal.] The people who design, engineer, sell, and support Polaris are the people who own Mersive, and that changes how everything on this site works.</p>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The story</div>
+      <h2>We bought this company because we believed in it.</h2>
+      <div class="two">
+        <div class="card"><h3>Decisions by people who&rsquo;ve pulled cable</h3><p>The owners of this company have programmed control systems, commissioned rooms at 6 a.m., and sat through the change orders. Product decisions, pricing decisions, and partner terms are made by people who have lived on your side of the rack.</p></div>
+        <div class="card"><h3>A fifteen-year head start, kept</h3><p>Mersive Solstice taught the market wireless collaboration, and the team that built it is the team that owns what comes next. Polaris isn&rsquo;t a pivot; it&rsquo;s the same people finishing the thought, with their own money on the table.</p></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Values: as receipts, not adjectives</div>
+      <h2>Don&rsquo;t take our word for it. Take the evidence.</h2>
+      <p class="sdek">Every company claims transparency and craft. Here is ours, in verifiable form:</p>
+      <div class="cnv-bene">
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.docs} /></div><b>Public release notes</b><p>Every firmware release, publicly logged: dates, changes, fixes. The changelog is the update-policy receipt, and anyone can read it.</p><p style="margin-top:8px"><a href="/resources/firmware">The changelog →</a></p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.dir} /></div><b>Open documentation</b><p>Deployment guides, admin manuals, APIs, security architecture: no forms, no logins, live at documentation.mersive.com.</p><p style="margin-top:8px"><a href="/resources/docs">The docs hub →</a></p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.support} /></div><b>Engineers in the support threads</b><p>The person answering the hard ticket is often the person who wrote the subsystem. Small company, short distance from problem to fix, on purpose.</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.people||CNVIC.support} /></div><b>A customer council with the owners in the room</b><p>A standing council of the people who run Mersive estates (universities, enterprises, integrators) meets directly with the owner-operators who build the platform. It informs the roadmap; it doesn't read about it afterward. [Member names published only with opt-in.]</p></div>
+      </div>
+    </section>
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">For the channel</div>
+      <h2>You&rsquo;re buying from your own.</h2>
+      <p>Our business moves through partners, and the people who own this company came up through the same industry you did. When you register a deal, the person approving it owns part of this company. Partner terms here are set by people who have carried a quote to a customer and waited by the phone.</p>
+      <p style="margin:0"><a href="/partners/program">The partner program →</a></p>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The people</div>
+      <h2>Names, not org charts.</h2>
+      <p class="sdek">First names, real roles, and the things we do when we're not doing this. The people who own the company answer to the people who use the product. [Fun facts and wording — confirm with each leader before publish.]</p>
+      <div class="cnv-leads">
+        <Fragment set:html={face("Damian","CEO · co-owner","BJJ black belt.","Flew F/A-18s for the Navy before he ran companies. Three years leading Mersive, now with his own name on it. [confirm wording]")} />
+        <Fragment set:html={face("Tom","CFO · co-owner","Avid snowboarder.","The numbers guy who bet his own money on the platform. [confirm wording]")} />
+        <Fragment set:html={face("Mike","Chief Revenue Officer","[fun fact placeholder]","Built SaaS revenue engines before bringing them to AV. [confirm]")} />
+        <Fragment set:html={face("Ryan","VP Product","[fun fact placeholder]","Deep AV product roots: on his second tour at Mersive, which tells you something. [confirm]")} />
+        <Fragment set:html={face("Steve","VP Engineering","[fun fact placeholder]","Builder and entrepreneur; six years engineering Mersive, fifteen working with Damian. [confirm]")} />
+        <Fragment set:html={face("John","VP Solutions Engineering","[fun fact placeholder]","Deep AV ties; 6+ years making Mersive work in real rooms. [confirm]")} />
+        <Fragment set:html={face("Ian","VP Operations","[fun fact placeholder]","Deep AV ties; 6+ years shipping the hardware on time. [confirm]")} />
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The timeline</div>
+      <h2>Fifteen years, three chapters.</h2>
+      <div class="cnv-flow s3">
+        <div class="cnv-step"><span class="n">2012–2025 [dates placeholder]</span><b>The Mersive Solstice years</b><p>Wireless collaboration, defined and refined across three product generations: 200K+ rooms and the vocabulary the market still uses.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">Dec 2025 [verify with legal]</span><b>Management ownership</b><p>The team that builds the product buys the company. Decisions now move at the speed of conviction, made by people with skin in every deal.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step hot"><span class="n">2026 [date placeholder]</span><b>Polaris</b><p>The next platform generation: rooms that host the meeting, joined from a browser, managed from one cloud.</p></div>
+      </div>
+      <p style="margin-top:12px"><a class="btn accent" href="/platform/lineage">The full product lineage: Mersive Solstice → Polaris →</a></p>
+    </section>
+    <CtaBand variant="story" />
+</BaseLayout>

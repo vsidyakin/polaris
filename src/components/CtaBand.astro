@@ -1,0 +1,87 @@
+---
+/**
+ * The closing CTA band. THE ONE OF THESE ON THE SITE.
+ *
+ * There used to be two — this component, on the placeholder pages only, and a
+ * `ctaBand()` string builder in lib/blocks.ts that every other page called
+ * through `<Fragment set:html>`. They had drifted: the builder's primary button
+ * was `.btn.warm`, this one's was `.btn.accent`, so the same band closed two
+ * different-looking halves of the same site. The builder is gone; what survives
+ * of it is `bandSky()`, which still generates the star markup at build time
+ * because that part is a generator, not a template.
+ *
+ * If a page needs a closing band, it imports this. Do not add a second builder.
+ *
+ * THE WARM BUTTON IS THE PAGE'S ONE WARM MOMENT. Every variant's primary is
+ * `.btn.warm`, and scripts/check-copper.py allows exactly one `.warm` element
+ * per page (two on the home page, which opens warm and closes warm). A page
+ * that renders this band has therefore spent its copper — see "THE WARM MOMENT"
+ * in styles/global.css before adding another.
+ */
+import { bandSky } from "../lib/blocks";
+
+interface Props {
+  /** "platform" and "story" swap the headline and the button pair. */
+  variant?: "default" | "platform" | "story";
+}
+const { variant = "default" } = Astro.props;
+
+const COPY = {
+  default: { h: "See it in your own rooms" },
+  platform: { h: "See the platform live." },
+  story: { h: "Meet Polaris in your own rooms." },
+}[variant];
+---
+
+<div class="ctaband">
+  <Fragment set:html={bandSky()} />
+
+  <h2>{COPY.h}</h2>
+  <p class="note">
+    Hardware trials ship for every product, direct from Mersive. When the rooms prove it, we
+    introduce your regional partner for the rollout.
+  </p>
+
+  {
+    variant === "platform" ? (
+      <Fragment>
+        <a class="btn warm big" href="/demo">
+          Get a demo
+        </a>
+        &nbsp;
+        <a class="btn secondary big" href="/trial">
+          Start a trial
+        </a>
+        &nbsp;
+        <a
+          class="btn ghost big"
+          href="https://www.youtube.com/@mersive"
+          target="_blank"
+          rel="noopener"
+        >
+          Watch on YouTube ↗
+        </a>
+      </Fragment>
+    ) : variant === "story" ? (
+      <Fragment>
+        <a class="btn warm big" href="/trial">
+          Start a trial
+        </a>
+        &nbsp;
+        <a class="btn secondary big" href="/products/family">
+          The Polaris family →
+        </a>
+      </Fragment>
+    ) : (
+      <Fragment>
+        <a class="btn warm big" href="/trial">
+          Start a free trial
+        </a>
+        &nbsp;
+        <a class="btn secondary big" href="/demo">
+          Get a demo
+        </a>
+      </Fragment>
+    )
+  }
+</div>

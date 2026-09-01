@@ -1,0 +1,73 @@
+---
+/**
+ * Site search. The index is built at compile time from the route registry and
+ * SEO copy, then serialised into the page for the client script to filter.
+ */
+import { ROUTES, href } from "../data/routes";
+import { TITLES, DESC } from "../data/seo";
+import { PLACEHOLDER_PAGES } from "../data/placeholder-pages";
+import { PAGE_TITLES } from "../data/page-titles";
+import { JOBS, jobBlurb, jobPath } from "../data/jobs";
+import { CASES } from "../data/cases";
+import { BLOG_POSTS } from "../data/blog";
+import { withBase } from "../lib/base";
+
+const routeIndex = ROUTES.map((route) => {
+  const placeholder = PLACEHOLDER_PAGES[route];
+  const title =
+    placeholder?.t ?? PAGE_TITLES[route] ?? (TITLES[route] ?? "").replace(" | Mersive", "");
+  const desc = (placeholder?.dek ?? DESC[route] ?? "").replace(/<[^>]*>/g, "");
+  return { r: route, h: href(route), t: title || route, d: desc.slice(0, 110) };
+});
+
+/* Job pages are real pages but cannot be in ROUTES — the set changes with the
+   Rippling board, not with the repo — so they are appended here rather than
+   being left unfindable. Computed paths, hence withBase(). */
+const jobIndex = JOBS.map((job) => ({
+  r: `careers/${job.slug}`,
+  h: withBase(jobPath(job)),
+  t: job.name,
+  d: `Open role · ${jobBlurb(job)}`.slice(0, 110),
+}));
+
+/* The thirteen customer studies, for the same reason as the jobs: they are real
+   pages under /resources/cases/, they are what someone searches for by customer
+   name ("wework", "warwick", "brent"), and ROUTES only carries the hub. Indexed by
+   organisation, since that is the word people type. */
+const caseIndex = CASES.map((c) => ({
+  r: `resources/cases/${c.slug}`,
+  h: `${withBase("/resources/cases")}/${c.slug}`,
+  t: `${c.org} — ${c.headline}`,
+  d: `Case study · ${c.dek}`.slice(0, 110),
+}));
+
+/* The forty-five blog posts, for the same reason as the jobs and the studies:
+   they are real pages under /resources/blog/, they are what someone searches for by
+   subject ("byom", "screen mirroring", "iso 27001"), and ROUTES carries only the
+   hub. Indexed on the headline and the dek, which is where those words are. */
+const postIndex = BLOG_POSTS.map((p) => ({
+  r: `resources/blog/${p.slug}`,
+  h: `${withBase("/resources/blog")}/${p.slug}`,
+  t: p.headline,
+  d: `${p.topicLabel} · ${p.dek}`.slice(0, 110),
+}));
+
+const index = [...routeIndex, ...jobIndex, ...caseIndex, ...postIndex];
+---
+
+<div id="ssearch">
+  <div class="ssbox" role="dialog" aria-label="Site search">
+    <div class="ssrow">
+      <input
+        id="ssq"
+        type="text"
+        placeholder="Search the site: pages, products, topics…"
+        autocomplete="off"
+      />
+      <button class="ssx" type="button" data-search-close aria-label="Close">✕</button>
+    </div>
+    <div id="ssr"></div>
+  </div>
+</div>
+
+<script type="application/json" id="search-index" set:html={JSON.stringify(index)} is:inline />

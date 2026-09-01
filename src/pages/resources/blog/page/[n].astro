@@ -1,0 +1,73 @@
+---
+/**
+ * /resources/blog/page/<n> — the blog hub, pages two onward.
+ *
+ * Same systematic order as the hub: BLOG_POSTS_ORDERED minus the featured lead,
+ * PER_PAGE per page. Page one lives at /resources/blog itself (with the
+ * featured lead); this route only exists from page 2, so /page/1 never
+ * duplicates the hub. The layout scales to any number of posts by adding
+ * pages, never by changing structure.
+ */
+import HubLayout from "../../../../layouts/HubLayout.astro";
+import PostGrid from "../../../../components/PostGrid.astro";
+import CtaBand from "../../../../components/CtaBand.astro";
+import { BLOG_POSTS_ORDERED, BLOG_TOPICS, blogCount, PER_PAGE } from "../../../../data/blog";
+import { href } from "../../../../data/routes";
+
+export async function getStaticPaths() {
+  const rest = BLOG_POSTS_ORDERED.slice(1);
+  const pageCount = Math.ceil(rest.length / PER_PAGE);
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, i) => {
+    const n = i + 2;
+    return {
+      params: { n: String(n) },
+      props: {
+        n,
+        pageCount,
+        posts: rest.slice((n - 1) * PER_PAGE, n * PER_PAGE),
+      },
+    };
+  });
+}
+
+interface Props {
+  n: number;
+  pageCount: number;
+  posts: (typeof BLOG_POSTS_ORDERED)[number][];
+}
+const { n, pageCount, posts } = Astro.props;
+
+const hub = href("resources/blog");
+const newer = n === 2 ? hub : `${hub}/page/${n - 1}`;
+const older = n < pageCount ? `${hub}/page/${n + 1}` : null;
+---
+
+<HubLayout
+  route="resources/blog"
+  child={{ path: `page/${n}`, name: `Page ${n}` }}
+  title={`Blog, page ${n} | Mersive`}
+  description="Read our latest thinking on how organizations meet, share, and collaborate. Practical writing on wireless collaboration, hybrid rooms, and the networks behind them."
+  crumbs={[{ label: "Blog", href: hub }, { label: `Page ${n}` }]}
+  pageTitle="Blog"
+>
+  <nav slot="tags" class="bhx-topics" aria-label="Browse by topic">
+    <a class="on warm" href={hub} aria-current="page">All <i>{blogCount("all")}</i></a>
+    {
+      BLOG_TOPICS.filter((t) => t.key !== "all").map((t) => (
+        <a href={`${hub}/topic/${t.key}`}>
+          {t.label} <i>{blogCount(t.key)}</i>
+        </a>
+      ))
+    }
+  </nav>
+
+  <PostGrid posts={posts} basePath="resources/blog" />
+
+  <nav class="bhx-pager" aria-label="Pagination">
+    <a href={newer}>&lsaquo; Newer</a>
+    <span class="bhx-pgn">Page {n} of {pageCount}</span>
+    {older ? <a href={older}>Older &rsaquo;</a> : <span />}
+  </nav>
+
+  <CtaBand slot="after" />
+</HubLayout>

@@ -1,0 +1,94 @@
+---
+/**
+ * /resources/cases/<slug> — one case study, pre-rendered.
+ *
+ * Thirteen real HTML files rather than a modal or a client-side fetch: a case
+ * study is the page a salesperson sends as a link and a search engine indexes, so
+ * it has to exist on its own. `getStaticPaths` reads src/data/cases.ts, which is
+ * also what the hub renders from — one source, so a card and its study cannot
+ * describe the deployment differently.
+ *
+ * The actual body/hero/foot-nav rendering lives in PostLayout, shared with
+ * /resources/blog/<slug> — this file only computes case-study-specific data:
+ * the schema call (type "Article", no author/dates/partOf — see data/schema.ts
+ * for why a fabricated date or by-line would be worse than none), and the foot
+ * nav's same-sector related stories.
+ */
+import PostLayout from "../../../layouts/PostLayout.astro";
+import { articleSchema } from "../../../data/schema";
+import { CASES, type CaseStory } from "../../../data/cases";
+import { href } from "../../../data/routes";
+
+export async function getStaticPaths() {
+  return CASES.map((story) => ({ params: { slug: story.slug }, props: { story } }));
+}
+
+interface Props {
+  story: CaseStory;
+}
+const { story: c } = Astro.props;
+
+/* No DESC entry exists for a dynamic route, so the description is built from the
+   story: the org, the headline and the dek, cut at a word boundary near the
+   ~155 characters seo.ts aims for. */
+const MAX = 155;
+const rawDesc = `${c.org}: ${c.headline}. ${c.dek}`;
+const description = rawDesc.length <= MAX ? rawDesc : `${rawDesc.slice(0, MAX).replace(/\s+\S*$/, "")}…`;
+
+const related = CASES.filter((o) => o.topic === c.topic && o.slug !== c.slug).slice(0, 3);
+const footRelated = related.map((o) => ({
+  href: `${href("resources/cases")}/${o.slug}`,
+  title: `${o.org} — ${o.headline}`,
+  ctaLabel: "Read",
+}));
+
+const schema = [
+  articleSchema({
+    headline: `${c.org}: ${c.headline}`,
+    description,
+    /* The photograph the page leads with — image rights on the case
+       photography are settled, so it is safe to name in the graph. */
+    image: c.hero,
+    path: `/resources/cases/${c.slug}`,
+    section: c.topicLabel,
+    about: c.org,
+    /* A case study is a story about a deployment, so it points at the
+       family page: which products the deployment runs, in the site's own
+       words rather than restated here. */
+    mentions: ["products/family"],
+  }),
+];
+---
+
+<PostLayout
+  route="resources/cases"
+  childPath={c.slug}
+  childName={c.org}
+  title={`${c.org} — ${c.headline} | Mersive`}
+  description={description}
+  schema={schema}
+  crumbHubHref={href("resources/cases")}
+  crumbHubLabel="Case Studies"
+  topicLabel={c.topicLabel}
+  org={c.org}
+  headline={c.headline}
+  dek={c.dek}
+  hero={c.hero}
+  logo={c.logo}
+  logoAspect={c.logoAspect}
+  lede={c.lede}
+  takeaways={c.takeaways}
+  asideLabel={c.asideLabel}
+  body={c.body}
+  topicKey={c.topic}
+  midCta={{
+    heading: "Want this in your rooms?",
+    body: "We'll walk your spaces and map the closest deployment to yours.",
+    ctaLabel: "Book a demo",
+    ctaHref: href("demo"),
+  }}
+  footLabel={`More in ${c.topicLabel.toLowerCase()}`}
+  footRelated={footRelated}
+  backHref={href("resources/cases")}
+  backLabel="All case studies"
+/>

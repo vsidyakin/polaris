@@ -1,0 +1,526 @@
+/* ============================================================
+   Mobile layer — phones only.
+   Every rule is gated to (max-width: 640px); desktop viewports
+   never match anything in this file. Loaded after global.css
+   (see BaseLayout.astro) so it wins ties at equal specificity.
+   Conventions:
+   - .fig-deco  — decorative SVG detail hidden on phones
+     (tagged in src/lib/blocks.ts figure builders)
+   - peer-card rows become horizontal scroll-snap carousels
+   ============================================================ */
+
+/* The burger button is a NEW element that exists only for the phone nav.
+   It defaults hidden at every width; the phone block below reveals it.
+   These two rules touch no pre-existing element, so desktop is unaffected. */
+.navburger {
+  display: none;
+}
+/* Art-directed mobile figures (the <MobileFigure> pattern): a phone-format
+   variant SVG sits next to its desktop sibling, hidden at every width by
+   default; the phone block below swaps them. New elements only. */
+.fig-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  /* ---------- navigation: burger + accordion panel ---------- */
+  .site-header .navrow {
+    flex-wrap: nowrap;
+    position: relative;
+  }
+  .site-header .logo {
+    margin-right: auto;
+  }
+  /* closed state: just logo + burger in the bar */
+  .site-header .topitem,
+  .site-header .ctas {
+    display: none;
+  }
+  .navburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 7px 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 9px;
+    background: none;
+    color: #e9e2ff;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  /* ---------- the burger, and it turns into the X rather than being replaced
+     by one ----------
+     Three bars in an 18x14 box. Closed they sit at 0, 6 and 12; open, the outer
+     two travel to the middle line and cross at 45 degrees while the middle one
+     goes. Nothing appears or disappears except that middle bar, so the shape the
+     eye follows is continuous — which is the whole difference from the pair of
+     swapped SVGs this replaces.
+
+     `translate` and `rotate` as INDIVIDUAL properties, not one `transform`. Two
+     reasons, and the second is the load-bearing one. They compose in a fixed
+     order — translate, then rotate — so "slide to the centre line, then turn
+     about your own centre" is exactly what the two declarations say, with no
+     matrix to reason about. And this file's animations are not the only thing
+     that touches these elements: `transform` is what the dropdown's entry
+     keyframes fill (see `dropRowIn` in global.css), and keeping movement off that
+     property is the convention the nav cards and the row glyphs already follow. */
+  .navburger .nb-box {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 14px;
+  }
+  .navburger .nb-bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    /* Rotation and travel share one curve; the middle bar's fade is quicker, so
+       it is out of the way before the other two arrive on the centre line. */
+    transition:
+      translate 240ms cubic-bezier(0.22, 0.75, 0.3, 1),
+      rotate 240ms cubic-bezier(0.22, 0.75, 0.3, 1),
+      scale 200ms cubic-bezier(0.22, 0.75, 0.3, 1),
+      opacity 120ms ease;
+  }
+  .navburger .nb-bar:nth-child(1) {
+    top: 0;
+  }
+  .navburger .nb-bar:nth-child(2) {
+    top: 6px;
+    /* Closing: the X unwinds first, then the bar comes back. Without the delay it
+       reappears through the middle of two bars still travelling, which reads as
+       four bars for a frame and a half. */
+    transition-delay: 0s, 0s, 0s, 110ms;
+  }
+  .navburger .nb-bar:nth-child(3) {
+    top: 12px;
+  }
+  .site-header.mnav .navburger .nb-bar:nth-child(1) {
+    translate: 0 6px;
+    rotate: 45deg;
+  }
+  .site-header.mnav .navburger .nb-bar:nth-child(2) {
+    opacity: 0;
+    /* Collapsing toward the centre as it fades, so it reads as being absorbed
+       into the cross rather than switched off. */
+    scale: 0.35 1;
+    transition-delay: 0s;
+  }
+  .site-header.mnav .navburger .nb-bar:nth-child(3) {
+    translate: 0 -6px;
+    rotate: -45deg;
+  }
+  /* The state still has to be legible without the motion: the bars land as the X,
+     they just do not travel there. */
+  @media (prefers-reduced-motion: reduce) {
+    .navburger .nb-bar {
+      transition: none;
+    }
+  }
+  /* open state: the header becomes a scrollable full-height panel */
+  .site-header.mnav {
+    background: rgba(16, 12, 32, 0.97);
+  }
+  .site-header.mnav .navrow {
+    flex-wrap: wrap;
+    max-height: 100dvh;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  .site-header.mnav .topitem {
+    display: block;
+    width: 100%;
+    position: static;
+  }
+  .site-header.mnav .topitem > button {
+    width: 100%;
+    text-align: left;
+    padding: 13px 6px;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  /* accordion: only an explicit tap opens a menu (no hover/focus opens,
+     which stick on touch screens) */
+  .site-header.mnav .topitem:hover .drop,
+  .site-header.mnav .topitem:focus-within .drop {
+    display: none;
+  }
+  .site-header.mnav .topitem.openmenu .drop {
+    display: block;
+    animation: none;
+  }
+  .site-header.mnav .topitem.openmenu .drop > * {
+    animation: none;
+  }
+  .site-header.mnav .drop {
+    position: static;
+    min-width: 0;
+    width: 100%;
+    margin: 4px 0 10px;
+    padding: 4px 0;
+    border: none;
+    border-left: 2px solid rgba(165, 140, 255, 0.3);
+    border-radius: 0;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .site-header.mnav .drop a {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  /* Phones keep the sub-groups open. There is no hover, so there is no dwell to
+     detect, and tapping the heading of a group that is not a page would leave
+     its children unreachable. Also a tighter indent: 18px of margin plus 36px
+     of padding is most of a 360px screen. */
+  .navjs .site-header.mnav .drop .navsub,
+  .site-header.mnav .drop .navsub {
+    display: block;
+    margin-left: 10px;
+  }
+  .navjs .site-header.mnav .drop .navparent > a::after,
+  .navjs .site-header.mnav .drop .navparent > .grpbtn::after {
+    content: none;
+  }
+  .site-header.mnav .drop .navsub a {
+    padding-left: 26px;
+  }
+  /* Product cards: one per row, and the padding restated because the generic
+     `.mnav .drop a` rule above ties with the card rule in global.css and this
+     file loads second. A narrower thumbnail frame too — 84px of picture plus a
+     blurb does not fit a 360px screen with the panel's own indent. */
+  .site-header.mnav .drop .navcards {
+    grid-template-columns: 1fr;
+    padding: 2px 8px 6px;
+  }
+  /* And open, for the reason the text sub-groups above are: no hover means no
+     dwell, so a collapsed group whose heading is not a page would put its cards
+     out of reach. Same tighter indent as `.navsub` gets here. */
+  .navjs .site-header.mnav .drop .navparent > .navcards,
+  .site-header.mnav .drop .navparent > .navcards {
+    display: grid;
+    margin-left: 10px;
+  }
+  /* …and they do not slide, because here they never appeared: they were already
+     on screen when the panel opened. Tapping the heading still sets `.nsopen`
+     (so `aria-expanded` stays honest), and without this that tap would replay
+     the reveal animation over three cards the reader is already looking at. */
+  .site-header.mnav .drop .navparent.nsopen > .navcards a.navcard {
+    animation: none;
+  }
+  .site-header.mnav .drop .navcards a.navcard {
+    padding: 9px 10px;
+    grid-template-columns: 66px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .site-header.mnav .drop .navcards a.navcard .navcard-fig {
+    height: 42px;
+  }
+  /* CTAs stack at the end of the panel */
+  .site-header.mnav .ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin: 14px 0 0;
+    gap: 10px;
+  }
+  .site-header.mnav .connectitem {
+    width: 100%;
+  }
+  .site-header.mnav .connectitem > button {
+    justify-content: center;
+    width: 100%;
+    padding: 10px 13px;
+  }
+  .site-header.mnav .connectdrop {
+    right: auto;
+  }
+  /* The six key cells hold their grid on a phone — six across is the shape of
+     the key and stacking them would lose that — but the 17px glyph and 10px of
+     padding do not fit six times into 360px minus the panel's own indent.
+     `min-width: 0` on the cells is what actually lets the grid shrink; without
+     it each input keeps its UA default intrinsic width and the row overflows. */
+  .site-header.mnav .cd-keys {
+    gap: 5px;
+  }
+  .site-header.mnav .cd-key {
+    min-width: 0;
+    padding: 8px 0;
+    font-size: 15px;
+  }
+  .site-header.mnav .cd-gobtn {
+    text-align: center;
+  }
+  .site-header.mnav .ssbtn {
+    width: 100%;
+    height: 42px;
+    margin: 0;
+  }
+  .site-header.mnav .ssbtn::after {
+    content: "Search";
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  .site-header.mnav .ctas > a {
+    text-align: center;
+    font-size: 14.5px;
+    padding: 8px;
+  }
+  /* Contact and Try Polaris are flex rows because they carry a glyph, and the
+     `text-align` above does not centre a flex container's children. These are
+     stretched full width by `.ctas`, so without this the icon and label sit
+     against the left edge of a centred-looking button. One selector now covers
+     both: Contact used to be `.ctalink` and is a `.btn.secondary.hasic` since
+     it became a button. */
+  .site-header.mnav .btn.hasic {
+    justify-content: center;
+  }
+
+  /* ---------- global chrome ---------- */
+  .pocbar {
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+  .crumb {
+    font-size: 12px;
+  }
+  .ctaband {
+    padding: 20px 14px;
+  }
+  .logoband {
+    gap: 22px;
+  }
+
+  /* ---------- type & rhythm ---------- */
+  .xhero .xwrap {
+    padding-top: 48px;
+    padding-bottom: 56px;
+  }
+  .xhero h1 {
+    font-size: clamp(30px, 10vw, 38px);
+  }
+  .xhero .xdek,
+  .xdek {
+    font-size: 15.5px;
+  }
+  .xhero .btn.big {
+    margin-bottom: 8px;
+  }
+  .xtrust {
+    gap: 10px 14px;
+    font-size: 12px;
+  }
+  .sect h2,
+  .darkband h2 {
+    font-size: 23px;
+  }
+  h1.pg {
+    font-size: 27px;
+  }
+  .dek,
+  .lead {
+    font-size: 15.5px;
+  }
+  .sect {
+    padding-top: 44px;
+  }
+
+  /* hero scene: let it shrink to fit */
+  .scene {
+    min-height: 0;
+  }
+
+  /* ---------- peer-card rows -> swipe carousels ---------- */
+  .painrow,
+  .easy3,
+  .diffgrid.compact,
+  .pillars,
+  .tiercards,
+  .tiercards.duo,
+  .three,
+  .rs-row,
+  .clb-caps,
+  .wjf {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    padding-bottom: 14px;
+    scrollbar-width: none;
+  }
+  .painrow::-webkit-scrollbar,
+  .easy3::-webkit-scrollbar,
+  .diffgrid.compact::-webkit-scrollbar,
+  .pillars::-webkit-scrollbar,
+  .tiercards::-webkit-scrollbar,
+  .three::-webkit-scrollbar,
+  .rs-row::-webkit-scrollbar,
+  .clb-caps::-webkit-scrollbar,
+  .wjf::-webkit-scrollbar {
+    display: none;
+  }
+  .painrow > *,
+  .easy3 > *,
+  .diffgrid.compact > *,
+  .pillars > *,
+  .tiercards > *,
+  .tiercards.duo > *,
+  .three > *,
+  .rs-row > *,
+  .clb-caps > *,
+  .wjf > .wjf-step {
+    flex: 0 0 82%;
+    max-width: 82%;
+    min-width: 0;
+    scroll-snap-align: center;
+  }
+  .wjf > .wjf-arrow {
+    flex: 0 0 auto;
+    align-self: center;
+    scroll-snap-align: none;
+  }
+
+  /* ---------- figures ---------- */
+  .fig-deco {
+    display: none;
+  }
+  .fig-desktop {
+    display: none;
+  }
+  .fig-mobile {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  /* architecture scene: legible labels at phone scale */
+  .clbwrap svg text {
+    font-size: 13px;
+  }
+  .clbwrap foreignObject div {
+    font-size: 19px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* ---------- control clusters: wrap instead of running off the edge ----------
+     A 360px phone leaves .site-main 324px of content box (360 - 2×18px). Every
+     rule below is a cluster whose min-content width exceeds that. */
+
+  /* .prmode is a nowrap inline-flex: two labels + six buttons, ~575px of
+     min-content. Each label takes its own row so the pairing with its buttons
+     stays unambiguous; flex-shrink absorbs the inline margin-left on "Term"
+     that would otherwise push basis:100% past the container. */
+  .prmode {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    align-items: center;
+  }
+  .prmode .prlbl {
+    flex: 1 0 100%;
+  }
+  .prmode button {
+    min-height: 40px;
+  }
+
+  /* .fx-filter (firmware platforms) and .dxleg (docs legend) are nowrap rows
+     that only just miss at 360px and squeeze their labels to breaking. */
+  .fx-filter,
+  .dxleg {
+    flex-wrap: wrap;
+  }
+
+  /* The award strip is fifteen badges on an endless single row (see .mq in
+     pages.css). At 57px tall one pass is still about 1240px, comfortably wider
+     than any phone, so the marquee has plenty to travel and the loop stays
+     seamless — but it is a shorter lap than on desktop, so it is slowed to keep
+     the same drift speed rather than turning into a ticker. */
+  .mq-track {
+    animation-duration: 42s;
+  }
+  .mq-run {
+    gap: 10px;
+    padding-right: 10px; /* must equal the gap — see the note in pages.css */
+  }
+  .mq img {
+    height: 57px;
+  }
+
+  /* ---------- taxonomy matrix ----------
+     215px + two min-content cells is ~400px, and it is the one multi-column
+     grid in the sheet with no narrow-viewport rule of its own. Two columns of
+     cells with the row label spanning both keeps the matrix readable; the
+     hidden .hd is the empty corner spacer, so nothing is lost. */
+  .tax {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tax > .hd:first-of-type {
+    display: none;
+  }
+  .tax > .rowhd {
+    grid-column: 1 / -1;
+  }
+
+  /* ---------- wide tables ----------
+     .famtbl already wraps its table in a scroller; everything else (the cloud
+     fleet table with nowrap cells, the three-column compare matrices) is bare
+     and pushes the page sideways. min-width comes from the tbody so a table
+     that fits still fills the column.
+
+     .cmpscroll is excluded for the same reason .famtbl is: it is already a
+     scroll pane, with a frozen header row and a frozen label column, and its
+     table is `table-layout: fixed` with declared column widths. Turning that
+     table into `display: block` throws the fixed layout away — table-layout has
+     no meaning on a block box — and the anonymous table the tbody then forms is
+     sized `auto` at 100% of the phone, which squeezes fifteen vendors into
+     354px instead of letting them scroll. This file is unlayered and global.css
+     is not, so it wins every one of these on the cascade regardless of
+     specificity; the exclusion is the only thing that keeps it out. */
+  .site-main > table,
+  .site-main :not(.famtbl):not(.cmpscroll) > table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .site-main > table > tbody,
+  .site-main :not(.famtbl):not(.cmpscroll) > table > tbody {
+    display: table;
+    width: 100%;
+  }
+
+  /* ---------- touch targets ---------- */
+  .pick button,
+  .cnv-chip,
+  .fx-filter button {
+    min-height: 40px;
+  }
+  .selq label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 40px;
+  }
+  .ssbtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* iOS zooms the viewport in on a focused field under 16px and never zooms
+     back out, which leaves every page scrolled sideways. */
+  .site-main input,
+  .site-main select,
+  .site-main textarea,
+  .site-header input,
+  #ssearch input {
+    font-size: 16px;
+  }
+}

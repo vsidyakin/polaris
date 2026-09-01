@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+import PageIntro from "./../components/PageIntro.astro";
+---
+
+<BaseLayout route="how-to-buy">
+  <PageIntro
+    route={"how-to-buy"}
+    tpl={"T9"}
+    section={false}
+    title={"Three ways to meet Mersive Polaris."}
+    dek={"Every path ends with your regional partner. That's how we work. Pick the one that matches where you are."}
+  />
+    <section class="sect reveal tight">
+      <div class="three">
+        <h2 class="sr-only">Ways to buy</h2>
+        <div class="card" style="border-color:rgba(124,227,168,.45)"><div class="kicker" style="color:#7ce3a8">Most popular</div><h3>Start a hardware trial</h3><p>Real Polaris hardware in your rooms, shipped free, direct from Mersive. The pod is the demo: install it and watch the room argue for itself. When it proves out, we introduce your regional partner for the rollout.</p><a class="btn primary" href="/trial">Start a trial</a></div>
+        <div class="card"><div class="kicker">30 minutes, live</div><h3>Book a demo</h3><p>Your use case, your floor plan, a live workspace, with a solutions engineer who has seen your network diagram before.</p><a class="btn accent" href="/demo">Get a demo</a></div>
+        <div class="card"><div class="kicker">Ready to roll out</div><h3>Buy through a partner</h3><p>Polaris is sold through certified AV partners worldwide. Find yours by region, or ask us to introduce you.</p><a class="btn accent" href="/partners/where">Find a partner</a></div>
+      </div>
+      <p class="note" style="margin-top:14px">Already have a Mersive partner? Every quote and order routes through them automatically. Your relationship is protected. [Partner-of-record language pending D10 finalization.]</p>
+    </section>
+    <CtaBand />
+</BaseLayout>

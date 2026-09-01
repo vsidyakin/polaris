@@ -1,0 +1,189 @@
+---
+import { PAGE_IDS, href } from "../data/routes";
+import { isExternalRoute, type NavItem } from "../data/nav";
+import { NAV_CARDS, type NavCard } from "../data/nav-cards";
+
+export type Node =
+  | { kind: "group"; label: string }
+  | { kind: "groupLink"; label: string; route: string }
+  | { kind: "rule" }
+  | { kind: "bracket"; label: string; nodes: Node[] }
+  | { kind: "link"; label: string; route: string; indented: boolean }
+  /** `heading: true` renders the parent's own row as a linking group heading. */
+  | { kind: "parent"; label: string; route: string; children: NavItem[]; heading?: boolean }
+  /** A group heading that is not itself a page but still expands on hover. */
+  | { kind: "groupParent"; label: string; children: NavItem[] }
+  /** A group whose children are all hardware products, drawn as cards. */
+  | { kind: "cardGroup"; label: string; children: NavItem[] };
+
+interface Props {
+  node: Node;
+  /** Current route, so the active link can be flagged. */
+  route: string;
+}
+const { node, route } = Astro.props;
+const cur = (r: string) => (r === route ? "cur" : "");
+
+/* An off-site row is a plain outbound anchor: no base path, no review page ID
+   (it has no route to carry one), and the ↗ the rest of the site uses. */
+const ext = isExternalRoute;
+
+/* Card rows come from the same NavItem tuple as every other row, so the label is
+   still nav.ts's. Only the thumbnail and the blurb are looked up. */
+const card = (route: string): NavCard | undefined =>
+  NAV_CARDS[route as keyof typeof NAV_CARDS];
+
+/* Dropdown ROWS carry no glyph. The six menu-bar buttons keep theirs (see
+   `SiteHeader`), which is the distinction: an icon on the bar labels a
+   destination you are choosing between, while an icon on every row of an open
+   panel is 40-odd marks competing with the labels that actually carry the
+   meaning. `nav-icons.ts` and `SIC` still exist and still hold the mapping, so
+   this is one import away from coming back if it is wanted.
+*/
+---
+
+{node.kind === "group" && <div class="grp">{node.label}</div>}
+
+{node.kind === "rule" && <hr />}
+
+{
+  node.kind === "groupLink" && (
+    <a class:list={["grpa", cur(node.route)]} href={href(node.route)}>
+      {node.label}
+      {PAGE_IDS[node.route] && <i class="pgid-n">{PAGE_IDS[node.route]}</i>}
+    </a>
+  )
+}
+
+{
+  node.kind === "link" &&
+    (ext(node.route) ? (
+      <a
+        class:list={[node.indented && "ind"]}
+        href={node.route}
+        target="_blank"
+        rel="noopener"
+      >
+        {node.label} ↗
+      </a>
+    ) : (
+      <a class:list={[node.indented && "ind", cur(node.route)]} href={href(node.route)}>
+        {node.label}
+        {PAGE_IDS[node.route] && <i class="pgid-n">{PAGE_IDS[node.route]}</i>}
+      </a>
+    ))
+}
+
+{
+  node.kind === "parent" && (
+    <div class="navparent">
+      <a class:list={[node.heading && "grpa", cur(node.route)]} href={href(node.route)}>
+        {node.label}
+        {PAGE_IDS[node.route] && <i class="pgid-n">{PAGE_IDS[node.route]}</i>}
+      </a>
+      <div class="navsub">
+        {node.children.map(([kp, kl]) =>
+          ext(kp) ? (
+            <a href={kp} target="_blank" rel="noopener">
+              {kl} ↗
+            </a>
+          ) : (
+            <a class={cur(kp)} href={href(kp)}>
+              {kl}
+              {PAGE_IDS[kp] && <i class="pgid-n">{PAGE_IDS[kp]}</i>}
+            </a>
+          )
+        )}
+      </div>
+    </div>
+  )
+}
+
+{
+  /* Same submenu as a linking parent, but the heading is a label rather than an
+     anchor: "Wireless collaboration" and "Hybrid and Software" group products,
+     they are not pages. Keyboard users reach the children through the button,
+     which is why it is a button and not a div. */
+  node.kind === "groupParent" && (
+    <div class="navparent">
+      <button class="grp grpbtn" type="button" aria-expanded="false">
+        {node.label}
+      </button>
+      <div class="navsub">
+        {node.children.map(([kp, kl]) =>
+          ext(kp) ? (
+            <a href={kp} target="_blank" rel="noopener">
+              {kl} ↗
+            </a>
+          ) : (
+            <a class={cur(kp)} href={href(kp)}>
+              {kl}
+              {PAGE_IDS[kp] && <i class="pgid-n">{PAGE_IDS[kp]}</i>}
+            </a>
+          )
+        )}
+      </div>
+    </div>
+  )
+}
+
+{
+  /* The hardware group. Collapsed behind its heading exactly like `groupParent`,
+     and for the same reason: three cards standing open push the six rows below
+     them — Solstice, the transition page, the selector, the trial — most of a
+     panel's height down, and the menu reads as a product page rather than a list
+     of everywhere you can go. The heading is a button, so keyboard users reach
+     the cards the way they reach every other sub-group's children.
+     The cards themselves are unchanged; only what shows them is. */
+  node.kind === "cardGroup" && (
+    <div class="navparent navcardgrp">
+      <button class="grp grpbtn" type="button" aria-expanded="false">
+        {node.label}
+      </button>
+      <div class="navcards">
+        {node.children.map(([kp, kl]) => {
+          const c = card(kp);
+          return (
+            <a class:list={["navcard", cur(kp)]} href={href(kp)}>
+              <span class="navcard-fig">
+                {c?.thumb && (
+                  <img
+                    src={c.thumb}
+                    alt=""
+                    width={c.w}
+                    height={c.h}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+              </span>
+              <span class="navcard-txt">
+                <b>
+                  {kl}
+                  {PAGE_IDS[kp] && <i class="pgid-n">{PAGE_IDS[kp]}</i>}
+                </b>
+                <em>{c?.blurb}</em>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  )
+}
+
+{
+  node.kind === "bracket" && (
+    <div class="navbkt">
+      <div class="navbkt-items">
+        {node.nodes.map((n) => (
+          <Astro.self node={n} route={route} />
+        ))}
+      </div>
+      <span class="navbkt-label" aria-hidden="true">
+        <i />
+        <em>{node.label}</em>
+      </span>
+    </div>
+  )
+}

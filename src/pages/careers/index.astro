@@ -1,0 +1,198 @@
+---
+/**
+ * /careers — the company and every open role, on one page.
+ *
+ * This was two pages: /resources/hiring ("Work at Mersive" — offices, process,
+ * benefits, EEO) and /careers (the listing). They are merged here, and /careers is
+ * the survivor for two reasons: every job posting already lives beneath it at
+ * /careers/<slug>, so retiring it would orphan the postings, and it is the URL a
+ * candidate and a search engine both expect. /resources/hiring now redirects here.
+ *
+ * The order is a candidate's order, not the org chart's: what the company is, then
+ * what is open, then how applying works, then where the work happens and what comes
+ * with it. The roles sit high because someone who arrived to job-hunt should not
+ * have to scroll past our culture copy to find them.
+ *
+ * Roles are read from the Rippling board at build time (src/data/jobs.ts), grouped
+ * by department, one card each, each linking to its own page. Applying happens in
+ * Rippling and nowhere else: no form here, and no candidate data crosses
+ * mersive.com. The roster is only as current as the last deploy — a role filled
+ * today stays listed until the next push.
+ *
+ * The copy says nothing about where the roles come from or where an application
+ * goes: the Apply button on each posting does that, and narrating it to a candidate
+ * adds nothing they need.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JobCard from "../../components/JobCard.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import {
+  JOBS,
+  JOBS_BY_DEPARTMENT,
+  JOBS_REACHABLE,
+  JOB_BOARD_URL,
+  jobCountLabel,
+} from "../../data/jobs";
+
+/* Three states, not two. An unreachable listing must not claim nothing is open —
+   we do not know that, and telling a candidate there are no roles when there may be
+   several is the one wrong answer this page can give. */
+const rolesHead =
+  JOBS.length > 0
+    ? `${jobCountLabel()} right now.`
+    : JOBS_REACHABLE
+      ? "Nothing is open today."
+      : "The listing could not be loaded.";
+const rolesDek =
+  JOBS.length > 0
+    ? "Every role we are hiring for, each with its full description on this site, grouped by the team it sits in."
+    : JOBS_REACHABLE
+      ? "Rather than leave roles up after they are filled, this page shows nothing when nothing is open. New roles appear as soon as they are posted."
+      : "That is a fault on our side rather than a sign that nothing is open. The link below always shows every current opening.";
+---
+
+<BaseLayout route="careers">
+  <PageIntro
+    route={"careers"}
+    tpl={"T8"}
+    open={false}
+    gate={"GATED: HR CONTENT OWED"}
+    crumb={"Careers"}
+    section={false}
+    title={"Work at Mersive."}
+  />
+  <p class="dek">
+    One product, two offices, and a company owned by the people who design, engineer, sell and
+    support it. That ownership is not a slogan on this page: it is why the people who answer a
+    support ticket and the people who decide what ships are in the same building.
+  </p>
+
+  <div class="cnv-band reveal">
+    <div class="kicker">Open roles</div>
+    <h2>{rolesHead}</h2>
+    <p>{rolesDek}</p>
+    {
+      JOBS.length === 0 && (
+        <p style="margin:0">
+          <a class="btn accent big" href={JOB_BOARD_URL} target="_blank" rel="noopener noreferrer">
+            View all openings ↗
+          </a>
+        </p>
+      )
+    }
+  </div>
+
+  {
+    /* The full listing, not a featured handful. The merged page has no second page
+       to send anyone to, so every open role has to be reachable from right here. */
+    JOBS_BY_DEPARTMENT.map((group) => (
+      <section class="sect reveal flush">
+        <div class="kicker">{group.department}</div>
+        <h2>
+          {group.jobs.length} {group.jobs.length === 1 ? "role" : "roles"}
+        </h2>
+        <div class="job-list">
+          {group.jobs.map((job) => (
+            <JobCard job={job} hideDepartment />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="sect reveal flush">
+    <div class="kicker">Speculative applications</div>
+    <h2>Nothing that fits?</h2>
+    <p class="sdek">
+      Send it anyway if you build the kind of thing this company builds. Where a speculative
+      application should go, and who reads it, is not settled. [general-application route - HR]
+    </p>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">How to apply</div>
+    <h2>Apply once, to a person.</h2>
+    <p class="sdek">
+      Every step below is owed by HR before this page publishes. What is written here is the sequence
+      the page will describe, not a commitment about timing or stages.
+    </p>
+    <div class="three">
+      <div class="card">
+        <h3>1 &middot; Apply</h3>
+        <p>Find the role above and apply against it. [required materials per role - HR]</p>
+      </div>
+      <div class="card">
+        <h3>2 &middot; Interview</h3>
+        <p>[interview process - HR] Stages, who you meet, and how long it takes, stated plainly.</p>
+      </div>
+      <div class="card">
+        <h3>3 &middot; Offer</h3>
+        <p>
+          [offer and onboarding steps - HR] Compensation ranges are not published on this page and no
+          figure here is confirmed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Where the work happens</div>
+    <h2>Two offices.</h2>
+    <p class="sdek">
+      Both are real places with people in them. Which roles are on-site, hybrid, or remote is set per
+      role in the posting. [remote and hybrid policy per role - HR]
+    </p>
+    <div class="two">
+      <div class="card">
+        <h3>Headquarters &middot; Lakewood, Colorado</h3>
+        <p>1667 Cole Blvd, Suite 225<br />Lakewood, CO 80401</p>
+      </div>
+      <div class="card">
+        <h3>EMEA &middot; Pozna&#324;, Poland</h3>
+        <p>
+          The EMEA office. [Pozna&#324; street address: not published anywhere on the site today -
+          HR and facilities]
+        </p>
+      </div>
+    </div>
+    <p class="note">Both offices already appear on <a href="/contact">the contact page</a>.</p>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Benefits</div>
+    <h2>What comes with the job.</h2>
+    <p class="sdek">
+      Benefits differ by country and are not the same in Lakewood and Pozna&#324;, so this section
+      publishes as two lists rather than one averaged claim.
+    </p>
+    <p class="note">
+      [benefits summary - HR] Nothing is listed until HR supplies it per location. Inventing a
+      benefits list is a promise to a candidate that the company has not made.
+    </p>
+  </section>
+
+  <div class="cnv-band reveal">
+    <div class="kicker">Equal opportunity</div>
+    <h2>The statement goes here, in full.</h2>
+    <p class="note" style="margin:0">
+      [EEO statement: final wording - HR and legal] This is a legal statement, not marketing copy: it
+      publishes verbatim as counsel and HR write it, and nothing stands in for it in the meantime.
+    </p>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Who you would be joining</h3>
+      <p>Owned by the people who build Polaris, and what that changes about how the company runs.</p>
+      <a href="/resources/who">Who we are →</a>
+    </div>
+    <div class="card">
+      <h3>What you would be working on</h3>
+      <p>The platform, the workspace, and fifteen years of it: from Sol to Polaris.</p>
+      <a href="/platform/lineage">The platform story →</a>
+    </div>
+  </div>
+
+  <CtaBand variant="story" />
+</BaseLayout>

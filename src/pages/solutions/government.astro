@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { REG_SPINE } from "../../data/industries";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indStack, indSpine, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/government">
+  <Fragment set:html={indHead("solutions/government","Government","Written for the review board.","TAA front and center: a trusted, TAA-compliant supply chain, secure boot, a Linux-hardened OS, and security documentation a review board can read without an NDA. Deployable behind your firewall.")} />
+    <section class="sect reveal tight">
+      <div class="kicker">Procurement facts</div>
+      <h2>The facts strip, on the page.</h2>
+      <p class="sdek">The answers procurement asks for first: stated plainly, with placeholders flagged until certificates link.</p>
+      <table>
+        <tr><th style="width:44%">Procurement fact</th><th>Status</th></tr>
+        <tr><td>TAA compliance: trusted supply chain</td><td class="y">✓ TAA-compliant [country-of-origin statement placeholder]</td></tr>
+        <tr><td>Secure boot: verified boot path</td><td class="y">✓ shipping</td></tr>
+        <tr><td>Linux-hardened OS: no Windows attack surface</td><td class="y">✓ shipping</td></tr>
+        <tr><td>802.1X network authentication</td><td class="y">EAP-TLS, PEAP, TTLS or EAP-PWD &mdash; four methods, on wired Ethernet and on Wi-Fi, with no tier, SKU or licence gate anywhere in the firmware. The device&rsquo;s own identity keys are held in the onboard NXP SE050 secure element; your certificate and its private-key password are not, and this page claims nothing more than that [verify: the capability is in the firmware, but all seven Gen 4 802.1X test cases are still open in Jira. &ldquo;Shipping&rdquo; is a validation status, and a review board is the last audience to assert one to without the test evidence behind it. Close the cases or reword before release - engineering and CISO]</td></tr>
+        <tr><td>SOC 2</td><td class="y">Type 2 and SOC 3, for the Polaris cloud management console &mdash; security, confidentiality and availability. The products are not in the attested boundary; they are penetration-tested instead. [2026 SOC 2 Type 2: swap in the period and opinion date when the auditors issue - CISO]</td></tr>
+        <tr><td>ISO 27001</td><td class="y">&#10003; ISO/IEC 27001:2022, certificate 011964-03, BARR Certifications, valid to 26 June 2028 &mdash; no nonconformities at the June 2026 surveillance audit</td></tr>
+        <tr><td>FIPS / Common Criteria posture</td><td class="p">[placeholder — pending certification roadmap]</td></tr>
+        <tr><td>Contract vehicles: GSA / SEWP / state schedules</td><td class="p">[placeholder — pending channel confirmation]</td></tr>
+      </table>
+      <p class="note">[Facts strip follows the established TAA-page pattern in this category — every row links to its certificate or statement at launch. No claim ships unverified.]</p>
+    </section>
+    <section class="sect reveal flush">
+      <div class="kicker">The paperwork, pre-answered</div>
+      <h2>Your control numbers, already mapped.</h2>
+      <p class="sdek">The SOC 2 Type 2 report publishes a control-by-control mapping of NIST SP 800-171 Rev. 2, as required by DFARS, so a reviewer can match our controls to the requirement numbers they already use rather than translating a marketing page into evidence. ISO/IEC 27001:2022 certificate 011964-03 sits alongside it, valid to 26 June 2028, and the June 2026 surveillance audit closed with no nonconformities — every clause and the Annex A control testing assessed as design and operating effectiveness met. [2026 SOC 2 Type 2: confirm the NIST 800-171 mapping carries forward, and whether the mapping can be released separately from the full report - CISO] [verify: TAA and NDAA 889 are tracked internally as UNCONFIRMED - country-of-origin documentation per SKU owed by legal, product and engineering before this page implies either]</p>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Architecture</div>
+      <h2>On-prem and air-gapped postures.</h2>
+      <p class="sdek"><mark class="vflag" title="Held: not for release until private-cloud deployment ships">What runs where, and what never leaves the building: the deployment question answered before it&rsquo;s asked. [BLOCKED: THIS SECTION IS UNSUPPORTED AND THIS PAGE MAY NOT RELEASE UNTIL IT IS. Ruled by Damian Blazy 13 Aug 2026, held again 14 Aug 2026: the page is released when private-cloud deployment is done, not before. The hold is enforced by the build &mdash; /solutions/government is listed in src/data/held.ts, which keeps it out of sitemap.xml, disallows it in robots.txt in both the preview and the public state, and puts a noindex tag on this page specifically, independent of the preview flag. scripts/check-blocked.py fails the build if this note and that list ever disagree. Polaris has no on-premises or air-gapped posture today: the pod cannot activate, license, configure, share or update without Mersive&rsquo;s cloud. Local bootstrap requires MENDER_URLS, CLOUD_API_URL and DISPLAY_APP_URL all reachable; activation is a cloud device-code flow; and screen keys are cloud-issued and refreshed on a timer, so even in-room sharing needs the cloud. A search of the product repository returns zero hits for air-gap, on-prem, self-host and private cloud. The three cards below describe a posture that does not exist yet, for the one audience most likely to test it. When private cloud ships, this section and the compare-matrix row removed on 13 Aug (F17.1) both return on the same date - Damian and product]</mark></p>
+      <div class="cardrow">
+        <div class="card"><h3>Behind your firewall</h3><p>Same-network sharing stays on your LAN, peer-to-peer. The management and connectivity posture for restricted networks (what requires cloud reachability, what degrades gracefully without it) publishes here in plain language. [Placeholder — pending security team sign-off.]</p></div>
+        <div class="card"><h3>Air-gapped estates</h3><p><mark class="vflag" title="Held: not for release until private-cloud deployment ships">[HELD 14 Aug 2026 &mdash; THIS CARD MAY NOT RELEASE. Nothing on it ships today. Polaris has no air-gapped mode: a pod will not advance past its own local bootstrap page unless every Mersive cloud endpoint answers, so a disconnected unit never reaches the product at all. There is no offline or USB firmware path either &mdash; the repository returns zero hits for sideload and for an offline Mender install. The card is kept, unpublishable, because the question is real and the answer arrives with private-cloud deployment; it must be rewritten from what actually ships at that point rather than from this placeholder - Damian and product]</mark></p></div>
+        <div class="card"><h3>Review-board-readable docs</h3><p>The security architecture written to be read by a human and lifted into an ATO package: architecture narrative, port matrix, data-path inventory. All open, none of it behind a form.</p><a href="/platform/security">The Trust Center →</a></div>
+      </div>
+    </section>
+    <Fragment set:html={indStack("Pro-led, per the posture.","Pro carries the capability set the public-sector review expects; Essentials covers standard rooms inside the same accreditation boundary.",[
+      {hot:true,name:"Polaris Pro",tfor:"Secure & segmented spaces",pts:["802.1x / EAP-TLS · dual-network posture, isolated by architecture","True wireless BYOM: room camera and mic, no cable","Secure boot on a TAA-compliant supply chain","Web-join for visiting officials: zero network access granted"],msrp:"from $575.86",msub:"/ room / year · warranty included for life of the subscription",link:"products/pro",lbl:"See Pro"},
+      {name:"Polaris Essentials",tfor:"Standard rooms in the boundary",pts:["Same platform, same hardened OS, same portal","Full workspace + web-join","Steps up to Pro with a license"],msrp:"from $287.86",msub:"/ room / year",link:"products/essentials",lbl:"See Essentials"}
+    ],"Purchasing routes through approved public-sector partners and contract vehicles. [Vehicle list placeholder — pending channel confirmation.]")} />
+    <Fragment set:html={indSpine("The compliance spine","Shared with every regulated industry.","The same six commitments cited across government, healthcare, and finance: one story, no forks.",REG_SPINE)} />
+    <Fragment set:html={indProof("As a government council, the strong security and encryption behind Mersive Solstice is of huge importance. Having the knowledge that Mersive Solstice is penetration tested regularly was also very good.","David Boyd","Unified Consultancy, for Brent Council",[["107","Mersive Solstice Pods across Brent Civic Centre"],["21","member states served from the WHO operations centre in Cairo"],["TAA","compliant supply chain"]],"[Gen 3-era proof from published case studies: the Brent Council and WHO SHOC stories live in the <a href='/resources/cases'>case-study library</a>. Agency references may require approval to name.]")} />
+    <Fragment set:html={indRes([
+      ["Security whitepaper (PDF)","The architecture narrative in citable, ATO-ready form. [placeholder]","platform/security"],
+      ["Compliance matrix","Controls mapped to SOC 2 / ISO 27001 / your framework. [placeholder]","resources/docs"],
+      ["Find an approved partner","Public-sector resellers and contract vehicles, by region.","partners/where"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

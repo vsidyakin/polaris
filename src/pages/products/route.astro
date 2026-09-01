@@ -1,0 +1,52 @@
+---
+import ProductPage from "../../layouts/ProductPage.astro";
+import { XIC } from "../../data/icons";
+import { indProof, mediaBandHtml } from "../../lib/blocks";
+---
+
+<ProductPage
+  route="products/route"
+  tpl="T4"
+  title={"Polaris Route: active learning technology. <span class=\"tag t-ship al-flag\">SHIPS Q1 2027</span>"}
+  dek={"Classroom screen routing with the teacher in control: send any student's screen to any display, and moderate every share from the teacher's device. Polling and quizzing are Polaris Engage, alongside it. The lineage of Mersive Solstice Active Learning, continued on Polaris."}
+  chipsExtra={"<span class=\"tag t-ship al-flag\">SHIPS Q1 2027</span>"}
+  cta={"story"}
+>
+    <div class="g3band reveal al-flag" style="background:linear-gradient(90deg,rgba(232,199,106,.16),rgba(109,91,184,.10));border-color:#8a6d1a"><b>Route ships Q1 2027.</b> This page describes the planned teaching layer for Polaris classrooms; it is not orderable today. Classrooms shipping now run Polaris Essentials or Pro. <a class="btn accent" href="/products/family">The Polaris family →</a></div>
+    <Fragment set:html={mediaBandHtml("al","Route")} />
+
+    <section class="sect reveal tight">
+      <div class="kicker">Screen routing</div>
+      <h2>Any student's screen, on any display — when the teacher says so.</h2>
+      <p class="sdek">Active-learning rooms have more than one display on purpose. Route treats them as one teaching surface.</p>
+      <div class="prdgrid">
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.workspace} /></div><h3>Multi-display routing</h3><p>Route a student's work to the front display, mirror it to every pod display for group critique, or give each table its own workspace, rearranged live as the lesson moves.</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.shieldx} /></div><h3>Teacher moderation</h3><p>Nothing reaches a display without the teacher's say-so. Preview shares before they go up, approve or dismiss from the teacher's own device, and clear every screen in one tap when attention needs to come forward.</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.webjoin} /></div><h3>Students share from the browser</h3><p>Web-join means nothing to install and no device management burden: students share from whatever the district issued, including Chromebooks, in seconds.</p><a href="/platform/how">How web-join works →</a></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.devicefree} /></div><h3>Run the room from the teacher's device</h3><p>The teacher's laptop, tablet, or phone is the control surface: routing, moderation, and polling without walking to a console at the front of the room.</p></div>
+      </div>
+    </section>
+
+    {/* Polling and engagement moved to /products/engage on 25 Aug 2026: it is its
+        own product now, sold on its own terms. Route stops at what reaches a display. */}
+    <div class="taxq al-flag"><b>Polling and quizzing are Polaris Engage.</b> Route decides what reaches a display; Engage measures who is with you — questions answered from any browser, results live on the workspace, and the participation record afterwards. <a href="/products/engage">Polaris Engage →</a></div>
+
+    <div class="g3band reveal"><b>Packaging:</b> Route packs onto Polaris Essentials or Pro: one add-on, either tier. [Packaging placeholder — bundled EDU SKU vs add-on license pending Q8 pricing model; partner pricing in portal.] <a class="btn accent" href="/products/family">See the family →</a></div>
+
+    <div class="taxq"><b>Chromebook classrooms are the native case, not the workaround.</b> Web-join and Google Cast mean a 1:1 Chromebook fleet shares and lands on the workspace with zero installs; the district's device policy stays untouched. <a href="/solutions/k12">The K-12 story →</a></div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Room design</div>
+      <h2>What an active-learning room needs.</h2>
+      <table>
+        <tr><th style="width:44%">Requirement</th><th>Guidance</th></tr>
+        <tr><td>Displays per room</td><td>[spec placeholder — supported display count per Polaris room]</td></tr>
+        <tr><td>Network</td><td>[spec placeholder — bandwidth, VLAN, and 802.1x guidance per the deployment guide]</td></tr>
+        <tr><td>Student devices</td><td>Any device with a browser: Chromebooks, laptops, tablets, phones. No app, no download.</td></tr>
+        <tr><td>Teacher device</td><td>[spec placeholder — supported control surfaces]</td></tr>
+      </table>
+      <p class="note">[Room-design requirements placeholder — final guidance ships with the education deployment guide.]</p>
+    </section>
+
+    <Fragment set:html={indProof("Quote slot: a teacher or instructional-technology lead on what moderated screen routing and live polling changed in their classrooms.","[Named education customer — placeholder]","[Title · district / institution placeholder]",[["[stat]","participation lift [placeholder]"],["[stat]","classrooms deployed [placeholder]"],["[stat]","time to first share [placeholder]"]],"[Proof slot — named education customer, verified stats, and story approval required before launch. Feeds from the case-study library.]")} />
+</ProductPage>

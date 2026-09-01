@@ -1,0 +1,63 @@
+---
+/**
+ * /resources/blog/topic/<key> — every blog post in one topic.
+ *
+ * These pages replace the hub's old client-side chip filter: a filter that is a
+ * page works with pagination, is linkable, and appears in search. Assignment is
+ * systematic — a post's own `topic` field decides where it lists — and the
+ * pages derive themselves from BLOG_TOPICS, so a new topic key in the data
+ * is a new index page with no further work. Topics are small enough (a dozen or
+ * so posts each) that they do not paginate; if one outgrows that, give it the
+ * page/[n] treatment.
+ */
+import HubLayout from "../../../../layouts/HubLayout.astro";
+import PostGrid from "../../../../components/PostGrid.astro";
+import CtaBand from "../../../../components/CtaBand.astro";
+import { BLOG_POSTS_ORDERED, BLOG_TOPICS, blogCount } from "../../../../data/blog";
+import { href } from "../../../../data/routes";
+
+export async function getStaticPaths() {
+  return BLOG_TOPICS.filter((t) => t.key !== "all").map((t) => ({
+    params: { key: t.key },
+    props: {
+      topic: t,
+      posts: BLOG_POSTS_ORDERED.filter((p) => p.topic === t.key),
+    },
+  }));
+}
+
+interface Props {
+  topic: { key: string; label: string };
+  posts: (typeof BLOG_POSTS_ORDERED)[number][];
+}
+const { topic, posts } = Astro.props;
+const hub = href("resources/blog");
+---
+
+<HubLayout
+  route="resources/blog"
+  child={{ path: `topic/${topic.key}`, name: topic.label }}
+  title={`${topic.label} articles | Mersive`}
+  description={`Our latest thinking on ${topic.label.toLowerCase()}: articles from the Mersive blog.`}
+  crumbs={[{ label: "Blog", href: hub }, { label: topic.label }]}
+  pageTitle={topic.label}
+>
+  <nav slot="tags" class="bhx-topics" aria-label="Browse by topic">
+    <a href={hub}>All <i>{blogCount("all")}</i></a>
+    {
+      BLOG_TOPICS.filter((t) => t.key !== "all").map((t) => (
+        <a
+          class:list={[t.key === topic.key && "on warm"]}
+          href={`${hub}/topic/${t.key}`}
+          aria-current={t.key === topic.key ? "page" : undefined}
+        >
+          {t.label} <i>{blogCount(t.key)}</i>
+        </a>
+      ))
+    }
+  </nav>
+
+  <PostGrid posts={posts} basePath="resources/blog" />
+
+  <CtaBand slot="after" />
+</HubLayout>

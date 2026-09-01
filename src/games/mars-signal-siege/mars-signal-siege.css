@@ -1,0 +1,120 @@
+/* Mars: Signal Siege — the shell around the canvas.
+ *
+ * Deliberately small. The game draws its own UI, so the only job here is to
+ * give Phaser a box to fill, keep the canvas crisp when it is scaled up, and
+ * make sure the shell can hold keyboard focus without showing a focus ring the
+ * player never asked for.
+ */
+
+.mss-shell {
+  /* Fills the mount by flow, not by absolute positioning: .egg9-mount is a
+     flex child with no positioning context of its own, so `inset: 0` would
+     escape to the modal and cover the close button. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0812;
+  /* The shell is focusable so keyboard play works the moment Mars opens; the
+     ring would sit over the artwork and tells the player nothing, because the
+     whole overlay is the control surface. Focus-visible still shows for
+     keyboard navigation into the host's own buttons, which are outside this. */
+  outline: none;
+}
+
+.mss-mount {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Deliberately NOT a centring flex container.
+     Phaser runs Scale.FIT with CENTER_BOTH, which centres the canvas by
+     setting a margin on it. Centring it here as well applies both: the flex
+     box splits the leftover space around a canvas that has already been given
+     a 45px top margin, so the game sat 23px below centre and the letterbox
+     ended up almost entirely at the top — which is what made a full-screen
+     open still read as a panel with a strip above it. Polaris-Man's root is a
+     plain block for exactly this reason. */
+  display: block;
+}
+
+.mss-mount canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  /* Nearest-neighbour on the way up. Phaser sets this on the context, but the
+     CSS scale applied by Scale.FIT is a separate resampling step and needs its
+     own instruction or the pixel art softens at non-integer sizes. */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+}
+
+/* The host toggles this on its modal; the game only needs to not fight it. */
+[data-view="window"] .mss-mount canvas {
+  border: 1px solid #2a2438;
+}
+
+/* The loading screen.
+   Shown for the boot and for every mission load, over the canvas, on the same
+   near-black the game itself boots to so the handover is a cut rather than a
+   flash. Reading order is mark, then status, then bar. */
+.mss-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.2vh, 22px);
+  background: #0a0812;
+  color: #b9a7e8;
+  font: 700 11px "Arial Narrow", system-ui;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.mss-loading[hidden] { display: none; }
+
+/* The mark is three broken concentric rings, which is already the shape of a
+   spinner — so it turns, and it IS the loading indicator rather than a logo
+   with a progress bar bolted underneath. Linear on purpose: easing a
+   continuous rotation reads as a stutter. Sized off the viewport so it holds
+   its presence in both the full and the windowed frame. */
+.mss-logo {
+  width: clamp(72px, 15vh, 168px);
+  height: auto;
+  user-select: none;
+  animation: mssLogoSpin 9s linear infinite;
+}
+@keyframes mssLogoSpin {
+  to { transform: rotate(360deg); }
+}
+
+.mss-loading-text { opacity: 0.85; }
+
+.mss-bar {
+  width: min(280px, 60%);
+  height: 4px;
+  background: #241a3a;
+  overflow: hidden;
+}
+.mss-bar > i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #7ce3a8;
+  transition: width 140ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Core gameplay animation is untouched — the brief is explicit that it must
+     not be removed. This only stops the shell itself from animating in. */
+  .mss-shell {
+    transition: none !important;
+  }
+  /* The mark holds still; the bar is still doing the reporting. */
+  .mss-logo { animation: none; }
+  .mss-bar > i { transition: none; }
+}

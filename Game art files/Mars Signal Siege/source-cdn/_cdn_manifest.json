@@ -1,0 +1,457 @@
+[
+ {
+  "key": "titleBg",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-title-dystopian-colony/bg-df3bcc968b.png",
+  "file": "titleBg.png",
+  "status": "ok"
+ },
+ {
+  "key": "logo",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-signal-siege/logo-35cf35cd43.nobg.png",
+  "file": "logo.png",
+  "status": "ok"
+ },
+ {
+  "key": "panelA",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-dustline-relay-panel-a/bg-375bf636c2.png",
+  "file": "panelA.png",
+  "status": "ok"
+ },
+ {
+  "key": "panelB",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-dustline-relay-panel-b/bg-3c5a4407d3.png",
+  "file": "panelB.png",
+  "status": "ok"
+ },
+ {
+  "key": "bossBg",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-dustline-boss-gate/bg-289675c57e.png",
+  "file": "bossBg.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-1-071b659a03.png",
+  "file": "wshot_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-2-5e95a80471.png",
+  "file": "wshot_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-3-dcca119fce.png",
+  "file": "wshot_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-4-f277d24b27.png",
+  "file": "wshot_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 4,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-5-238e937269.png",
+  "file": "wshot_4.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 5,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-6-ac5f15387f.png",
+  "file": "wshot_5.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 6,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-7-db62bef5cd.png",
+  "file": "wshot_6.png",
+  "status": "ok"
+ },
+ {
+  "key": "weaponShots",
+  "index": 7,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-weapon-projectiles-v03/mars-weapon-projectiles-v03-8-e428cd2b7f.png",
+  "file": "wshot_7.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-1-87be5fc311.png",
+  "file": "rrun_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-2-d3a05ae818.png",
+  "file": "rrun_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-3-84fa1300d5.png",
+  "file": "rrun_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-4-9f08e6c1b0.png",
+  "file": "rrun_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 4,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-5-921c8b45af.png",
+  "file": "rrun_4.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRun",
+  "index": 5,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-6-ef2fe9f836.png",
+  "file": "rrun_5.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-7-4d98a44469.png",
+  "file": "rrunfire_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-8-ab1ec81ab7.png",
+  "file": "rrunfire_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-9-572730043e.png",
+  "file": "rrunfire_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-10-dff0bc29b5.png",
+  "file": "rrunfire_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 4,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-11-c2c481b747.png",
+  "file": "rrunfire_4.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookRunFire",
+  "index": 5,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-animation/signal-marshal-rook-production-animation-12-0ae5c5778f.png",
+  "file": "rrunfire_5.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookKey",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-key-poses/signal-marshal-rook-production-key-poses-1-d26285dc3d.png",
+  "file": "rkey_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookKey",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-key-poses/signal-marshal-rook-production-key-poses-2-86a1bad72e.png",
+  "file": "rkey_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookKey",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-key-poses/signal-marshal-rook-production-key-poses-3-a625f01753.png",
+  "file": "rkey_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookKey",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-production-key-poses/signal-marshal-rook-production-key-poses-4-df456fd743.png",
+  "file": "rkey_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookProne",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-prone-poses-v06/signal-marshal-rook-prone-poses-v06-1-218c34a1e3.png",
+  "file": "rprone_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "rookProne",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-prone-poses-v06/signal-marshal-rook-prone-poses-v06-4-1441296326.png",
+  "file": "rprone_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "trooperWalk",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/pairing-legion-walk-animation-v05/pairing-legion-walk-animation-v05-3-c1b40ac639.png",
+  "file": "trooper_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "trooperWalk",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/pairing-legion-walk-animation-v05/pairing-legion-walk-animation-v05-4-3e9a24d2a5.png",
+  "file": "trooper_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "trooperWalk",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/pairing-legion-walk-animation-v05/pairing-legion-walk-animation-v05-5-0eb8d69cdd.png",
+  "file": "trooper_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "trooperWalk",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/pairing-legion-walk-animation-v05/pairing-legion-walk-animation-v05-6-96b3afe1f9.png",
+  "file": "trooper_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "miteWalk",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/port-mite-scuttle-animation-v05/port-mite-scuttle-animation-v05-4-ad1eab4375.png",
+  "file": "mite_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "miteWalk",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/port-mite-scuttle-animation-v05/port-mite-scuttle-animation-v05-5-eb035ac407.png",
+  "file": "mite_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "miteWalk",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/port-mite-scuttle-animation-v05/port-mite-scuttle-animation-v05-6-68546cf971.png",
+  "file": "mite_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "turretAnim",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/browser-blocker-turret-animation-v05/browser-blocker-turret-animation-v05-1-21316092f2.png",
+  "file": "turret_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "turretAnim",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/browser-blocker-turret-animation-v05/browser-blocker-turret-animation-v05-2-c7f6888f15.png",
+  "file": "turret_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "turretAnim",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/browser-blocker-turret-animation-v05/browser-blocker-turret-animation-v05-3-4bf1caed51.png",
+  "file": "turret_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "turretAnim",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/browser-blocker-turret-animation-v05/browser-blocker-turret-animation-v05-4-d05945944b.png",
+  "file": "turret_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-1-b43fc3855e.png",
+  "file": "rookold_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-2-644c489714.png",
+  "file": "rookold_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-3-e6de03c5be.png",
+  "file": "rookold_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-4-4ccd9c7e16.png",
+  "file": "rookold_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 4,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-5-c1b7e23919.png",
+  "file": "rookold_4.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 5,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-6-2d30c90fcf.png",
+  "file": "rookold_5.png",
+  "status": "ok"
+ },
+ {
+  "key": "rook",
+  "index": 6,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/signal-marshal-rook-key-poses/signal-marshal-rook-key-poses-7-07ded83cb2.png",
+  "file": "rookold_6.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-1-0d1402f054.png",
+  "file": "shot_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-2-bf0dcfffae.png",
+  "file": "shot_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-3-4212f74ef0.png",
+  "file": "shot_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-4-56a5a0479a.png",
+  "file": "shot_3.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 4,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-5-45f2671265.png",
+  "file": "shot_4.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 5,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-6-b956009fb0.png",
+  "file": "shot_5.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 6,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-7-a360177844.png",
+  "file": "shot_6.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 7,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-8-5e8b046733.png",
+  "file": "shot_7.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 8,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-9-eb7aedfa31.png",
+  "file": "shot_8.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 9,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-10-ad30c8f64e.png",
+  "file": "shot_9.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 10,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-11-dbb3e4c504.png",
+  "file": "shot_10.png",
+  "status": "ok"
+ },
+ {
+  "key": "shots",
+  "index": 11,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/mars-refined-projectile-set/mars-refined-projectile-set-12-7def434009.png",
+  "file": "shot_11.png",
+  "status": "ok"
+ },
+ {
+  "key": "enemies",
+  "index": 0,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/dustline-relay-enemies/dustline-relay-enemies-1-93e063cf44.png",
+  "file": "enemy_0.png",
+  "status": "ok"
+ },
+ {
+  "key": "enemies",
+  "index": 1,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/dustline-relay-enemies/dustline-relay-enemies-2-a297d68666.png",
+  "file": "enemy_1.png",
+  "status": "ok"
+ },
+ {
+  "key": "enemies",
+  "index": 2,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/dustline-relay-enemies/dustline-relay-enemies-3-cd4d3875c7.png",
+  "file": "enemy_2.png",
+  "status": "ok"
+ },
+ {
+  "key": "enemies",
+  "index": 3,
+  "url": "https://gameblocks.nyc3.digitaloceanspaces.com/art/dustline-relay-enemies/dustline-relay-enemies-4-f0ec8617e1.png",
+  "file": "enemy_3.png",
+  "status": "ok"
+ }
+]

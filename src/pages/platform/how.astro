@@ -1,0 +1,190 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { W, seg } from "../../lib/pages/platform-how";
+import { LYR } from "../../data/icons";
+import { howToSchema } from "../../data/schema";
+import CtaBand from "../../components/CtaBand.astro";
+import { collabScene, parityFig } from "../../lib/blocks";
+import Crumbs from "../../components/Crumbs.astro";
+
+/* ── The web-join flow, once ──────────────────────────────────────────────────
+   The four steps a person actually performs to get on the display, and the only
+   copy of them. The section below renders this array and `howToSchema()` describes
+   it, so the HowTo node cannot describe a flow the page does not show — which is
+   the whole condition for using the type at all.
+
+   `icon` keys into W (lib/pages/platform-how.ts). Text is Unicode rather than HTML
+   entities: these strings are rendered through `{...}` expressions, which escape
+   markup, and they also travel into the JSON-LD as plain text. */
+const WEB_JOIN = [
+  {
+    icon: W.open,
+    name: "Open a browser",
+    text: "Any laptop or desktop tab: Mac, Windows, Chromebook, a locked-down loaner. Phones share through the Mersive app instead.",
+  },
+  {
+    icon: W.code,
+    name: "Go to app.mersive.com, type the key",
+    text: "The 6-character key is on the display. Every key is globally unique and expires ten minutes after it’s issued.",
+  },
+  {
+    icon: W.glass,
+    name: "You’re on the display",
+    text: "Your share lands in the workspace next to everyone else’s, composited live, not queued behind a presenter.",
+  },
+  {
+    icon: W.dock,
+    name: "The Dock rides in the tab",
+    text: "Layout, participants, handoff, end meeting: the room’s controls live in the same browser tab you joined from.",
+  },
+];
+
+const howTo = howToSchema({
+  name: "Share your screen to a Polaris room from a browser",
+  description:
+    "Web-join: share to a Polaris display from the browser on the device you walked in with, with no app, no download and no admin rights.",
+  route: "platform/how",
+  steps: WEB_JOIN.map((s) => ({ name: s.name, text: s.text })),
+  supply: [
+    "A laptop, desktop or Chromebook with a current web browser",
+    "The 6-character key shown on the room’s display",
+  ],
+});
+---
+
+<BaseLayout route="platform/how" schema={howTo ? [howTo] : []}>
+  {/* Crumbs, not PageIntro, for the reason Matt gave on the blog hub: the
+      bhx-head below is this page's <h1> and dek, so a PageIntro would emit a
+      second heading. The chip row is inline here because PageIntro is what
+      normally renders it. */}
+  <Crumbs route="platform/how" title="Meet Polaris" />
+    <div class="pageinfo"><span class="tag t-tpl">T5</span><span class="tag t-open">OPEN</span></div>
+    <header class="bhx-head">
+      <h1 class="bhx-title bhx-title-plain">Meet Mersive Polaris.</h1>
+      <p class="bhx-dek">One platform turns every display into a shared workspace: joined from a browser, hosted by the room, managed from one cloud. This page is the whole architecture in plain language, and why the meeting no longer lives on anyone's laptop.</p>
+    </header>
+
+    <section class="sect reveal how-sect">
+      <div class="kicker">The signature diagram</div>
+      <h2>Glass. Workspace. Cloud.</h2>
+      <p class="sdek">Three layers, one platform: the display renders, the workspace composites, the cloud connects and manages. Expand any layer for the plain-language depth.</p>
+      <Fragment set:html={collabScene()} />
+      <div class="how-layers">
+        <details class="how-layer"><summary><span class="hl-n">Layer 1 · in the room</span><Fragment set:html={LYR.glass} /><b>The glass</b><p>Any display becomes a Polaris endpoint: meeting room, classroom, lobby wall.</p><span class="hl-more">＋ more</span></summary>
+          <div class="hl-bd"><p>The display stops being a destination you cable into and becomes a <b>rendering target</b>: the Polaris device behind it draws whatever the workspace says to draw.</p>
+          <ul><li><b>Any display qualifies.</b> The panel you already own, driven by a Polaris device behind it: no smart-panel firmware to depend on, no vendor-matched displays.</li>
+          <li><b>In Polaris Pro rooms, the AV plugs in here.</b> Camera and mic cable into the Pro device, so meetings can borrow them wirelessly.</li>
+          <li><b>Idle displays still work.</b> When no one is sharing, the same display runs signage, managed from the same portal. <a href="/solutions/signage">Signage →</a></li></ul></div></details>
+        <details class="how-layer"><summary><span class="hl-n">Layer 2 · the unit of work</span><Fragment set:html={LYR.ws} /><b>The workspace</b><p>Every share, side by side, composited live, fed from any device, in-room or remote.</p><span class="hl-more">＋ more</span></summary>
+          <div class="hl-bd"><p>The workspace is what makes the display worth looking at: <b>not one mirrored screen but a composited canvas of simultaneous sources</b>.</p>
+          <ul><li><b>Multi-source, live.</b> A deck from a laptop, a guest's browser tab, photos from a phone, a dashboard from another building — side by side, rearranged from the Dock.</li>
+          <li><b>Any device feeds it.</b> Native share or web-join from the browser; sources from other networks arrive via <a href="/platform/cross-network">cross-network sharing</a>.</li>
+          <li><b>It belongs to the room.</b> The workspace is rendered by the room's Polaris hardware, not by whichever laptop happens to be open — close every laptop and it still stands, and it can be picked up again later.</li></ul></div></details>
+        <details class="how-layer"><summary><span class="hl-n">Layer 3 · above the estate</span><Fragment set:html={LYR.cloud} /><b>The cloud</b><p>Routes every workspace, manages every room: one admin plane for the whole estate.</p><span class="hl-more">＋ more</span></summary>
+          <div class="hl-bd"><p>Polaris Cloud does two jobs: it <b>introduces sessions</b> (the signaling that lets endpoints find each other across networks) and it <b>runs the fleet</b>.</p>
+          <ul><li><b>Session brokering.</b> Devices and displays find each other through the cloud; same-network traffic stays on your LAN; cross-network traffic flows over a direct, encrypted connection the cloud negotiated.</li>
+          <li><b>Fleet operations.</b> Bulk config, templates, firmware, analytics, alerts, for meeting rooms and signage alike. <a href="/platform/cloud">Polaris Cloud →</a></li>
+          <li><b>What it doesn't do.</b> Store your workspace content. The candid data-path story lives in the <a href="/platform/security">Trust Center</a>.</li></ul></div></details>
+      </div>
+    </section>
+
+    <section class="sect reveal how-sect">
+      <div class="how-sechead">
+        <div class="kicker">100% web-based</div>
+        <h2>Share from the browser: no app, no download, no install.</h2>
+        <p class="sdek">Web-join (browser-based screen sharing, with nothing to install) is what makes everything above usable by a guest who walked in ninety seconds ago &mdash; and it&rsquo;s why the walk-up path gives IT no client to package, approve, patch, or manage. Four steps, zero software:</p>
+      </div>
+      {/* Rendered from WEB_JOIN above, with the id the HowTo step URLs point at. */}
+      <div class="wjf">
+        {
+          WEB_JOIN.map((s, i) => (
+            <>
+              {i > 0 && <div class="wjf-arrow">→</div>}
+              <div class="wjf-step" id={`step-${i + 1}`}>
+                <span class="n">{i + 1}</span>
+                <Fragment set:html={s.icon} />
+                <b>{s.name}</b>
+                <p>{s.text}</p>
+              </div>
+            </>
+          ))
+        }
+      </div>
+      <div class="wjf-cap"><span>✓ No client</span><span>✓ No admin rights</span><span>✓ Works on Chromebooks</span></div>
+    </section>
+
+    <section class="sect reveal how-sect">
+      <div class="how-sechead">
+        <div class="kicker">Every way in</div>
+        <h2>Web share is the front door. It isn't the only door.</h2>
+        <p class="sdek">The workspace takes whatever the room brings. Web-join is the predominant path, but native casting and the Mersive mobile apps land on the same display, and they all composite together.</p>
+      </div>
+      <div class="leadgrid">
+        <div class="leadgrid-row leadgrid-row-lead">
+          <div class="proto hot leadgrid-card-lg"><b>Web-join</b><span class="pb any">any network</span><p>The browser share: no install, cross-network, guest-proof. The predominant path.</p></div>
+          <div class="proto hot leadgrid-card-lg"><b>Polaris mobile app</b><span class="pb any">any network</span><p>Share and control from the phone in your pocket. iOS &amp; Android.</p></div>
+        </div>
+        <div class="leadgrid-row leadgrid-row-rest">
+          <div class="proto"><b>AirPlay</b><span class="pb lan">LAN only</span><p>Native Apple sharing: no Mersive software on the device.</p></div>
+          <div class="proto"><b>Miracast</b><span class="pb lan">LAN only</span><p>Native Windows sharing, straight from the OS.</p></div>
+          <div class="proto"><b>Google Cast</b><span class="pb lan">LAN only</span><p>Chromecast from Chrome and Android: the Chromebook classroom's native path.</p></div>
+        </div>
+      </div>
+      <div class="proto-band">All of these: <b>at the same time, on the same workspace.</b> An AirPlay share, a Miracast share, a browser guest, and a phone can sit side by side on one display. Native casting reaches the room over the local link only &mdash; the room's network, a peer-to-peer Wi-Fi Direct session, or the receiver's own access point &mdash; and discovery is link-local, so it breaks the moment a VLAN boundary appears. Once its share lands in the workspace, remote participants see it like everything else. Web-join and the Mersive apps join from any network. We say so plainly on the <a href="/platform/cross-network">cross-network page</a>.</div>
+    </section>
+
+    <section class="sect reveal how-sect">
+      <div class="how-sechead">
+        <div class="kicker">Meeting parity</div>
+        <h2>Everyone sees what the display shows.</h2>
+      </div>
+      <div class="explainer">
+        <p class="explainer-lead">Meeting parity: every source shared into the room is delivered to everyone who joined at app.mersive.com, and the layout travels with it &mdash; order, focus, full-screen and position stay in step, because the room and every browser run the same layout code.</p>
+        <p class="explainer-body">So a remote seat reproduces what the display shows at its own screen&rsquo;s resolution rather than watching a video of the room&rsquo;s screen. No craning at the display, no &ldquo;can you re-share that,&rdquo; no second-class seats.</p>
+        <div class="explainer-note">
+          <div class="explainer-note-label">The one exception</div>
+          <p><b>One exception, and it is worth knowing before you plan a room.</b> A source on the Pro&rsquo;s wired HDMI input takes the screen over as a full-screen feed rather than joining the workspace. It is not a tile on the canvas, so it is not one of the streams the remote seats receive &mdash; wired ingest is a room behaviour, and parity covers the canvas. Share the same laptop wirelessly instead and it lands in the workspace like everything else, remote seats included.</p>
+        </div>
+      </div>
+      <Fragment set:html={parityFig()} />
+    </section>
+
+    <section class="sect reveal how-sect">
+      <div class="how-sechead">
+        <div class="kicker">Why the silicon matters</div>
+        <h2>Where a panel stops and the room silicon starts.</h2>
+      </div>
+      <div class="explainer">
+        <p class="explainer-lead">A workspace is a compositing problem: a roomful of people sharing at once means many simultaneous decode sessions rendered into one layout, and bridging your meeting to the room's AV adds real-time encode on top.</p>
+        <div class="explainer-note">
+          <div class="explainer-note-label">The memory ceiling</div>
+          <p>Around 5 on Essentials and 10 on Pro &mdash; a memory ceiling on the chassis, not a licence: nothing in the software counts sources or refuses one, so the limit is what the silicon can hold, and the two tiers run the same code.</p>
+        </div>
+        <p class="explainer-body">That takes purpose-built silicon, not a display's spare cycles.</p>
+      </div>
+      <div class="encwrap">
+        <div class="enc-row hot"><div class="enc-lbl"><b>Mersive Polaris</b><span>dedicated encode/decode silicon</span></div><div class="enc-bars"><div class="enc-segs"><Fragment set:html={seg(6,6)} /></div><span class="enc-cap">many simultaneous decodes, composited live into the room&rsquo;s layout [verify: no density figure is pending publication, because no software cap exists to publish &mdash; the practical ceiling is memory, ruled by Damian Blazy as around 5 on Essentials and 10 on Pro (14 Aug 2026, see src/data/rulings.ts). Separately: whether the composited canvas is ENCODED and sent to remote participants as one stream, or whether remote seats receive the individual source streams and lay them out with the same layout code, is a mechanism question the verification pass answered the second way. It does not change what a remote seat sees. Confirm the mechanism before this caption says encode - engineering]</span></div><span class="enc-tag yes">✓ real-time encode at room scale</span></div>
+        <div class="enc-row"><div class="enc-lbl"><b>Casting dongle / button</b><span>button + desktop client</span></div><div class="enc-bars"><div class="enc-segs"><Fragment set:html={seg(2,6)} /></div><span class="enc-cap">carries one presenter's pixels per transmitter, and the picture stops at the display: nothing leaves the room without a UC call</span></div><span class="enc-tag no">✕ the picture stops at the display</span></div>
+        <div class="enc-row"><div class="enc-lbl"><b>Smart-panel SoC</b><span>display firmware, leftover headroom</span></div><div class="enc-bars"><div class="enc-segs"><Fragment set:html={seg(2,6)} /></div><span class="enc-cap">split-view casting in firmware; the composite never leaves the glass</span></div><span class="enc-tag no">✕ no real-time encode out</span></div>
+        <p class="note" style="margin:12px 0 4px">Each bar = one simultaneous decode session on the display. [verify: the competitor silicon values in the two lower rows are illustrative and comparative rather than measured &mdash; confirm or replace them before publish. The Polaris session count is no longer pending: it is a memory ceiling of around 5 on Essentials and 10 on Pro, ruled by Damian Blazy 14 Aug 2026]</p>
+      </div>
+      <div class="explainer">
+        <p class="explainer-summary">What this buys you in the room: a panel&rsquo;s composite stays on its own glass; <b>Polaris encodes the whole meeting out to every participant</b> &mdash; and Polaris Pro keeps enough encode headroom to hand the room&rsquo;s camera and mic to your Teams, Zoom, Webex, or Meet call.</p>
+      </div>
+    </section>
+
+    <section class="sect reveal how-sect">
+      <div class="how-sechead">
+        <div class="kicker">Go deeper</div>
+        <h2>Evaluating Polaris? Start with these four reads.</h2>
+      </div>
+      <div class="cardrow">
+        <div class="card"><h3>Cross-network sharing</h3><p>Content crosses subnets, VLANs, and the internet: no VPN, no UC call. Of the twelve competitors we checked in August 2026, exactly one documents a comparable off-LAN path, and it wants two ephemeral port ranges, XMPP and STUN/TURN/ICE, with signalling hosted in Azure West Europe. The other eleven document LAN-local media only.</p><a href="/platform/cross-network">The flagship deep-dive →</a></div>
+        <div class="card"><h3>Security architecture</h3><p>The trust chain, network posture, and update policy: the ten-minute read your security team actually wants. Nothing gated.</p><a href="/platform/security">The Trust Center →</a></div>
+        <div class="card"><h3>Where meetings live</h3><p>Two questions classify every room ever built. This grid is the map, and Polaris is the only platform we know of holding all three agnostic rungs.</p><a href="/platform/taxonomy">Where meetings live →</a></div>
+        <div class="card"><h3>Hybrid meetings</h3><p>BYOM today, hosted-BY-the-room next: how the meeting leaves the laptop for good, with native clients, chosen per meeting.</p><a href="/products/hybrid">The hybrid family →</a></div>
+      </div>
+      <p class="note" style="text-align:center">Also: <a href="/products/pro/spec#platform-lifecycle">the 10-year platform and its invariants</a> · <a href="/products/family">the tier table</a> · <a href="/platform/cloud">Polaris Cloud</a> · <a href="/platform/tco">the 10-year math</a></p>
+    </section>
+    <CtaBand variant="platform" />
+</BaseLayout>

@@ -1,0 +1,411 @@
+/* ==========================================================================
+   Developer panel — TEMPORARY, delete at production launch
+   ==========================================================================
+
+   Chrome for the small tab on the right edge (components/DevPanel.astro,
+   scripts/dev-panel.ts) and, below it, the rules that switch the rest of the
+   review chrome off so a page can be read as production.
+
+   Hand-written rather than Tailwind, for the same reason games.css is: this is
+   a self-contained lump of pre-launch chrome that gets deleted whole, and
+   keeping it out of the theme means nothing in the real site can come to
+   depend on it.
+
+   Deliberately unlayered. Tailwind's @layer components loses to unlayered CSS
+   in the cascade, and one of the things being switched off (.tmpbox on the home
+   page) is an Astro-scoped style, which is also unlayered — so the suppression
+   rules below carry !important rather than relying on source order.
+   ========================================================================== */
+
+/* ---------- the panel ---------- */
+
+.devp {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  /* Above the header (50) and the compare tooltips (60); below the easter-egg
+     overlays (200) and the search overlay (800), so neither gets a tab across
+     its edge. */
+  z-index: 150;
+  display: flex;
+  align-items: flex-start;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #e2d9ff;
+}
+
+/* Hidden entirely until Ctrl+Alt+M arms it. The state is restored from
+   localStorage by the inline boot script in DevPanel.astro, before this part of
+   the page paints, so an armed panel never flashes in and an unarmed one never
+   flashes out. */
+html:not([data-dev="on"]) .devp {
+  display: none;
+}
+
+.devp-tab {
+  flex: none;
+  padding: 12px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-right: 0;
+  border-radius: 7px 0 0 7px;
+  background: #241c45;
+  color: #b9a6ff;
+  font: inherit;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  cursor: pointer;
+  box-shadow: -4px 0 14px rgba(5, 3, 14, 0.5);
+}
+.devp-tab:hover {
+  background: #2f2559;
+  color: #d9ccff;
+}
+.devp-tab:focus-visible {
+  outline: 2px solid #a58cff;
+  outline-offset: -2px;
+}
+
+.devp-body {
+  width: 252px;
+  max-height: 86vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-right: 0;
+  border-radius: 8px 0 0 8px;
+  background: #16122e;
+  box-shadow: -10px 0 34px rgba(5, 3, 14, 0.6);
+}
+html:not([data-dev-panel="open"]) .devp-body {
+  display: none;
+}
+
+.devp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1d1739;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #b9a6ff;
+}
+.devp-x {
+  border: 0;
+  background: none;
+  color: #8f85b8;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.devp-x:hover {
+  color: #e2d9ff;
+}
+
+.devp-grp {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.devp-grp:last-of-type {
+  border-bottom: 0;
+}
+
+/* ---------- collapsible groups ---------- */
+
+/* The header is the old .devp-lbl caption made clickable — same size, weight
+   and colour, so the panel reads as it did before it gained a third group. */
+.devp-gh {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  background: none;
+  color: #7a6fa8;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-align: left;
+  cursor: pointer;
+}
+.devp-gh:hover {
+  color: #b9a6ff;
+}
+.devp-gh:focus-visible {
+  outline: 2px solid #a58cff;
+  outline-offset: -2px;
+}
+.devp-car {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: 4px solid currentColor;
+  border-right: 3.5px solid transparent;
+  border-left: 3.5px solid transparent;
+  transition: transform 0.12s;
+}
+/* The section carries the state, not the button: the inline boot script in
+   DevPanel.astro sets it before this part of the panel paints. */
+[data-devp-sec][data-shut] .devp-car {
+  transform: rotate(-90deg);
+}
+[data-devp-sec][data-shut] .devp-sec {
+  display: none;
+}
+.devp-sec {
+  padding: 0 10px 11px;
+}
+
+/* The four individual chrome switches, under the master they override. */
+.devp-sub {
+  margin-top: 7px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.devp-hint {
+  margin: 0 0 8px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: #7a6fa8;
+}
+
+/* ---------- toggles ---------- */
+
+.devp-t {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.devp-t:last-child {
+  margin-bottom: 0;
+}
+.devp-t:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.devp-t:focus-visible {
+  outline: 2px solid #a58cff;
+  outline-offset: 1px;
+}
+.devp-t b {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2d9ff;
+}
+.devp-t em {
+  display: block;
+  margin-top: 1px;
+  font-size: 9.5px;
+  font-style: normal;
+  color: #8f85b8;
+}
+
+/* The switch reads as the state of the thing named, not of the button: lit
+   means the chrome is on the page. */
+.devp-sw {
+  flex: none;
+  width: 26px;
+  height: 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+  transition: background 0.12s;
+}
+.devp-sw::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #8f85b8;
+  transition:
+    transform 0.12s,
+    background 0.12s;
+}
+.devp-t[aria-pressed="true"] .devp-sw {
+  background: rgba(165, 140, 255, 0.4);
+}
+.devp-t[aria-pressed="true"] .devp-sw::after {
+  transform: translateX(12px);
+  background: #c6b6ff;
+}
+
+/* The master switch is the one that reads the other way round — lit means the
+   page is clean — so it gets its own colour rather than sharing the purple. */
+.devp-master {
+  border-color: rgba(124, 227, 168, 0.22);
+  background: rgba(124, 227, 168, 0.06);
+}
+.devp-master[aria-pressed="true"] .devp-sw {
+  background: rgba(124, 227, 168, 0.4);
+}
+.devp-master[aria-pressed="true"] .devp-sw::after {
+  background: #7ce3a8;
+}
+
+/* A season is a thing running on the page rather than a piece of chrome being
+   hidden, so it gets its own colour — nobody should read a lit snowflake as
+   "review chrome is on". */
+.devp-season[aria-pressed="true"] {
+  border-color: rgba(120, 196, 255, 0.34);
+  background: rgba(120, 196, 255, 0.1);
+}
+.devp-season[aria-pressed="true"] .devp-sw {
+  background: rgba(120, 196, 255, 0.4);
+}
+.devp-season[aria-pressed="true"] .devp-sw::after {
+  background: #8fd0ff;
+}
+
+/* ---------- buttons ---------- */
+
+.devp-b {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #e2d9ff;
+  font: inherit;
+  font-size: 10.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.devp-b:hover {
+  background: rgba(165, 140, 255, 0.16);
+  border-color: rgba(165, 140, 255, 0.42);
+}
+.devp-b:focus-visible {
+  outline: 2px solid #a58cff;
+  outline-offset: 1px;
+}
+.devp-b-lead {
+  border-color: rgba(165, 140, 255, 0.34);
+  background: rgba(165, 140, 255, 0.1);
+  font-weight: 700;
+}
+.devp-b span {
+  color: #7a6fa8;
+}
+
+.devp-foot {
+  padding: 8px 10px 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 9.5px;
+  line-height: 1.55;
+  color: #7a6fa8;
+}
+.devp-foot b {
+  color: #b9a6ff;
+  font-weight: 600;
+}
+
+/* Narrow screens: the tab would eat a tenth of the viewport and the body more
+   than half of it. The panel is a desktop tool; leave the phone alone. */
+@media (max-width: 640px) {
+  .devp {
+    display: none !important;
+  }
+}
+
+@media print {
+  .devp {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   Review-chrome suppression
+   ==========================================================================
+   Each attribute is absent by default, so an unarmed browser sees exactly the
+   page it saw before this panel existed. Delete this block with the chrome it
+   switches off.
+   ========================================================================== */
+
+/* Bracketed placeholder notes, wrapped by initVerifyFlags in scripts/site.ts.
+   Hidden rather than unstyled: leaving "[confirm with product]" in the copy
+   without its highlight reads as real text, which is worse than a gap.
+
+   .pubneed goes with them — the pre-launch publish list under the security
+   matrix is a hand-authored .vflag and nothing else, so hiding only the mark
+   would leave its margins behind as a gap in the page. */
+html[data-dev-flags="off"] mark.vflag,
+html[data-dev-flags="off"] .pubneed {
+  display: none !important;
+}
+
+/* Pink review page-ID chips, inserted by initReviewIds in scripts/site.ts. */
+html[data-dev-ids="off"] .pgid,
+html[data-dev-ids="off"] .pgid-n,
+html[data-dev-ids="off"] .pgid-row {
+  display: none !important;
+}
+
+/* The gold POC build banner, the orange pre-launch publish band, and the home
+   page's yellow link into /404. */
+html[data-dev-banners="off"] .pocbar,
+html[data-dev-banners="off"] .plband,
+html[data-dev-banners="off"] .tmpbox {
+  display: none !important;
+}
+
+/* The editorial status chips in the .pageinfo row above each H1 — the template
+   number (T6, CTA), the publishing state (OPEN, GATED, BLOCKED) and the
+   internal PRE-LAUNCH placeholder note. Page metadata for review, never
+   production copy.
+
+   Scoped to `.pageinfo > .tag` rather than to the variant classes, because
+   three of those variants also appear inline in body copy where they ARE
+   content and must survive: `t-ship` ("SHIPS Q4 2026"), `t-pre` (the Element
+   PRE-LAUNCH marker in the family tables) and `t-gated` (the NDA badges on
+   security documents, and the partner portal's gated cards). `t-blk` is the
+   one variant that is review chrome wherever it appears.
+
+   One .pageinfo row does carry a `t-ship` chip — products/route's
+   SHIPS Q1 2027 — and this hides it along with the rest of the row. That is
+   correct rather than a compromise: the whole row is review furniture and goes
+   at launch, and that page's <h1> repeats the same chip on the next line, so
+   nothing about availability disappears from the page.
+
+   Then the row itself. It cannot simply be hidden, because initReviewIds in
+   scripts/site.ts injects the pink page-ID chip INTO .pageinfo when there is
+   one — hiding the container would take that chip with it and make this
+   switch quietly override the page-IDs switch. So the row goes only when
+   nothing else is in it, or when the page-ID chips are off too; otherwise it
+   stays and holds the chip it is hosting. Without this an empty row leaves
+   its own margins behind as a gap above the H1. */
+html[data-dev-tags="off"] .pageinfo > .tag,
+html[data-dev-tags="off"] .t-blk {
+  display: none !important;
+}
+
+html[data-dev-tags="off"] .pageinfo:not(:has(> .pgid)),
+html[data-dev-tags="off"][data-dev-ids="off"] .pageinfo {
+  display: none !important;
+}

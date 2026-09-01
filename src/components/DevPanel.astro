@@ -1,0 +1,214 @@
+---
+/**
+ * Developer panel — TEMPORARY. Delete at production launch, with the rest of
+ * the review chrome (see AGENTS.md).
+ *
+ * A small tab on the right edge of every page. It does three things:
+ *
+ * 1. Switches the review chrome off, so the page can be read as the production
+ *    site rather than as a review build — the bracketed `[…]` placeholder
+ *    notes, the pink page-ID chips, the gold POC banner, the pre-launch bands,
+ *    the home page's yellow 404 box and the T6 / OPEN / GATED status chips
+ *    above each H1. "Production preview" does all of them at once; the
+ *    individual switches are underneath it.
+ * 2. Previews the seven seasonal effects — snow, fireworks, bats and the rest — one
+ *    at a time. Those live in `scripts/seasonal.ts`, which is deliberately
+ *    independent of this panel and survives its deletion; this is only a way
+ *    to look at them before a date trigger exists.
+ * 3. Opens Mission Control, or drops straight into any one of the nine games,
+ *    from any page — the Polaris star that normally opens them is only in the
+ *    home hero.
+ *
+ * Every group collapses, and which ones are shut persists with the rest of the
+ * state. There are three of them now and the panel is taller than the viewport
+ * on a laptop with all three open.
+ *
+ * **It is armed with Ctrl+Alt+M and invisible until then.** The panel is in
+ * every build, like the POC banner, but a visitor who does not know the chord
+ * never sees it. The armed flag and every switch persist in localStorage under
+ * `polaris-dev-panel`, so a developer arms it once per browser.
+ *
+ * Three files and one line in BaseLayout, all deletable together:
+ *   components/DevPanel.astro   this file — markup and the pre-paint restore
+ *   scripts/dev-panel.ts        the wiring
+ *   styles/dev-panel.css        the chrome, and the suppression rules
+ *
+ * `scripts/seasonal.ts` is NOT one of them and must survive the deletion: it is
+ * the effects themselves, which the site may well want to ship on a date
+ * trigger. Nothing in it imports anything from the panel.
+ *
+ * The boot script below is `is:inline` and this component is rendered first in
+ * <body> on purpose. It has to set the attributes on <html> before the POC
+ * banner and the page content parse, or a browser with "production preview" on
+ * gets a frame of gold banner before the module script catches up. Same reason
+ * PageGate inlines its unlock. Everything that can wait is in the bundled
+ * module instead.
+ */
+
+/* The season list is the effects module's own, so the panel cannot drift out of
+   step with what it can actually start. Importing it here is build-time only:
+   nothing in seasonal.ts touches the DOM until setSeason() is called, and the
+   browser gets it as a lazy chunk from scripts/dev-panel.ts instead. */
+import { SEASONS } from "../scripts/seasonal";
+
+/** `eggLaunch()` route key → what the overlay calls it, and whose planet it is.
+ *
+ * All nine, in orbital order with the unidentified contact last. Keep it that
+ * way: this list is the only complete inventory of the eggs anywhere in the
+ * source, and the two that went missing from it — Mercury and Uranus, the two
+ * Phaser games — were also the two hardest to reach any other way, since
+ * getting to them otherwise means finding the star and then finding the right
+ * dot in the solar system. */
+const GAMES: [key: string, name: string, planet: string][] = [
+  ["mercury", "Solar Circuit", "Mercury"],
+  ["venus", "Signal Jumper", "Venus"],
+  ["earth", "The Lost Display", "Earth"],
+  ["catch", "Mars: Signal Siege", "Mars"],
+  ["stack", "Workspace Stack", "Jupiter"],
+  ["saturn", "Dongle Patrol", "Saturn"],
+  ["uranus", "Polaris-Man", "Uranus"],
+  ["pluto", "Packet Muncher", "Pluto"],
+  ["invade", "Network Interference", "Unidentified"],
+];
+
+/** Each switch: the state key it owns, its label, and what it actually hides. */
+const TOGGLES: [key: string, label: string, note: string][] = [
+  ["flags", "Placeholder notes", "yellow […] review copy"],
+  ["ids", "Page-ID chips", "pink A0 / A0.1 / .f1 chips"],
+  ["banners", "Build banners", "POC bar, pre-launch, 404 box"],
+  ["tags", "Status chips", "T6 / OPEN / GATED intro tags"],
+];
+---
+
+<div class="devp">
+  <button
+    class="devp-tab"
+    id="devp-tab"
+    type="button"
+    aria-controls="devp-body"
+    aria-expanded="false"
+  >
+    DEV
+  </button>
+
+  <div class="devp-body" id="devp-body">
+    <div class="devp-head">
+      <span>DEV PANEL</span>
+      <button class="devp-x" id="devp-hide" type="button" aria-label="Disarm the panel (Ctrl+Alt+M)"
+        >✕</button
+      >
+    </div>
+
+    <section class="devp-grp" data-devp-sec="chrome">
+      <button class="devp-gh" type="button" data-dev-sec="chrome" aria-controls="devp-sec-chrome" aria-expanded="true">
+        <i class="devp-car" aria-hidden="true"></i>REVIEW CHROME
+      </button>
+
+      <div class="devp-sec" id="devp-sec-chrome">
+        <button class="devp-t devp-master" type="button" data-dev-toggle="prod" aria-pressed="false">
+          <b>Production preview<em>hide all review chrome</em></b>
+          <span class="devp-sw" aria-hidden="true"></span>
+        </button>
+
+        <div class="devp-sub">
+          {
+            TOGGLES.map(([key, label, note]) => (
+              <button class="devp-t" type="button" data-dev-toggle={key} aria-pressed="true">
+                <b>
+                  {label}
+                  <em>{note}</em>
+                </b>
+                <span class="devp-sw" aria-hidden="true" />
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="devp-grp" data-devp-sec="seasonal">
+      <button class="devp-gh" type="button" data-dev-sec="seasonal" aria-controls="devp-sec-seasonal" aria-expanded="true">
+        <i class="devp-car" aria-hidden="true"></i>SEASONAL
+      </button>
+
+      <div class="devp-sec" id="devp-sec-seasonal">
+        <p class="devp-hint">
+          One at a time — starting a season stops the last one. Press the lit switch again to clear
+          the page. Not on a date trigger yet; nobody sees these but you.
+        </p>
+        {
+          SEASONS.map(([key, label, note]) => (
+            <button class="devp-t devp-season" type="button" data-dev-season={key} aria-pressed="false">
+              <b>
+                {label}
+                <em>{note}</em>
+              </b>
+              <span class="devp-sw" aria-hidden="true" />
+            </button>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="devp-grp" data-devp-sec="eggs">
+      <button class="devp-gh" type="button" data-dev-sec="eggs" aria-controls="devp-sec-eggs" aria-expanded="true">
+        <i class="devp-car" aria-hidden="true"></i>EASTER EGGS
+      </button>
+
+      <div class="devp-sec" id="devp-sec-eggs">
+        <button class="devp-b devp-b-lead" type="button" data-dev-egg="menu">
+          Mission Control ▸
+        </button>
+        {
+          GAMES.map(([key, name, planet]) => (
+            <button class="devp-b" type="button" data-dev-egg={key}>
+              {name} <span>· {planet}</span>
+            </button>
+          ))
+        }
+      </div>
+    </section>
+
+    <div class="devp-foot">
+      <span id="devp-where"></span>
+      <br />
+      Developer chrome — <b>Ctrl+Alt+M</b> hides it. Not in the production site.
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  /* Pre-paint state restore. Keep in sync with STATE_KEY and the defaults in
+     scripts/dev-panel.ts — the module reads the same object back out. */
+  (function () {
+    var root = document.documentElement;
+    try {
+      var s = JSON.parse(localStorage.getItem("polaris-dev-panel") || "{}");
+      if (s.on) root.setAttribute("data-dev", "on");
+      if (s.on && s.open) root.setAttribute("data-dev-panel", "open");
+      /* Absent means shown, so only an explicit false writes an attribute. */
+      ["flags", "ids", "banners", "tags"].forEach(function (k) {
+        if (s[k] === false) root.setAttribute("data-dev-" + k, "off");
+      });
+      /* Collapsed groups. Done here rather than in the module because this
+         script sits after the markup it is reaching for, so the sections exist
+         — and an armed, open panel would otherwise paint every group expanded
+         and then snap shut a moment later. */
+      var shut = Array.isArray(s.shut) ? s.shut : ["seasonal", "eggs"]; /* = DEFAULTS.shut */
+      shut.forEach(function (k) {
+        var sec = document.querySelector('[data-devp-sec="' + k + '"]');
+        if (!sec) return;
+        sec.setAttribute("data-shut", "");
+        var head = sec.querySelector(".devp-gh");
+        if (head) head.setAttribute("aria-expanded", "false");
+      });
+    } catch (e) {
+      /* Storage blocked (private mode, cookies off): the panel just starts
+         disarmed and every switch starts on. Nothing else depends on it. */
+    }
+  })();
+</script>
+
+<script>
+  import "../scripts/dev-panel";
+</script>

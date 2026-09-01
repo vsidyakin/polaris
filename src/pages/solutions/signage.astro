@@ -1,0 +1,66 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="solutions/signage">
+  <PageIntro
+    route={"solutions/signage"}
+    tpl={"T7"}
+    section={"Use cases"}
+    title={"Digital signage: dedicated screens, meeting displays, or both."}
+    dek={"Polaris drives signage as a first-class deployment: lobbies, hallways, cafeterias, retail and hospitality floors on dedicated screens, and the meeting displays you already own between meetings. Dynamic and event-driven content, cached locally so the wall keeps running, all managed from the same portal as the rooms &mdash; included, not licensed separately, with no second vendor and no separate signage stack. In-platform signage is common now: four of the vendors in our compare matrix ship it. What is not common is having it in the same portal at no extra licence &mdash; on one of them, signage needs a $999.99 administrative-tools licence plus a separate cloud subscription."}
+  />
+
+    <section class="sect reveal flush">
+      <div class="kicker">Scope, stated plainly</div>
+      <h2>What ships: a signage estate, driven from Polaris Cloud. Not a CMS.</h2>
+      <p class="sdek">Honest scoping up front: Polaris publishes content to any display it drives &mdash; dedicated signage screens and idle meeting displays alike (welcome content, wayfinding, dashboards, campaigns), scheduled and managed in Polaris Cloud. It is not a full signage CMS with playlist authoring and content production workflows, and this page won't pretend otherwise.</p>
+          <section class="sect reveal tight">
+      <div class="kicker">Beyond a playlist</div>
+      <h2>Dynamic, event-driven, and resilient.</h2>
+      <div class="three">
+        <div class="card"><h3>Dynamic content</h3><p>Screens pull live data rather than replaying a fixed loop: dashboards, menus, pricing, schedules and room-booking or occupancy data update themselves from the systems that already own them. A Polaris screen renders whatever its URL serves, so the data stays where it lives &mdash; Polaris does not sense occupancy itself.</p></div>
+        <div class="card"><h3>Event-driven signage</h3><p>Content reacts to what happens: a calendar event, a room going busy, an alert or an operational trigger changes what the wall shows, without anyone republishing a playlist.</p></div>
+        <div class="card"><h3>Local caching</h3><p>Content is cached on the device, so the wall keeps playing through a network blip or a cloud outage, and large media does not cross the WAN every loop. [Cache scope and offline duration publish with the datasheet.]</p></div>
+      </div>
+    </section>
+
+<div class="cardrow">
+        <div class="card"><h3>Dedicated screens or shared ones</h3><p>Deploy Polaris on signage-only displays anywhere in the building, and every meeting room doubles as an endpoint the moment it is idle: no media players velcroed behind panels, no second estate to purchase.</p></div>
+        <div class="card"><h3>Scheduled in the same portal</h3><p>Content and schedules live in Polaris Cloud next to fleet management: assign by room, building, or the whole estate. [Content format and scheduling scope placeholder — shipping capability only.]</p></div>
+        <div class="card"><h3>Zero-cost estate math</h3><p>A dedicated signage network means players, licenses, and a vendor. Reusing idle meeting displays covers the lobby-adjacent spaces you actually wanted — at [placeholder]% of that spend.</p></div>
+      </div>
+    </section>
+
+    <section class="sect reveal tight">
+      <div class="kicker">What goes on the wall</div>
+      <h2>Any web page is a sign.</h2>
+      <p class="sdek">Grafana, Power BI, Google Slides, the intranet, your existing CMS: if it has a URL, it publishes. Every web tool you already run is an integration, and nothing new gets built or bought to make the wall useful.</p>
+      <div class="sgxrow reveal">
+        <div class="sgx"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Welcome wall example"><rect width="160" height="100" rx="4" fill="#181330"/><rect x="0" y="0" width="160" height="34" rx="4" fill="#4a3585"/><rect x="10" y="11" width="64" height="12" rx="3" fill="#e2d9ff" opacity=".9"/><rect x="10" y="46" width="104" height="9" rx="3" fill="#35304d"/><rect x="10" y="61" width="84" height="9" rx="3" fill="#35304d"/><circle cx="136" cy="70" r="14" fill="#2e7a4f"/><rect x="128" y="66" width="16" height="8" rx="2" fill="#7ce3a8" opacity=".85"/></svg><span>Welcome wall</span></div>
+        <div class="sgx"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dashboard example"><rect width="160" height="100" rx="4" fill="#181330"/><rect x="8" y="8" width="68" height="40" rx="3" fill="#1d5c7a"/><rect x="84" y="8" width="68" height="40" rx="3" fill="#241c45"/><rect x="90" y="36" width="8" height="8" fill="#7ce3a8"/><rect x="102" y="28" width="8" height="16" fill="#7ce3a8"/><rect x="114" y="20" width="8" height="24" fill="#7ce3a8"/><rect x="126" y="30" width="8" height="14" fill="#7fc6dd"/><rect x="8" y="56" width="144" height="14" rx="3" fill="#35304d"/><rect x="8" y="76" width="98" height="14" rx="3" fill="#2e7a4f" opacity=".8"/></svg><span>Live dashboards</span></div>
+        <div class="sgx"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Menu board example"><rect width="160" height="100" rx="4" fill="#181330"/><rect x="0" y="0" width="160" height="24" rx="4" fill="#6d5bb8"/><rect x="10" y="7" width="52" height="10" rx="3" fill="#f2edff" opacity=".9"/><rect x="10" y="34" width="86" height="9" rx="3" fill="#35304d"/><rect x="126" y="34" width="24" height="9" rx="3" fill="#7ce3a8" opacity=".7"/><rect x="10" y="52" width="98" height="9" rx="3" fill="#35304d"/><rect x="126" y="52" width="24" height="9" rx="3" fill="#7ce3a8" opacity=".7"/><rect x="10" y="70" width="76" height="9" rx="3" fill="#35304d"/><rect x="126" y="70" width="24" height="9" rx="3" fill="#7ce3a8" opacity=".7"/></svg><span>Menus &amp; pricing</span></div>
+        <div class="sgx"><svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Room schedule example"><rect width="160" height="100" rx="4" fill="#181330"/><rect x="0" y="0" width="46" height="100" rx="4" fill="#12102a"/><rect x="8" y="12" width="28" height="7" rx="3" fill="#635b7e"/><rect x="8" y="40" width="28" height="7" rx="3" fill="#635b7e"/><rect x="8" y="68" width="28" height="7" rx="3" fill="#635b7e"/><rect x="54" y="10" width="98" height="22" rx="3" fill="#4a3585"/><rect x="60" y="16" width="56" height="9" rx="3" fill="#cfc2ff" opacity=".85"/><rect x="54" y="38" width="98" height="22" rx="3" fill="#2e7a4f"/><rect x="60" y="44" width="40" height="9" rx="3" fill="#8fe6b4" opacity=".9"/><rect x="54" y="66" width="98" height="22" rx="3" fill="#1d5c7a"/><rect x="60" y="72" width="64" height="9" rx="3" fill="#7fc6dd" opacity=".85"/></svg><span>Room schedules</span></div>
+      </div>
+      <p class="note">Starting points ship with the product: a signage template and the live WeWork example exist in the codebase today. [Link the public examples gallery at launch: docs gap list.]</p>
+      <div class="g3band reveal"><b>The schedule on the door.</b> The idle display outside every room shows that room&rsquo;s calendar: the cloud API reads and writes room calendar events, so the sign by the door and the booking system agree without a separate scheduling-panel product. <a class="btn accent" href="/platform/cloud">The cloud API &rarr;</a></div>
+    </section>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">One portal</div>
+      <h2>Rooms and signage, one pane.</h2>
+      <p>Polaris Cloud manages the meeting estate and the signage estate together: one login, one fleet, one set of policies, one health view. When the display in Huddle 12 drops, the same alert pipeline tells the same person, whether it was mid-meeting or mid-signage.</p>
+      <div class="chips"><span>✓ One login</span><span>✓ One fleet</span><span>✓ One alert pipeline</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/platform/cloud">Explore Polaris Cloud →</a></p>
+    </div>
+
+    <div class="g3band reveal"><b>Signage yields to meetings, automatically.</b> The display knows the difference: signage when idle, workspace the moment a meeting starts, signage again when it ends. No scheduling conflicts, no manual input switching, no one hunting for a remote.</div>
+
+    <div class="two">
+      <div class="card"><h3>The portal behind it</h3><p>Analytics, activation, fleet operations, alerts (and the signage tab), from one cloud.</p><a href="/platform/cloud">Polaris Cloud →</a></div>
+      <div class="card"><h3>Signage-heavy, meeting-light?</h3><p>Launch puts sharing and signage on every display at entry price: one-time hardware purchase.</p><a href="/products/launch">Launch: pre-launch →</a></div>
+    </div>
+    <CtaBand />
+</BaseLayout>

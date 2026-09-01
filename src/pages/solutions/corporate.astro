@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indSpine, indRouter, indProof } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/corporate">
+  <Fragment set:html={indHead("solutions/corporate","Corporate","Meeting rooms are a scale problem.","From ten huddle rooms with no AV staff to a thousand-room global estate with a security review board. The platform is the same. The story you need isn't. Pick your scale — or, if the content is the point rather than the room count, start with creative.")} />
+    <Fragment set:html={indRouter([
+      {link:"solutions/enterprise",k:"Hundreds to thousands of rooms · security review boards",h:"Enterprise",p:"Segmented networks, 802.1x everywhere, a review board between you and every purchase, and a fleet too big to touch by hand. Pro-led: true wireless BYOM, a readable security pack, one management plane.",go:"Built for the deep end"},
+      {link:"solutions/smb",k:"10–50 rooms · no AV department",h:"SMB & Mid-market",p:"Nobody on staff programs rooms for a living, so the rooms have to run themselves. Essentials-led: guests share from a browser, IT manages from one portal, and the warranty rides the subscription.",go:"Rooms that run themselves"},
+      {link:"solutions/creative",k:"Studios & agencies · the content sets the brief",h:"Creative",p:"Not a scale but a discipline: several pieces of work on screen at once, from several machines, with clients and directors outside the room and an embargo on all of it. Pro-led: density, browser access for guests, and content that never lands on a server.",go:"The work is the meeting"}
+    ])} />
+    <Fragment set:html={indSpine("The shared spine","What every corporate estate gets.","Scale changes the story; the platform doesn't. Three things hold from ten rooms to ten thousand.",[
+      [XIC.webjoin,"Guests share from the browser","Web-join means the visiting board member, client, or contractor is on the display in under a minute: no install, no admin rights, no dongle drawer.","platform/how"],
+      [XIC.oneplat,"One platform, Launch → Pro","Every tier runs the same platform, so a mixed estate isn't a mixed experience. Most step-ups are a license change; where Pro hardware adds ports your room needs, the pod swaps and the license moves with you.","products/family"],
+      [XIC.cloudx,"One pane for the whole estate","Polaris Cloud manages every room, and every signage screen (dedicated or idle), from one login: analytics, firmware, alerts, health.","platform/cloud"]
+    ])} />
+    <Fragment set:html={indProof("The main thing that attracted us to the Mersive Solstice collaboration platform was its reliability. With competing solutions, we had to constantly reboot, the uptime on the devices wasn't good, and the devices were not as modern as what Mersive was offering for essentially the same price or less.","Jacob Robinson","Director of Engineering · WeWork",[["~15,000","Mersive Solstice Pods across WeWork locations"],["500+","locations worldwide, run through Mersive Solstice Cloud"],["91","Convene's NPS with Mersive Solstice rooms, vs a 45 hospitality average"]],"[Gen 3-era proof from published case studies: the WeWork, Convene, and The Marq stories live in the <a href='/resources/cases'>case-study library</a>. A named Polaris-era corporate reference is still wanted before launch.]")} />
+    <CtaBand />
+</BaseLayout>

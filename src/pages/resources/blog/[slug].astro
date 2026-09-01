@@ -1,0 +1,136 @@
+---
+/**
+ * /resources/blog/<slug> — one blog post, pre-rendered.
+ *
+ * Forty-five real HTML files. A post is the thing that gets linked, indexed and
+ * emailed, so each one exists on its own rather than behind a client-side router
+ * the way the source page did — its articles only existed inside React state, which
+ * means no URL, no back button and nothing for a search engine to find.
+ *
+ * `getStaticPaths` reads src/data/blog.ts, which is also what the hub renders
+ * from. The actual body/hero/foot-nav rendering lives in PostLayout, shared with
+ * /resources/cases/<slug> — this file only computes blog-specific data: the
+ * schema call (type "BlogPosting", partOf the Blog node, a real author/dates
+ * when the post carries them), and the foot nav's topic-neighbour cards plus
+ * its "on the site" destination card.
+ */
+import PostLayout from "../../../layouts/PostLayout.astro";
+import { articleSchema, faqPageSchema, BLOG_ID } from "../../../data/schema";
+import { lookupAuthor } from "../../../data/authors";
+import {
+  BLOG_POSTS,
+  BLOG_POSTS_ORDERED,
+  blogDest,
+  blogFaq,
+  type BlogPost,
+} from "../../../data/blog";
+import { imgSrc, imgForSchema } from "../../../lib/blog-img";
+import { longDate } from "../../../lib/date";
+import { href } from "../../../data/routes";
+
+export async function getStaticPaths() {
+  return BLOG_POSTS.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+const { post: p } = Astro.props;
+
+/* No DESC entry exists for a dynamic route, so the description is the post's own
+   dek, cut at a word boundary near the ~155 characters seo.ts aims for. */
+const MAX = 155;
+const description = p.dek.length <= MAX ? p.dek : `${p.dek.slice(0, MAX).replace(/\s+\S*$/, "")}…`;
+
+const hero = imgSrc(p.hero, p.heroRemote);
+
+/* The draft posts' heroes are the site's own diagrams (poc-*.png), whose ratios
+   run from 1.5:1 to 6.5:1 — cropping those to the photo band's 21:9 cut them off
+   on every side. Diagrams render at their natural ratio instead. */
+const heroFit = (p.hero || "").includes("/poc-");
+
+/* Next and previous in the hub's order, so a reader can walk the library without
+   going back to the grid. */
+const i = BLOG_POSTS_ORDERED.findIndex((o) => o.slug === p.slug);
+const prev = i > 0 ? BLOG_POSTS_ORDERED[i - 1] : null;
+const next = i >= 0 && i < BLOG_POSTS_ORDERED.length - 1 ? BLOG_POSTS_ORDERED[i + 1] : null;
+
+/* The foot of the post: two neighbouring reads and, between them, the part of the
+   site this topic belongs to. Prefer same-topic neighbours; fall back to whatever is
+   adjacent in the hub order so the row is never short a card. */
+const dest = blogDest(p.topic);
+const pool = [
+  ...BLOG_POSTS_ORDERED.filter((o) => o.topic === p.topic && o.slug !== p.slug),
+  ...BLOG_POSTS_ORDERED.filter((o) => o.topic !== p.topic && o.slug !== p.slug),
+];
+const nextRead = [prev, next].filter(Boolean) as BlogPost[];
+const footPosts = [...nextRead, ...pool]
+  .filter((o, i, a) => a.findIndex((x) => x.slug === o.slug) === i)
+  .slice(0, 2);
+const footRelated = footPosts.map((o) => ({
+  href: `${href("resources/blog")}/${o.slug}`,
+  topicClass: `cat-${o.topic}`,
+  topicLabel: o.topicLabel,
+  title: o.headline,
+  ctaLabel: "Read",
+}));
+
+const author = lookupAuthor(p.author);
+const publishedLong = longDate(p.published);
+const updatedLong = p.updated && p.updated !== p.published ? longDate(p.updated) : null;
+
+/* The FAQ block the fifteen SEO drafts end with, read back out of the body the
+   page renders below. Placeholder answers are dropped inside faqPageSchema(). */
+const faq = faqPageSchema(blogFaq(p), `/resources/blog/${p.slug}`);
+
+const schema = [
+  articleSchema({
+    type: "BlogPosting",
+    headline: p.headline,
+    description,
+    image: imgForSchema(p.hero, p.heroRemote),
+    path: `/resources/blog/${p.slug}`,
+    section: p.topicLabel,
+    published: p.published,
+    updated: p.updated,
+    author,
+    partOf: BLOG_ID,
+    mentions: [dest.route],
+  }),
+  ...(faq ? [faq] : []),
+];
+---
+
+<PostLayout
+  route="resources/blog"
+  childPath={p.slug}
+  childName={p.headline}
+  title={`${p.headline} | Mersive`}
+  description={description}
+  schema={schema}
+  crumbHubHref={href("resources/blog")}
+  crumbHubLabel="Blog"
+  topicLabel={p.topicLabel}
+  headline={p.headline}
+  dek={p.dek}
+  author={author}
+  publishedISO={p.published}
+  publishedLong={publishedLong}
+  updatedISO={p.updated}
+  updatedLong={updatedLong}
+  readTime={p.readTime}
+  hero={hero}
+  heroFit={heroFit}
+  lede={p.lede}
+  takeaways={p.takeaways}
+  asideLabel={p.asideLabel}
+  body={p.body}
+  topicKey={p.topic}
+  pull={p.pull}
+  pullWho={p.pullWho}
+  sourceNote={p.source}
+  footDest={{ href: href(dest.route), label: dest.label, line: dest.line }}
+  footRelated={footRelated}
+  backHref={href("resources/blog")}
+  backLabel="All blog posts"
+/>

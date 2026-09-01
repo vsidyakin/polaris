@@ -1,0 +1,141 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { TAX, RS_CAP } from "../../data/taxonomy";
+import CtaBand from "../../components/CtaBand.astro";
+import { roomScene, rsLegend } from "../../lib/blocks";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/taxonomy">
+  <PageIntro
+    route={"platform/taxonomy"}
+    tpl={"T2"}
+    crumb={"Where meetings live"}
+    title={"BYOD, BYOM, or room-hosted: where does your meeting live?"}
+  />
+  <p class="dek">
+    Two questions classify every meeting room ever built: who hosts the meeting, and is the room
+    locked to one ecosystem or agnostic. First, watch the meeting leave the laptop, then find your
+    rooms on the grid.
+  </p>
+
+  <section class="sect reveal tight">
+    <div class="kicker">The ladder, animated</div>
+    <h2>Watch the meeting leave the laptop.</h2>
+    <p class="sdek">
+      Same room, three eras. Solid lines are cables into the Polaris pod; dashed lines are wireless.
+      The purple ring marks the meeting host, where the meeting actually lives. Watch it move.
+    </p>
+    <div class="txl">
+      <div class="vg">
+        <span class="stepno">1 · BYOD</span>
+        <Fragment set:html={roomScene(1)} />
+        <div class="txl-cap"><i></i>host: the laptop, alone</div>
+        <b>Your device alone</b>
+        <p>
+          You share pixels; the room adds the display. <Fragment set:html={RS_CAP[1]} /> Close the lid
+          and the meeting dies with it.
+        </p>
+      </div>
+      <div class="vg">
+        <span class="stepno">2 · BYOM</span>
+        <Fragment set:html={roomScene(2)} />
+        <div class="txl-cap"><i></i>host: still the laptop, room AV bridged in</div>
+        <b>The room's AV, your meeting</b>
+        <p set:html={RS_CAP[2]} />
+      </div>
+      <div class="vg">
+        <span class="stepno">3 · Room-hosted</span>
+        <Fragment set:html={roomScene(3)} />
+        <div class="txl-cap"><i></i>host: the room itself</div>
+        <b>Hosted BY the room</b>
+        <p set:html={RS_CAP[3]} />
+      </div>
+    </div>
+    <Fragment set:html={rsLegend()} />
+    <p class="note">
+      [Concept diagrams — production version is the scroll-driven storyboard from the strategy deck,
+      sanitized.]
+    </p>
+  </section>
+
+  <section class="sect reveal tight" style="padding-bottom:0">
+    <div class="kicker">The market map</div>
+    <h2>Now place every room on the grid.</h2>
+    <p class="sdek">
+      The same three rungs, crossed with the lock question: every room system on the market lands in
+      one of six cells. <em>(Click any cell.)</em>
+    </p>
+  </section>
+
+  <div class="tax">
+    <div class="hd" style="background:transparent"></div>
+    {TAX.cols.map((c) => <div class="hd">{c}</div>)}
+    {
+      TAX.rows.map((r, ri) => (
+        <>
+          <div class="rowhd" title={r.sub}>
+            {r.name}
+            <br />
+            <span style="font-weight:400;color:var(--color-muted)">{r.sub}</span>
+          </div>
+          {r.cells.map((c, ci) => (
+            <div
+              class:list={["cell", c.us && "us"]}
+              id={`cell-${ri}-${ci}`}
+              data-tax-cell
+              data-row={ri}
+              data-col={ci}
+            >
+              <b set:html={c.h} />
+              <Fragment set:html={c.d} />
+            </div>
+          ))}
+        </>
+      ))
+    }
+  </div>
+  <div id="taxdetail"></div>
+
+  <div class="clmband reveal">
+    <div class="kicker" style="color:#7ce3a8">The claim this page earns</div>
+    <h2>The only platform we know of in all three agnostic cells at once.</h2>
+    <p>
+      One dongle vendor reaches BYOD with native protocols, BYOM with a transmitter in the laptop, and the room-hosted rung with a Microsoft Teams Rooms system on Microsoft's Android-based MDEP - certified by Microsoft only as a bundle with a named third-party bar, carrying a Teams Rooms licence on top of the hardware, and with no entry on Zoom's certified-hardware list at all. Another agnostic vendor reaches BYOM with a hybrid add-on, and its own matrix marks chat unsupported. The native VTC platforms bring native clients inside their own ecosystem, at their own price. Each gives something up to get there. Vendor by vendor, named and sourced, on the <a href="/compare/hub">compare matrix</a>. Polaris is the only platform we know of that holds all three agnostic rungs on one device and one install, with the vendor's real client rather than a re-render (BYOD workspace, true
+      wireless BYOM, and room-hosted meetings with native clients) with no dependence on a locked
+      ecosystem.
+    </p>
+    <div class="chips">
+      <span>✓ BYOD: agnostic</span><span>✓ BYOM: agnostic</span><span>✓ BYOM+: agnostic, with Polaris Host [pre-launch]</span>
+    </div>
+    <p style="margin-top:16px">
+      <a class="btn accent" href="/products/family">Meet the family →</a> &nbsp;
+      <a class="btn accent" href="/compare/hub">Check the matrix →</a>
+    </p>
+  </div>
+
+  <div class="kicker" style="margin-top:26px">Mini-glossary: the vocabulary this page teaches</div>
+  <div class="txg reveal">
+    <a href="/resources/glossary"
+      ><b>BYOD</b>Bring your own device: you share pixels to the display; the meeting stays on your
+      laptop.</a
+    >
+    <a href="/resources/glossary"
+      ><b>BYOM</b>Bring your own meeting: your call, with the room's camera and mic bridged in.</a
+    >
+    <a href="/resources/glossary"
+      ><b>Room-hosted</b>The room itself starts, controls, and shares the meeting, hosted BY the
+      room.</a
+    >
+    <a href="/resources/glossary"
+      ><b>Room-hosted</b>Any meeting where no user device is load-bearing (native or web-wrapped).
+      The difference matters.</a
+    >
+  </div>
+
+  <CtaBand variant="platform" />
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/taxonomy";
+</script>

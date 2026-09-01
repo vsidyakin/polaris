@@ -1,0 +1,20 @@
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - astro@7.2.0
+
+# GHSA-2v37-7h3g-55p8 (high): nanoid <3.3.18 loops forever when a custom
+# generator is called with size 0. It reaches us three ways, all build-time only
+# — astro>vite>postcss>nanoid, vitefu>vite>postcss>nanoid and
+# @tailwindcss/vite>vite>postcss>nanoid — and postcss calls it with a fixed size
+# and no custom generator, so nothing here was exploitable and nothing ships to a
+# browser. Pinned anyway because it is free, and because a standing high alert on
+# the default branch trains people to ignore the next one.
+#
+# Kept in the 3.x line: postcss wants ^3.3, and nanoid >=4 is ESM-only. Drop this
+# once vite ships a postcss that resolves the patch on its own.
+#
+# This lives here rather than in package.json because pnpm 11 no longer reads the
+# `pnpm` field there — it warns and ignores it.
+overrides:
+  nanoid: ^3.3.18

@@ -1,0 +1,113 @@
+---
+/**
+ * /resources/blog — the blog hub, page one.
+ *
+ * Redesigned 20 Aug 2026 (Steve's brief): editorial and airy instead of carded.
+ * The layout is fully systematic — no hand assignment anywhere:
+ *   - the FEATURED lead is simply the newest post (BLOG_POSTS_ORDERED[0]);
+ *   - the grid below carries the next PER_PAGE posts in the same order;
+ *   - older posts continue at /resources/blog/page/2, /3, ... (see page/[n]);
+ *   - the topic row links to /resources/blog/topic/<key> pages, replacing the
+ *     old client-side chip filter so filtering scales with pagination.
+ * Adding a post to blog.ts is the entire publishing workflow: the hub,
+ * pages, and topic indexes all re-derive themselves.
+ *
+ * The title/dek/tags/grid shell is HubLayout, shared with /resources/cases —
+ * this file only supplies what's actually different: the featured lead, the
+ * pager, and the build note.
+ */
+import HubLayout from "../../layouts/HubLayout.astro";
+import PostGrid from "../../components/PostGrid.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { BLOG_POSTS_ORDERED, BLOG_TOPICS, blogCount, PER_PAGE } from "../../data/blog";
+import { imgSrc } from "../../lib/blog-img";
+import { lookupAuthor } from "../../data/authors";
+import { shortDate } from "../../lib/date";
+import { href } from "../../data/routes";
+
+const topicName = (key: string) => BLOG_TOPICS.find((t) => t.key === key)?.label ?? key;
+
+const [featured, ...rest] = BLOG_POSTS_ORDERED;
+const pagePosts = rest.slice(0, PER_PAGE);
+const pageCount = Math.ceil(rest.length / PER_PAGE);
+
+const fArt = imgSrc(featured.card || featured.hero, featured.cardRemote || featured.heroRemote);
+const fAuthor = lookupAuthor(featured.author);
+const fWhen = shortDate(featured.published);
+---
+
+{/* HubLayout renders the trail itself rather than taking a <Crumbs />: its
+    crumbs prop carries a four-level trail (Home / Resources / Blog / Page 2) on
+    the paginated and topic sub-pages, which Crumbs.astro's three-level shape
+    cannot express — which is why those two pages kept raw crumb markup on the
+    matt branch too. No PageIntro here for the same reason Matt gave: the
+    bhx-head below is this page's <h1> and dek. */}
+<HubLayout route="resources/blog" crumbs={[{ label: "Blog" }]} pageTitle="Blog">
+  <Fragment slot="pageinfo">
+    <div class="pageinfo">
+      <span class="tag t-tpl">T8</span><span class="tag t-open">OPEN</span>
+    </div>
+  </Fragment>
+
+  <p slot="dek" class="bhx-dek">
+    Read our latest thinking on how organizations meet, share, and collaborate. Practical
+    writing on wireless collaboration, hybrid rooms, and the networks behind them.
+  </p>
+
+  <nav slot="tags" class="bhx-topics" aria-label="Browse by topic">
+    <a class="on warm" href={href("resources/blog")} aria-current="page">All <i>{blogCount("all")}</i></a>
+    {
+      BLOG_TOPICS.filter((t) => t.key !== "all").map((t) => (
+        <a href={`${href("resources/blog")}/topic/${t.key}`}>
+          {t.label} <i>{blogCount(t.key)}</i>
+        </a>
+      ))
+    }
+  </nav>
+
+  <a class="bhx-feature" href={`${href("resources/blog")}/${featured.slug}`} aria-label={featured.headline}>
+    <span class="bhx-fbd">
+      <span class:list={["ik", `cat-${featured.topic}`]}>{topicName(featured.topic)}</span>
+      <span class="bhx-fh">{featured.headline}</span>
+      <span class="bhx-fd">{featured.dek}</span>
+      <span class="bhx-meta">
+        {fAuthor && `By ${fAuthor.name}`}
+        {fAuthor && fWhen && " · "}
+        {fWhen && <time datetime={featured.published}>{fWhen}</time>}
+      </span>
+    </span>
+    {
+      fArt ? (
+        <span class="bhx-shot bhx-fshot">
+          <img src={fArt} alt="" decoding="async" width="960" height="640" />
+        </span>
+      ) : (
+        <span class="bhx-typeshot" aria-hidden="true">
+          <span>{featured.dek}</span>
+        </span>
+      )
+    }
+  </a>
+
+  <PostGrid posts={pagePosts} basePath="resources/blog" />
+
+  <nav class="bhx-pager" aria-label="Pagination">
+    <span></span>
+    <span class="bhx-pgn">Page 1 of {pageCount}</span>
+    {
+      pageCount > 1 ? (
+        <a href={`${href("resources/blog")}/page/2`}>Older &rsaquo;</a>
+      ) : (
+        <span />
+      )
+    }
+  </nav>
+
+  <p class="note">
+    [Ported from mersive.com/blog: copy is verbatim and imagery is self-hosted by
+    scripts/fetch-blog-images.mjs at build time. Roughly 25 of the images are pexels
+    stock rather than Mersive photography — replace before launch.]
+  </p>
+
+  <CtaBand slot="after" />
+</HubLayout>

@@ -1,0 +1,208 @@
+---
+import "../styles/global.css";
+import "../styles/mobile.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SearchOverlay from "../components/SearchOverlay.astro";
+import GameOverlays from "../components/GameOverlays.astro";
+import PocBar from "../components/PocBar.astro";
+import DevPanel from "../components/DevPanel.astro";
+import PageGate from "../components/PageGate.astro";
+import PageTransition from "../components/PageTransition.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { TITLES, DESC, OG_IMAGE } from "../data/seo";
+import { buildGraph } from "../data/schema";
+import { PAGE_IDS, PRELAUNCH, href, type Route } from "../data/routes";
+import { isHeld } from "../data/held";
+import { withBase } from "../lib/base";
+
+interface Props {
+  /** Route key, e.g. "platform/how". The home page uses "home". */
+  route: Route;
+  /** Overrides the TITLES entry; falls back to "<title> | Mersive". */
+  title?: string;
+  /** Overrides the DESC entry. */
+  description?: string;
+  /** Social-card image, rooted path or absolute URL. Defaults to OG_IMAGE. */
+  image?: string;
+  /** Extra JSON-LD nodes, merged after the route's registry entry. */
+  schema?: object[];
+  /**
+   * A dynamic page beneath `route`, for routes whose children are not in the
+   * registry because they come from live data — /careers/<job-slug> is the only
+   * one today. `path` is the trailing segment, `name` the visible page name.
+   *
+   * Canonical, og:url and the breadcrumb all extend to include it, and the
+   * route's own SCHEMA entry is suppressed (it describes the parent). There is no
+   * TITLES or DESC entry to fall back on, so `title` and `description` become
+   * required — the build stops below if either is missing.
+   */
+  child?: { path: string; name: string };
+  /**
+   * Drop the site header. For pages that are a single decision rather than a
+   * place in the site — the 404 is the only one today. The footer stays, so
+   * nobody is stranded: it carries the full link set.
+   */
+  bare?: boolean;
+}
+
+const { route, title, description, image, schema = [], bare = false, child } = Astro.props;
+
+/* The registry is what guarantees every page has its own title and description
+   (see the Record<Route, string> note in seo.ts). A dynamic child has no entry to
+   inherit, so failing loudly here is the equivalent guard: silently reusing the
+   parent's copy is how 29 pages once shipped the home page's description. */
+if (child && (!title || !description)) {
+  throw new Error(
+    `BaseLayout: /${route}/${child.path} is a dynamic child page, so it must pass ` +
+      "both `title` and `description` — there is no TITLES or DESC entry for it."
+  );
+}
+
+const pageTitle = title ?? TITLES[route];
+const pageDesc = description ?? DESC[route];
+/* Review chrome only. Children would all inherit the parent's chip and read as
+   the same page, so they get none. */
+const pageId = child ? undefined : PAGE_IDS[route];
+const prelaunch = PRELAUNCH[route];
+const canonical = new URL(child ? `${href(route)}/${child.path}` : href(route), Astro.site);
+
+/* The card is a computed path, so it needs withBase() — a bare "/og-default.png"
+   resolved against Astro.site drops the base and 404s under PAGES_MODE=public.
+   An absolute URL passed by a page is used as given. */
+const rawImage = image ?? OG_IMAGE;
+const ogImage = /^https?:\/\//.test(rawImage)
+  ? new URL(rawImage)
+  : new URL(withBase(rawImage), Astro.site);
+
+/* Structured data. `href()` applies the base path, so preview builds describe
+   themselves with URLs that actually resolve on the preview host. */
+const graph = buildGraph({
+  route,
+  title: pageTitle,
+  description: pageDesc,
+  canonical: canonical.href,
+  image: ogImage.href,
+  url: (r) => new URL(href(r), Astro.site).href,
+  child: child?.name,
+  extra: schema,
+});
+
+/* Set by the GitHub Pages workflow. The preview is a public URL — anyone with
+   the link can read it — so keep it out of search results while the POC banner
+   is still up. Pages cannot serve a host-root robots.txt (the host is shared
+   across every Mersive repo), which makes the meta tag the only real control. */
+const previewNoindex = import.meta.env.PUBLIC_NOINDEX === "true";
+
+/* A page can also be held individually — built and reachable, but deliberately
+   not discoverable, because its copy describes something we do not ship yet.
+   That hold must survive launch day, so it is OR-ed with the preview flag rather
+   than depending on it. See src/data/held.ts and scripts/check-blocked.py. */
+const held = isHeld(Astro.url.pathname);
+const noindex = previewNoindex || held;
+
+/* Ship the preview locked: the attribute is in the served HTML, so the page is
+   hidden before first paint and stays hidden with JS off. PageGate's inline
+   script removes it. See that component for what this does and does not protect. */
+const gated = Boolean(process.env.SITE_PASSWORD);
+
+/* THE GATE IS PREVIEW-ONLY, AND THIS IS WHERE THAT IS ENFORCED.
+   www.mersive.com must never ship it: a gated production site is not a degraded
+   launch, it is an invisible one — every visitor meets a password prompt for a
+   password that was never issued to them, and the site looks live from the
+   inside. That failure is worse than the noindex trap and just as silent, so it
+   fails the build rather than being caught downstream.
+
+   Keyed on the canonical origin, not on a flag, because the origin is what makes
+   a build production: if these pages tell crawlers and browsers they live at
+   www.mersive.com, they are the production site whatever produced them.
+
+   Astro reads .env into import.meta.env but not into process.env, so the only way
+   SITE_PASSWORD arrives here is the shell or the CI environment. `pnpm build:prod`
+   clears it with `env -u`; this catches every other route in. To exercise the gate
+   locally, use `pnpm preview:pages`, which sets a non-production SITE_URL. */
+if (gated && new URL(Astro.site ?? "https://www.mersive.com").hostname === "www.mersive.com") {
+  throw new Error(
+    "SITE_PASSWORD is set for a build whose canonical origin is www.mersive.com.\n" +
+      "That would publish the production site behind the preview password gate.\n\n" +
+      "  Production      : `pnpm build:prod` (clears SITE_PASSWORD and the other three env vars)\n" +
+      "  Gate a preview  : `pnpm preview:pages`, or set SITE_URL to the Pages host\n\n" +
+      "See the crawler-blocking section of AGENTS.md. Nothing preview-only ships to production."
+  );
+}
+---
+
+<html lang="en" data-gate={gated ? "locked" : undefined}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mersive" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={pageTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDesc} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <JsonLd data={graph} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600..700&display=swap"
+    />
+  </head>
+
+  <body data-route={route} data-pgid={pageId}>
+    {/* First in <body> so its inline state restore runs before the review
+        chrome below it parses — see the component. Temporary; delete with the
+        rest of the review chrome at launch. */}
+    <DevPanel />
+    <PageGate />
+    <PocBar />
+    {!bare && <SiteHeader route={route} />}
+
+    {
+      prelaunch && (
+        <div class="plband">
+          <b>NOT PUBLISHED AT INITIAL LAUNCH.</b> {prelaunch} Kept in the build so the story is
+          designed now (sell-today rule, CEO 8/2026); the launch build excludes this route and
+          scopes cross-references to it.
+        </div>
+      )
+    }
+
+    {/* Fades the page body out on the way to the next route and back in when it
+        lands. Wraps <main> rather than sitting inside it — see the component. */}
+    <PageTransition>
+      <main class="site-main" id="app">
+        <slot />
+      </main>
+    </PageTransition>
+
+    <SearchOverlay />
+    <GameOverlays />
+    <SiteFooter />
+
+    <script>
+      import "../scripts/site";
+    </script>
+  </body>
+</html>

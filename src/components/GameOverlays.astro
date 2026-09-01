@@ -1,0 +1,195 @@
+---
+/**
+ * Easter-egg overlays: Mission Control (the solar-system launcher) and the
+ * nine game modals. Hidden until the Polaris star in the hero is clicked.
+ *
+ * `#egg` through `#egg7` are hand-drawn canvas games living in
+ * `eggs/runtime.ts`.
+ *
+ * `#egg8` and `#egg9` are the two that are not: both are Phaser games under
+ * `src/games/`, mounted into `#egg8-mount` and `#egg9-mount` by a dynamic
+ * import, so neither Phaser nor the artwork is fetched until the planet is
+ * activated.
+ *
+ *   - `#egg8` — Mercury / SOLAR CIRCUIT, `src/games/solar-road/`. A port of
+ *     Phaser3-Road (MIT); see public/eggs/solar-road/ATTRIBUTION.md. It
+ *     replaced a hand-drawn canvas racer of the same name in Aug 2026.
+ *   - `#egg9` — Uranus / POLARIS-MAN, `src/games/polaris-man/`. It took slot 9
+ *     rather than 8 because SOLAR CIRCUIT claimed 8 on its branch first.
+ *
+ * The two differ in one respect worth knowing: Polaris-Man owns its own audio
+ * graph and its own keyboard, so its ✕/mute route through the game handle.
+ * SOLAR CIRCUIT has neither, so it keeps the site's EggAudio and the ordinary
+ * `eggToggleMute()` button, exactly like the canvas eggs.
+ *
+ * The markup is carried over verbatim from the POC — the galaxy map is a
+ * hand-tuned SVG whose geometry the runtime animates by node reference, so it
+ * is emitted as raw HTML rather than re-authored as JSX-ish Astro markup.
+ *
+ * Mission Control now launches from the three.js solar system in
+ * `scripts/eggs/solar3d.ts`, which mounts into `#ss3d`. The SVG map it
+ * replaced is still here, in `#ss-legacy`, hidden rather than deleted: it is
+ * also the fallback the runtime reveals if WebGL is unavailable, so the seven
+ * games stay reachable on a machine that cannot render the 3D scene. The
+ * canvases and animation code behind it are untouched in `eggs/runtime.ts`.
+ *
+ * Mission Control is a framed panel at 90% of the viewport, not a full-bleed
+ * render: a titled box with the retro Mersive logo film as its opening, then the
+ * system inside the same frame. The chrome is part of the panel rather than
+ * floating over the scene — "You Found Polaris" and the mute toggle in the head,
+ * "Explore the planets" and the key hints in the foot — so the render has a
+ * defined edge and the 5% of backdrop around it reads as the room it sits in.
+ *
+ * The film is video-only: the source's audio track measured -91 dB, i.e. digital
+ * silence, so it was stripped. Sound over the logo is a synth sting from
+ * EggAudio, and the score starts with the system.
+ */
+const OVERLAYS = `<div id="eggmenu" style="display:none">
+  <div class="eggmenu-full">
+    <div class="eggmenu-head">
+      <b class="eggmenu-title">You Found Polaris</b>
+      <span class="eggmenu-acts">
+        <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+        <button class="egg-x" onclick="eggMenuClose()" aria-label="Close (Esc)">✕</button>
+      </span>
+    </div>
+    <div class="eggmenu-stage">
+      <div id="ss3d" class="ss3d"></div>
+      <div id="egg-intro" class="eggmenu-intro" hidden onclick="eggIntroSkip()">
+        <video id="egg-intro-v" class="eggmenu-introv" playsinline muted preload="none"
+               poster="/eggs/mersive-logo-poster.jpg"></video>
+        <button class="eggmenu-skip" type="button" onclick="eggIntroSkip()">Skip &rsaquo;</button>
+      </div>
+      <div id="ss-legacy" class="ss-legacy" hidden><div class="ss-wrap"><div class="ss-zoom"><canvas id="ss-bg" width="1040" height="440" aria-hidden="true"></canvas><canvas id="ss-dyn" width="1040" height="440" aria-hidden="true"></canvas><svg class="solsys" viewBox="0 0 1040 440" aria-hidden="true"><defs><linearGradient id="ss-ctail2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgba(140,160,255,0)"/><stop offset="1" stop-color="rgba(158,180,255,.42)"/></linearGradient><radialGradient id="ss-uglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(124,227,168,.30)"/><stop offset="1" stop-color="rgba(124,227,168,0)"/></radialGradient></defs><g id="ss-belt"></g><g class="ss-p ss-ship" data-name="UNIDENTIFIED" data-route="invade" data-s="20" transform="translate(683.9,304.8)" onclick="eggLaunch(&#39;invade&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="22" fill="transparent"/><g class="ss-rot"><ellipse cy="5" rx="16" ry="8" fill="url(#ss-uglow)"/><path d="M-30 0 L-16 -3 L-10 0 L-16 3 Z" fill="url(#ss-ctail2)" opacity=".8"/><g class="ss-body"><ellipse rx="11" ry="4.4" fill="#241c45" stroke="#8f7ae0" stroke-width="1.3"/><path d="M-7 -2.2 Q0 -8.6 7 -2.2" fill="rgba(124,227,168,.28)" stroke="#7ce3a8" stroke-width="1.1"/><circle cx="-5.5" cy="1.1" r="1" fill="#e8c76a" class="ss-shiplightA"/><circle cx="0" cy="1.6" r="1" fill="#e8a184" class="ss-shiplightB"/><circle cx="5.5" cy="1.1" r="1" fill="#e8c76a" class="ss-shiplightC"/></g></g><g class="ss-brk"><path d="M -20 -11 L -20 -20 L -11 -20"/><path d="M 11 -20 L 20 -20 L 20 -11"/><path d="M 20 11 L 20 20 L 11 20"/><path d="M -11 20 L -20 20 L -20 11"/></g><g class="ss-card"><path class="ss-lead" d="M 14.4 -14.4 L 42 -42"/><g class="ss-cbox" transform="translate(42,-88)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">UNIDENTIFIED</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">NETWORK INTERFERENCE</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="MERCURY" data-route="mercury" data-s="13" transform="translate(551,238.2)" onclick="eggLaunch(&#39;mercury&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="17" fill="transparent"/><g class="ss-brk"><path d="M -13 -7.1 L -13 -13 L -7.1 -13"/><path d="M 7.1 -13 L 13 -13 L 13 -7.1"/><path d="M 13 7.1 L 13 13 L 7.1 13"/><path d="M -7.1 13 L -13 13 L -13 7.1"/></g><g class="ss-card"><path class="ss-lead" d="M 9.4 -9.4 L 35 -35"/><g class="ss-cbox" transform="translate(35,-81)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">MERCURY</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">SOLAR CIRCUIT</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="VENUS" data-route="venus" data-s="14.4" transform="translate(613.9,226.7)" onclick="eggLaunch(&#39;venus&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="17" fill="transparent"/><g class="ss-brk"><path d="M -14.4 -7.9 L -14.4 -14.4 L -7.9 -14.4"/><path d="M 7.9 -14.4 L 14.4 -14.4 L 14.4 -7.9"/><path d="M 14.4 7.9 L 14.4 14.4 L 7.9 14.4"/><path d="M -7.9 14.4 L -14.4 14.4 L -14.4 7.9"/></g><g class="ss-card"><path class="ss-lead" d="M 10.4 -10.4 L 36.4 -36.4"/><g class="ss-cbox" transform="translate(36.4,-82.4)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">VENUS</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">SIGNAL JUMPER</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="EARTH" data-route="earth" data-s="15.2" transform="translate(638.9,200.9)" onclick="eggLaunch(&#39;earth&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="17" fill="transparent"/><g class="ss-brk"><path d="M -15.2 -8.4 L -15.2 -15.2 L -8.4 -15.2"/><path d="M 8.4 -15.2 L 15.2 -15.2 L 15.2 -8.4"/><path d="M 15.2 8.4 L 15.2 15.2 L 8.4 15.2"/><path d="M -8.4 15.2 L -15.2 15.2 L -15.2 8.4"/></g><g class="ss-card"><path class="ss-lead" d="M 10.9 -10.9 L 37.2 -37.2"/><g class="ss-cbox" transform="translate(37.2,-83.2)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">EARTH</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">THE LOST DISPLAY</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="MARS" data-route="catch" data-s="13.6" transform="translate(562.6,275.2)" onclick="eggLaunch(&#39;catch&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="17" fill="transparent"/><g class="ss-brk"><path d="M -13.6 -7.5 L -13.6 -13.6 L -7.5 -13.6"/><path d="M 7.5 -13.6 L 13.6 -13.6 L 13.6 -7.5"/><path d="M 13.6 7.5 L 13.6 13.6 L 7.5 13.6"/><path d="M -7.5 13.6 L -13.6 13.6 L -13.6 7.5"/></g><g class="ss-card"><path class="ss-lead" d="M 9.8 -9.8 L 35.6 -35.6"/><g class="ss-cbox" transform="translate(35.6,-81.6)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">MARS</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">MARS: SIGNAL SIEGE</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="JUPITER" data-route="stack" data-s="22.5" transform="translate(696.1,282.9)" onclick="eggLaunch(&#39;stack&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="21" fill="transparent"/><g class="ss-brk"><path d="M -22.5 -12.4 L -22.5 -22.5 L -12.4 -22.5"/><path d="M 12.4 -22.5 L 22.5 -22.5 L 22.5 -12.4"/><path d="M 22.5 12.4 L 22.5 22.5 L 12.4 22.5"/><path d="M -12.4 22.5 L -22.5 22.5 L -22.5 12.4"/></g><g class="ss-card"><path class="ss-lead" d="M 16.2 -16.2 L 44.5 -44.5"/><g class="ss-cbox" transform="translate(44.5,-90.5)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">JUPITER</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">WORKSPACE STACK</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="SATURN" data-route="saturn" data-s="26.7" transform="translate(823.4,188.3)" onclick="eggLaunch(&#39;saturn&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="25" fill="transparent"/><g class="ss-brk"><path d="M -26.7 -14.7 L -26.7 -26.7 L -14.7 -26.7"/><path d="M 14.7 -26.7 L 26.7 -26.7 L 26.7 -14.7"/><path d="M 26.7 14.7 L 26.7 26.7 L 14.7 26.7"/><path d="M -14.7 26.7 L -26.7 26.7 L -26.7 14.7"/></g><g class="ss-card"><path class="ss-lead" d="M -19.2 -19.2 L -48.7 -48.7"/><g class="ss-cbox" transform="translate(-310.7,-94.7)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">SATURN</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">DONGLE PATROL</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="URANUS" data-route="uranus" data-s="16" transform="translate(797.1,134.3)" onclick="eggLaunch(&#39;uranus&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="21.8" fill="transparent"/><g class="ss-brk"><path d="M -16 -8.8 L -16 -16 L -8.8 -16"/><path d="M 8.8 -16 L 16 -16 L 16 -8.8"/><path d="M 16 8.8 L 16 16 L 8.8 16"/><path d="M -8.8 16 L -16 16 L -16 8.8"/></g><g class="ss-card"><path class="ss-lead" d="M -11.5 -11.5 L -38 -38"/><g class="ss-cbox" transform="translate(-300,-84)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">URANUS</text><text class="ss-cg dev" x="14" y="39.5">&#9656; IN DEVELOPMENT</text><text class="ss-cr" x="14" y="58">&#8212;</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="NEPTUNE" data-route="dev" data-s="15.8" transform="translate(739,93.6)" onclick="eggDevBlip(this)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="17" fill="transparent"/><g class="ss-brk"><path d="M -15.8 -8.7 L -15.8 -15.8 L -8.7 -15.8"/><path d="M 8.7 -15.8 L 15.8 -15.8 L 15.8 -8.7"/><path d="M 15.8 8.7 L 15.8 15.8 L 8.7 15.8"/><path d="M -8.7 15.8 L -15.8 15.8 L -15.8 8.7"/></g><g class="ss-card"><path class="ss-lead" d="M -11.4 11.4 L -37.8 37.8"/><g class="ss-cbox" transform="translate(-299.8,37.8)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">NEPTUNE</text><text class="ss-cg dev" x="14" y="39.5">&#9656; IN DEVELOPMENT</text><text class="ss-cr" x="14" y="58">&#8212;</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g><g class="ss-p" data-name="PLUTO" data-route="pluto" data-s="13" transform="translate(212,314)" onclick="eggLaunch(&#39;pluto&#39;)" onmouseenter="EggAudio.uiHover()"><circle class="ss-hit" r="16" fill="transparent"/><g class="ss-brk"><path d="M -13 -7.1 L -13 -13 L -7.1 -13"/><path d="M 7.1 -13 L 13 -13 L 13 -7.1"/><path d="M 13 7.1 L 13 13 L 7.1 13"/><path d="M -7.1 13 L -13 13 L -13 7.1"/></g><g class="ss-card"><path class="ss-lead" d="M 9.4 -9.4 L 35 -35"/><g class="ss-cbox" transform="translate(35,-81)"><rect class="ss-cbg" width="262" height="80" rx="3.5"/><text class="ss-cn" x="14" y="21">PLUTO</text><text class="ss-cg" x="14" y="39.5">&#9656; GAME AVAILABLE</text><text class="ss-cr" x="14" y="58">PACKET MUNCHER</text><text class="ss-cb" x="14" y="75">BEST &#8212;</text></g></g></g></svg></div></div></div>
+    </div>
+    <div class="eggmenu-foot">
+      <span class="eggmenu-cap">Explore the planets</span>
+      <div id="eggmenu-key"></div>
+    </div>
+  </div>
+</div>
+<div id="egg3" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#e8a184">The intruder · network diagnostics</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">NETWORK INTERFERENCE</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">Rogue signals are jamming the airspace above the room. You're the pod — clear the channel. Jammers rain static, splitters multiply, and every fourth wave the FIREWALL sweeps in. Downed signals drop powered displays: relay shield, dual beam, the piercing LANCE and the wide-angle SWEEP.</p>
+    <div class="egg-stage"><canvas id="egg3c" width="880" height="520"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">signals cleared: <b id="egg3s" style="color:#7ce3a8">0</b> · wave: <b id="egg3w" style="color:#e8c76a">1</b> · link integrity: <b id="egg3l" style="color:#a58cff">3</b> · best: <b id="egg3b" style="color:#e2d9ff">0</b></div>
+    <div id="egg3-key"></div>
+  </div>
+</div>
+<div id="egg2" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#2f8aa8">Jupiter · workspace assembly</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">WORKSPACE STACK</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">Shares keep coming. Compose the workspace — complete a row and it renders to the display. Hold a piece for later, trust the ghost, and slam it home when you're sure.</p>
+    <div class="egg-stage"><canvas id="egg2c" width="640" height="560"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="egg2s" style="color:#7ce3a8">0</b> · lines: <b id="egg2ln" style="color:#4fc3d9">0</b> · level: <b id="egg2lv" style="color:#e8c76a">1</b> · best: <b id="egg2b" style="color:#a58cff">0</b></div>
+    <div id="egg2-key"></div>
+  </div>
+</div>
+<div id="egg" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#7ce3a8">Mars · canyon relay</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">RELAY RUN</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">Aliens are looting Earth's audiovisual gear, and someone has to invoice them for it. You're the AV Integrator: fight through three decks of their freighter, shoot the capsules open, and take the equipment back — HDMI becomes a Blaster, a Display fans into Multicast, Coil fires Fiber, a Speaker is pure Subwoofer. Switches level your weapon, Surges take one hit for you. Snatchers steal; make them regret it. A boss holds every deck.</p>
+    <div class="egg-stage"><canvas id="eggc" width="880" height="520"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="eggs" style="color:#7ce3a8">0</b> · mission: <b id="egglv" style="color:#e8c76a">1</b>/3 · best: <b id="eggb" style="color:#a58cff">0</b></div>
+    <div id="egg-key"></div>
+  </div>
+</div>
+<div id="egg4" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#c6e05a">Pluto · deep-network maintenance</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">PACKET MUNCHER</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">Something is nesting in the farthest switch fabric. Run the corridors, eat every stray packet, and mind the four interference glyphs — each hunts its own way. Grab a powered display and, for a few seconds, the hunters become the hunted. Ten sectors between you and a clean network.</p>
+    <div class="egg-stage"><canvas id="egg4c" width="560" height="620"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="egg4s" style="color:#7ce3a8">0</b> · sector: <b id="egg4lv" style="color:#e8c76a">1</b>/10 · lives: <b id="egg4l" style="color:#a58cff">3</b> · best: <b id="egg4b" style="color:#e2d9ff">0</b></div>
+    <div id="egg4-key"></div>
+  </div>
+</div>
+<div id="egg5" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#e8c76a">Venus · broadcast campus</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">SIGNAL JUMPER</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">Ten displays across the broadcast campus went dark, and the interference is walking around like it owns the place. Run the loading dock, the cable trench, the rooftop, the mezzanine and the antenna tower, then push on through the uplink yard, the static fields, the rack canyon, the microwave bridge and master control — stomp the glyphs flat, bank the signal bits, bump the cache blocks, plant the midpoint flag, ride the ferries, and touch every display back to Polaris green. Game over offers a CONTINUE from the top of the level that beat you.</p>
+    <div class="egg-stage"><canvas id="egg5c" width="880" height="520"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="egg5s" style="color:#7ce3a8">0</b> · level: <b id="egg5lv" style="color:#e8c76a">1</b>/10 · lives: <b id="egg5l" style="color:#a58cff">3</b> · bits: <b id="egg5bt" style="color:#7fc6dd">0</b> · best: <b id="egg5b" style="color:#e2d9ff">0</b></div>
+    <div id="egg5-key"></div>
+  </div>
+</div>
+<div id="egg6" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <div class="kicker" style="color:#7fc6dd">Earth · search and rescue</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">THE LOST DISPLAY</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">The campus's flagship display was stolen and walled up in a fortress beyond the north-east mesa. Cross a hundred screens of field, woods, river and dead server yard, crimper in hand — find the two small keys, mind the spikes, arrows and false floors, put five strikes into the CRT TYRANT's open screen, and raise the display where it belongs. Five hollow caves hide heart containers, and the RELAY TOWER on the south-west shore keeps the MERSIVE POLARIS — press X to grab what's in front of you, or to send the puck flying out and back.</p>
+    <div class="egg-stage"><canvas id="egg6c" width="720" height="528"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="egg6s" style="color:#7ce3a8">0</b> · bits: <b id="egg6bt" style="color:#7fc6dd">0</b> · keys: <b id="egg6k" style="color:#e8c76a">0</b> · time: <b id="egg6t" style="color:#a58cff">0:00</b> · best: <b id="egg6b" style="color:#e2d9ff">0</b></div>
+    <div id="egg6-key"></div>
+  </div>
+</div>
+<div id="egg7" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="kicker" style="color:#e8c76a">Saturn · the dongle belt</div>
+    <div class="egg-gt" style="color:#e2d9ff;margin:4px 0 4px">DONGLE PATROL</div>
+    <p style="font-size:12px;color:#b8aede;margin:0 0 10px">The dongle users are pouring out of the rings in formation: HDMI drones, button wingmen, and the big conference pucks running the show. Hold the line in the Polaris fighter. They swoop in, regroup, breathe, and dive. Mind the boss pucks&rsquo; PAIRING BEAM &mdash; get caught and your fighter is theirs. Shoot that boss down mid-dive and your fighter comes home to fly beside you: DUAL FIRE. Every fourth wave is a demo stage &mdash; pure flying, pure bonus, PERFECT if you drop every last one.</p>
+    <div class="egg-stage"><canvas id="egg7c" width="880" height="520"></canvas></div>
+    <div style="font-size:11px;color:#8f85b8;margin-top:8px">score: <b id="egg7s" style="color:#7ce3a8">0</b> · wave: <b id="egg7w" style="color:#e8c76a">1</b> · lives: <b id="egg7l" style="color:#a58cff">3</b> · <span id="egg7d" style="color:#7fc6dd;font-weight:700"></span> best: <b id="egg7b" style="color:#e2d9ff">0</b></div>
+    <div id="egg7-key"></div>
+  </div>
+</div>
+<div id="egg8" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">&#10005;</button>
+    <button class="egg-snd" onclick="eggToggleMute()" aria-label="Toggle sound (M)"></button>
+    <div class="egg8-intro">
+      <div class="kicker" style="color:#ff6fe0">Mercury &middot; the night side circuit</div>
+      <h3 style="color:#e2d9ff;margin:4px 0 4px">SOLAR CIRCUIT</h3>
+      <p style="font-size:12px;color:#b8aede;margin:0 0 10px">A run cut across Mercury&rsquo;s night side, Point A to Point B, against the clock. The sun never sets here and never rises either &mdash; it just sits on the horizon throwing its corona up the sky, and everything you can see is either lit by it or hiding from it. The route opens wide and fast, closes to a canyon barely three lanes across, climbs, and falls away again, four stages of it. Keep it on the basalt: the regolith either side will drag you down and take your speed with it. Stay clean and the craft keeps finding more &mdash; the longer you hold the line, the faster it will let you go, and the yellow pads are how you get there sooner.</p>
+    </div>
+    <div id="egg8-mount" class="egg8-mount"></div>
+    <div id="egg8-status" role="status" style="font-size:11px;color:#8f85b8;margin-top:8px;min-height:1em"></div>
+    <div id="egg8-key"></div>
+  </div>
+</div>
+<div id="egg-mars" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="eggMarsToggleMute()" aria-label="Toggle sound (M)"></button>
+    <!-- Same shape as #egg9 and for the same reason: the Mission Control card
+         already carries the description, and the game opens on its own title
+         screen. Anything above the canvas here is a second introduction. -->
+    <div id="egg-mars-mount" class="egg9-mount"></div>
+    <div id="egg-mars-status" role="status" style="font-size:11px;color:#8f85b8;margin-top:8px;min-height:1em"></div>
+    <div class="egg9-hint" id="egg-mars-hint" aria-hidden="true">F &middot; windowed</div>
+  </div>
+</div>
+<div id="egg9" style="display:none">
+  <div class="egg-bd big fit">
+    <button class="egg-x" onclick="eggBackToMenu()">✕</button>
+    <button class="egg-snd" onclick="egg9ToggleMute()" aria-label="Toggle sound (M)"></button>
+    <!-- No description paragraph here. The briefing card in Mission Control
+         already carries this copy, and repeating it above the game stretched one
+         sentence across the full panel width at ~180 characters a line. The game
+         has its own title screen; it does not need an introduction as well. -->
+    <div id="egg9-mount" class="egg9-mount"></div>
+    <div id="egg9-status" role="status" style="font-size:11px;color:#8f85b8;margin-top:8px;min-height:1em"></div>
+    <div class="egg9-hint" id="egg9-hint" aria-hidden="true">F &middot; windowed</div>
+  </div>
+</div>`;
+---
+
+<Fragment set:html={OVERLAYS} />

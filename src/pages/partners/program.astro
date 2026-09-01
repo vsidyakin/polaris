@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CNVIC } from "../../data/icons";
+import { crumbs } from "../../lib/blocks";
+---
+
+<BaseLayout route="partners/program">
+  <Fragment set:html={crumbs("partners/program","Partner program")} />
+    <div class="pageinfo"><span class="tag t-tpl">T7</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Our business moves <span class="warm">through partners</span>.</h1>
+    <p class="dek">That is not a channel strategy bolted onto a direct business; it is how Mersive goes to market, on purpose. This page is the public half of the program: what we build for you, and how to get in.</p>
+
+    <div class="cnv-band reveal">
+      <div class="kicker" style="color:#7ce3a8">Who you&rsquo;re partnering with</div>
+      <h2>Owned by AV people. Run by AV people.</h2>
+      <p>Management owns this company: the people setting your partner terms have pulled cable, programmed rooms, and sat through the change orders. When you register a deal, the person approving it owns part of this company.</p>
+      <p style="margin:0"><a href="/resources/who">Who we are: the ownership story →</a></p>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The program</div>
+      <h2>What&rsquo;s in it for you.</h2>
+      <p class="sdek">Eight commitments. Deal registration and MDF/co-op run today; the rest ships with the program relaunch. Everything gated lives in the portal; everything marketing lives here, in the open.</p>
+      <div class="cnv-bene">
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.reg} /></div><b>Deal registration</b><p>Register the deal you sourced and it&rsquo;s protected: approved fast, by a person with a stake in your win, not a scoring bot.</p><span class="real">runs today</span></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.tagp} /></div><b>Partner pricing</b><p>Price lists by region and tier, in the portal. MSRP is public on every shipping product page; pre-launch SKUs carry their price at launch. Your margin is the part we keep between us.</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.mdf} /></div><b>MDF &amp; co-op</b><p>Market development funds and co-op programs for partners who build demand: events, campaigns, demo-room builds.</p><span class="real">runs today</span></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.demo} /></div><b>Demo gear</b><p>Discounted demo kits for your briefing room and your customer floor. The workspace sells itself once it&rsquo;s on your own displays.</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.collat} /></div><b>Co-brandable collateral</b><p>Battlecards, one-pagers, proposal-ready architecture and security content, built to be lifted straight into your quote, with your logo on it.</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.cert} /></div><b>Training &amp; certification</b><p>Sales and technical curriculum with certifications your team can carry into a bid. [Curriculum structure placeholder.]</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.dir} /></div><b>Directory listing</b><p>A sales-approved profile on the public where-to-buy directory: logo, specializations, regions, and an outbound link to you.</p></div>
+        <div class="cnv-ben"><div class="ic"><Fragment set:html={CNVIC.ship} /></div><b>Trial-fulfillment pipeline</b><p>Every hardware trial requested on this site routes through a regional partner. Trials are demand generation for you, never around you.</p></div>
+      </div>
+      <div class="taxq"><b>Tiers.</b> The program will carry a public tier structure (criteria, benefits per tier, and how you move up), published on this page the way we publish everything else. [Tier structure placeholder — pending program design.]</div>
+    </section>
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">The trial engine</div>
+      <h2>Trials are your pipeline.</h2>
+      <p>When an end customer requests a trial on this site, we match them with a regional partner — you. The kit, the relationship, and the conversion are yours. The website generates the demand; the channel closes it. That is the whole design.</p>
+      <p style="margin:0"><a href="/trial">See the trial flow the customer sees →</a></p>
+    </div>
+
+    <div class="ctaband reveal"><h2>In, or want in?</h2><p class="note" style="margin:0 0 12px">Domain-based access: once your company is approved, your whole team registers with their work email.</p>
+      <a class="btn accent big" href="/partners/portal">Partner portal login</a> &nbsp; <a class="btn secondary big" href="/partners/become">Become a partner</a></div>
+</BaseLayout>

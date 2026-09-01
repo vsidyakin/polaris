@@ -1,0 +1,119 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { DEV } from "../data/icons";
+import { crumbs } from "../lib/blocks";
+import { faqPageSchema } from "../data/schema";
+
+/* ── The trial FAQ, once ──────────────────────────────────────────────────────
+   The accordion below renders this array and `faqPageSchema()` describes it, so
+   the page's FAQ and its FAQPage node are the same four answers rather than two
+   copies that can drift.
+
+   Three of the four answers still carry a bracketed Q14 ops placeholder, and
+   faqPageSchema() drops any answer that does — an answer that says "[Duration
+   placeholder]" is not a fact to publish to Google. Each one rejoins the node the
+   day its brackets come off this array, with no other edit anywhere. The build log
+   names what was dropped. */
+const FAQ = [
+  {
+    q: "How long does the trial run?",
+    a: "[Duration placeholder — Q14 ops.] The design intent: long enough to run real meetings with real guests, not a single vendor walk-through. You should get through at least one board meeting, one all-hands, and one visitor with a locked-down laptop before you have to decide anything.",
+  },
+  {
+    q: "What network access does it need?",
+    a: "A display and a network drop (or Wi-Fi). Web-join works immediately: users share from the browser with nothing installed. To test cross-network sharing across VLANs or from the internet, your network team gets the port matrix and deployment guide with the kit. [Exact port/egress requirements — deployment guide placeholder.] The trial pod runs the same security posture as production, including 802.1x/EAP-TLS if you want to test it against your NAC.",
+  },
+  {
+    q: "What happens when it ends?",
+    a: "Two exits, both clean. <b>Keep it:</b> your partner converts the trial hardware into an order: no re-install, the rooms just keep working. <b>Return it:</b> prepaid label in the box, and the temporary cloud tenant closes. [Convert/return mechanics placeholder — Q14 ops.]",
+  },
+  {
+    q: "Who actually fulfills the trial?",
+    a: 'An authorized Mersive partner in your region: trials are channel-fulfilled by design, because the partner who runs your trial is the one who will make your deployment succeed. See <a href="/partners/where">where to buy</a> for who they are.',
+  },
+];
+
+const faq = faqPageSchema(FAQ, "/trial");
+---
+
+<BaseLayout route="trial" schema={faq ? [faq] : []}>
+  <Fragment set:html={crumbs("trial","Start a trial")} />
+    <div class="pageinfo"><span class="tag t-tpl">CTA</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Try Mersive Polaris <span class="warm">in your own rooms</span>.</h1>
+    <p class="dek">Not a sandbox, not a recorded demo: real hardware, in your rooms, on your network, with your users and your guests. Every shipping Polaris product is available as a hardware trial, and every trial is fulfilled with your regional partner.</p>
+
+    <section class="sect reveal flush">
+      <div class="kicker">How a trial works</div>
+      <h2>Four steps. No procurement gymnastics.</h2>
+      <div class="cnv-flow">
+        <div class="cnv-step"><span class="n">1 · request</span><b>Tell us about your rooms</b><p>The form below: who you are, how many rooms, which country. Two minutes. Already work with a reseller or integrator? Name them and we keep them in the loop from day one.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">2 · ships</span><b>The kit ships, direct from Mersive</b><p>Trial hardware arrives free and pre-configured: plug the pod into a display and a network and the screen key is on the display. Users install nothing; web-join is the browser.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">3 · run it</span><b>Real meetings, real network</b><p>Your rooms, your users, your guests. A Mersive engineer checks in mid-trial to answer the questions your IT team will have by then.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step hot"><span class="n">4 · decide</span><b>Decide, then meet your partner</b><p>If the rooms argue for themselves, we introduce an authorized partner in your region to design and quote the rollout (or route it through the one you named). Not convinced? Prepaid return label in the box.</p></div>
+      </div>
+      <p class="note">[Trial duration, return/convert mechanics, and shipping coverage are Q14 ops decisions — the flow above is the committed shape; terms shown are not final.]</p>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">What arrives</div>
+      <h2>What&rsquo;s in the box.</h2>
+      <p class="sdek">Pick the tier that matches the room you want to test, or request one of each and run them side by side.</p>
+      <div class="cnv-kits">
+        <div class="cnv-kit"><Fragment set:html={DEV.pod} /><h3>Essentials trial kit</h3><div class="kfor">Standard meeting rooms · classrooms</div>
+          <ul><li>Polaris pod, pre-flashed with Essentials</li><li>HDMI + power + mounting hardware</li><li>Quick-start card: the screen key on the display is the whole onboarding</li><li>Cross-network configuration: share across VLANs or the internet, no VPN</li><li>Temporary Polaris Cloud tenant, so you see the fleet view too</li></ul></div>
+        <div class="cnv-kit hot"><Fragment set:html={DEV.pod} /><h3>Pro trial kit</h3><div class="kfor">Conferencing rooms · segmented networks</div>
+          <ul><li>Everything in the Essentials kit, flashed Pro</li><li>USB room-AV bridging for wireless BYOM: test with your own camera and mic</li><li>HDMI input and dual 4K60 output: test wired ingest and a second display</li><li>Deployment guide + port matrix for your network team</li></ul></div>
+      </div>
+      <p class="note">[Kit contents placeholder — final packing list pending Q14 ops. Silhouettes are placeholder art direction.] Pre-launch products (Launch, Link, Host) join the trial program at launch.</p>
+    </section>
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">The channel note: on the page, on purpose</div>
+      <h2>Your reseller stays in the loop.</h2>
+      <p>Trials are partner-fulfilled demand, never a way around the channel. If you already buy through a reseller or integrator, the trial is theirs to run and theirs to convert: same relationship, no direct end-run. If you don&rsquo;t have one yet, this is how you get one worth keeping: we introduce you to an authorized partner in your region and they take it from there.</p>
+      <p style="margin:0"><a href="/partners/program">How the partner program works →</a></p>
+    </div>
+
+    <div class="cta2col reveal"><div class="cnv-form">
+      <h3>Request a trial</h3><div id="hs-trial"></div>
+      <p>Form mock: production routes this to trial fulfillment, and to a partner introduction when you convert. No field reaches a server in this POC.</p>
+      <div class="cnv-fgrid">
+        <div class="cnv-field"><label>Name</label><input type="text" placeholder="Dana Reyes"></div>
+        <div class="cnv-field"><label>Company</label><input type="text" placeholder="Acme Manufacturing"></div>
+        <div class="cnv-field"><label>Work email</label><input type="email" placeholder="dana@acme.com"></div>
+        <div class="cnv-field"><label>Country</label><select><option>United States</option><option>Canada</option><option>United Kingdom</option><option>Germany</option><option>Australia</option><option>Other…</option></select></div>
+        <div class="cnv-field"><label>Rooms in scope</label><select><option>1–10</option><option>10–50</option><option>50–250</option><option>250+</option></select></div>
+        <div class="cnv-field"><label>Current reseller / integrator (optional)</label><input type="text" placeholder="Name them and the trial routes through them"></div>
+      </div>
+      <button class="btn accent big" onclick="cnvSubmit('trial request')">Request my trial kit</button>
+    </div>
+    <aside class="expect"><div class="kicker">What to expect</div><h3>What ships, and what happens after.</h3>
+      <ul>
+        <li>Real Polaris hardware, shipped free and pre-configured for your network</li>
+        <li>Your rooms, your users, your guests: real meetings, not a sandbox</li>
+        <li>A human check-in mid-trial from a Mersive engineer</li>
+        <li>Return label in the box, or a partner introduction to convert it into a rollout</li>
+        <li>No credit card, no auto-convert, no surprises [trial mechanics pending Q14]</li>
+      </ul>
+    </aside></div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Questions people actually ask</div>
+      <h2>Trial FAQ.</h2>
+      {
+        FAQ.map((f, i) => (
+          <details class="sec-acc" open={i === 0}>
+            <summary>{f.q}</summary>
+            <div class="bd"><p set:html={f.a} /></div>
+          </details>
+        ))
+      }
+    </section>
+</BaseLayout>
+
+<script>
+  import "../scripts/pages/forms";
+</script>

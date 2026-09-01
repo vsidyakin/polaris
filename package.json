@@ -1,0 +1,60 @@
+{
+  "name": "mersive-polaris-website",
+  "type": "module",
+  "version": "2.0.0",
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "images": "node scripts/fetch-blog-images.mjs",
+    "images:masters": "node scripts/build-zoom-masters.mjs",
+    "images:zoom": "node scripts/build-zoom-frames.mjs",
+    "images:road": "node scripts/build-solar-road-art.mjs",
+    "images:pm-tiles": "node scripts/build-polaris-man-tiles.mjs",
+    "build": "node scripts/fetch-blog-images.mjs && astro build",
+    "build:prod": "env -u SITE_URL -u BASE_PATH -u PUBLIC_NOINDEX -u SITE_PASSWORD pnpm run build",
+    "verify:prod": "pnpm run build:prod && pnpm run check:indexable && pnpm run check:blocked",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro",
+    "rebase": "node scripts/rebase-html.mjs",
+    "test:music": "node scripts/test-egg-music-loop.mjs",
+    "test:game": "node scripts/test-polaris-man.mjs",
+    "test:loops": "node scripts/check-loop-seams.mjs \"Game audio files/Polaris Man/nes/wav\"",
+    "music:gen": "node scripts/gen-egg-music.mjs",
+    "build:pages": "node scripts/fetch-blog-images.mjs && astro build && node scripts/rebase-html.mjs",
+    "preview:pages": "BASE_PATH=/polaris-website SITE_URL=https://mersive-technologies.github.io PUBLIC_NOINDEX=true SITE_PASSWORD=${SITE_PASSWORD:-preview} pnpm run build:pages && BASE_PATH=/polaris-website astro preview",
+    "check:figures": "python3 scripts/check-figures.py",
+    "check:all": "pnpm check && pnpm check:figures && pnpm check:specs && pnpm test:game && pnpm test:mars",
+    "check:specs": "python3 scripts/check-specs.py",
+    "check:outline": "python3 scripts/check-outline.py dist",
+    "verify": "pnpm check:all && pnpm build && pnpm check:outline && pnpm check:indexable && pnpm check:warranty && pnpm check:keycustody && pnpm check:blocked && pnpm check:claims && pnpm check:sources && pnpm check:provenance && pnpm check:static && pnpm check:copper",
+    "check:warranty": "python3 scripts/check-warranty.py dist",
+    "check:keycustody": "python3 scripts/check-keycustody.py dist",
+    "check:blocked": "python3 scripts/check-blocked.py dist",
+    "check:indexable": "python3 scripts/check-indexable.py dist",
+    "check:claims": "python3 scripts/check-claims.py dist",
+    "check:sources": "python3 scripts/check-sources.py",
+    "check:static": "python3 scripts/check-static-evidence.py dist",
+    "check:copper": "python3 scripts/check-copper.py dist",
+    "check:provenance": "python3 scripts/check-provenance.py",
+    "test:mars": "node scripts/test-mars.mjs",
+    "mars:art": "python scripts/build-mars-art.py",
+    "mars:audio": "python scripts/build-mars-audio.py && python scripts/build-mars-sfx.py"
+  },
+  "dependencies": {
+    "astro": "^7.2.0",
+    "phaser": "4.2.1",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.1.2",
+    "@types/three": "^0.185.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

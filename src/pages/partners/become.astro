@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { crumbs } from "../../lib/blocks";
+---
+
+<BaseLayout route="partners/become">
+  <Fragment set:html={crumbs("partners/become","Become a partner")} />
+    <div class="pageinfo"><span class="tag t-tpl">T7</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Apply once. <span class="warm">Your whole team gets in</span>.</h1>
+    <p class="dek">No per-seat account requests, no waiting on a portal admin. When your company is approved, your email domain is the key: anyone at your company self-registers with their work address.</p>
+
+    <div class="cnv-flow s3 reveal">
+      <div class="cnv-step"><span class="n">1 · apply</span><b>Ten fields, five minutes</b><p>The form below. Tell us who you are, where you sell, what you specialize in, and which distributors you buy through.</p></div>
+      <div class="cnv-arrow">→</div>
+      <div class="cnv-step"><span class="n">2 · sales approves</span><b>A person reviews it</b><p>Applications are approved by the sales team: a human decision, not a form-score. Directory profiles get the same treatment later. [Approval SLA placeholder — Q11.]</p></div>
+      <div class="cnv-arrow">→</div>
+      <div class="cnv-step hot"><span class="n">3 · domain live</span><b>Everyone with your email is in</b><p>Your domain goes on the allowlist. Sales engineers, the quoting desk, marketing: anyone @yourcompany creates their own portal login. No shared passwords, no bottleneck.</p></div>
+    </div>
+
+    <div class="taxq reveal"><b>Eligibility, plainly.</b> The program is built for resellers, integrators, and consultants with a working AV or UC practice, from two-person design-build shops to national integrators. Distribution relationships help but are not required to apply; regional coverage and specialization matter more than headcount. [Formal eligibility criteria placeholder — pending program design.]</div>
+
+    <div class="cnv-form reveal">
+      <h2 class="sr-only">Apply to the partner programme</h2>
+      <h3>Partner application</h3>
+      <p>Form mock: production feeds the sales approval queue. Nothing is sent in this POC.</p>
+      <div class="cnv-fgrid">
+        <div class="cnv-field"><label>Company</label><input type="text" placeholder="Cascade AV Design-Build"></div>
+        <div class="cnv-field"><label>Company email domain</label><input type="text" placeholder="cascadeav.com — this becomes your team&rsquo;s key"></div>
+        <div class="cnv-field"><label>Your work email</label><input type="email" placeholder="you@cascadeav.com"></div>
+        <div class="cnv-field"><label>Regions you cover</label><select><option>North America</option><option>EMEA</option><option>APAC</option><option>LATAM</option><option>Multiple / global</option></select></div>
+        <div class="cnv-field"><label>Distributor relationships</label><input type="text" placeholder="Who do you buy through today? (optional)"></div>
+        <div class="cnv-field"><label>Specializations</label><select><option>Corporate AV / UC</option><option>Education</option><option>Government &amp; regulated</option><option>Healthcare</option><option>Multiple</option></select></div>
+      </div>
+      <button class="btn accent big" onclick="cnvSubmit('partner application')">Submit application</button>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Day one</div>
+      <h2>What you get the day you&rsquo;re approved.</h2>
+      <ul class="cnv-list">
+        <li><b>Portal access for your whole team</b>: domain-based self-registration, immediately.</li>
+        <li><b>Partner price lists</b> for your region, plus the quote builder.</li>
+        <li><b>Deal registration</b>: protect your first deal the same day.</li>
+        <li><b>The collateral library</b>: co-brandable battlecards and proposal-ready content.</li>
+        <li><b>Training curriculum</b>: start certification whenever your team is ready.</li>
+        <li><b>Demo-gear ordering</b> and a directory-profile submission (sales-approved before it publishes).</li>
+      </ul>
+      <p class="note">Trial-fulfillment routing switches on once your region and specializations are confirmed. [Sequencing placeholder — Q11/Q14.]</p>
+    </section>
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/forms";
+</script>

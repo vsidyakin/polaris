@@ -1,0 +1,68 @@
+---
+/**
+ * The shared content-hub shell: one title, body copy under it, a row of
+ * selectable tags, then whatever content the page hands it (almost always a
+ * PostGrid). Locked in from the blog hub's redesign (20 Aug 2026) and now
+ * shared with /resources/cases, so both read as the same kind of page.
+ *
+ * Deliberately thin — a title, a dek slot, a tags slot, and a wrap for
+ * everything else — because a hub's surrounding furniture genuinely differs
+ * (blog's featured lead and pager; case studies' award blurb and pipeline
+ * section) even though the head/tags/grid shape is identical. Forcing those
+ * into typed props would just move the variation into a longer prop list;
+ * slots let each page keep its own extras legible in its own file.
+ *
+ * Wraps BaseLayout itself, the same way PostLayout does, so a page renders
+ * exactly one layout.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import type { Route } from "../data/routes";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  route: Route;
+  child?: { path: string; name: string };
+  title?: string;
+  description?: string;
+  schema?: object[];
+  /** The trail after Home / Resources — usually one crumb ("Blog",
+      "Case Studies"), two on a sub-page (["Blog" (linked), "Page 2"]). */
+  crumbs: Crumb[];
+  pageTitle: string;
+}
+
+const { route, child, title, description, schema, crumbs, pageTitle } = Astro.props;
+---
+
+<BaseLayout route={route} child={child} title={title} description={description} schema={schema}>
+  <div class="crumb">
+    <a href="/">Home</a><span class="crumb-sep">/</span>Resources<span class="crumb-sep">/</span>
+    {
+      crumbs.map((c, i) => (
+        <>
+          {c.href ? <a href={c.href}>{c.label}</a> : c.label}
+          {i < crumbs.length - 1 && <span class="crumb-sep">/</span>}
+        </>
+      ))
+    }
+  </div>
+
+  <slot name="pageinfo" />
+
+  <header class="bhx-head">
+    <h1 class="bhx-title">{pageTitle}</h1>
+    <slot name="dek" />
+  </header>
+
+  <slot name="tags" />
+
+  <div class="bhx-wrap">
+    <slot />
+  </div>
+
+  <slot name="after" />
+</BaseLayout>

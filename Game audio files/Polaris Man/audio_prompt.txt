@@ -1,0 +1,259 @@
+Use the connected `stable-audio` MCP to create a complete original soundtrack for my 2D retro action-platform game, Polaris Man.
+
+Generate all 15 tracks listed below using the `stable_audio_text_to_audio` tool. Retrieve every completed generation using `stable_audio_get_result`.
+
+Do not download, upload, sample, transform, transcribe or reproduce any copyrighted soundtrack. Do not use audio-to-audio for this batch. The time references below are descriptive references only. Create completely original melodies, motifs, bass lines, rhythms and arrangements. No result should contain a recognizable quotation or close melodic imitation of an existing game soundtrack.
+
+OUTPUT LOCATION
+
+The MCP will initially save completed files in its own output folder. After each file is retrieved, copy it into:
+
+C:\Users\dlbla\Dropbox\1.0 My Documents\2.0 Professional files\1.0 Elk View Capital\1.0 Mersive\Executive Packet\Website\git website\polaris-website\Game audio files\Polaris Man
+
+Do not overwrite an existing file. If a filename already exists, add `_v2`, `_v3` or the next available version number.
+
+GENERATION SETTINGS
+
+Use these settings for every generation:
+
+- Tool: `stable_audio_text_to_audio`
+- Duration: 75 seconds
+- Output format: WAV
+- Steps: 8
+- CFG scale: 1.5
+- Use a different fixed seed for every track, beginning with 31001 and ending with 31015.
+- Generate and retrieve one track at a time.
+- After receiving a generation ID, wait at least 10 seconds before checking the result.
+- Continue polling at sensible intervals while the result is processing.
+- Do not create duplicate generations merely because a result is still processing.
+- Do not retry a failed paid generation without reporting the failure first.
+- Verify that every downloaded file exists and has a nonzero file size.
+
+SHARED MUSICAL DIRECTION
+
+Every track must be an original instrumental score for the same fictional game universe.
+
+Use a disciplined late-1980s console-action sound palette:
+
+- Two pulse-wave-style melodic voices
+- One triangle-wave-style bass voice
+- One noise-based percussion voice
+- Optional sparse original sampled percussion accents
+- Crisp, dry, tightly controlled chiptune production
+- Strong foreground melody
+- Active countermelody that supports rather than duplicates the lead
+- Melodic bass lines rather than sustained root notes
+- Short noise-channel kicks, snares, hats and impact bursts
+- Minor-key urgency balanced by heroic major-color moments
+- Compact harmonic movement
+- Clear rhythmic momentum
+- Strong contrast between A and B sections
+- Memorable motifs that can be recognized after one or two listens
+- No vocals, spoken words, cinematic orchestra, realistic rock band, modern EDM drops, lush ambient pads or long reverberant tails
+- No references to existing game titles, characters, composers or melodies
+
+LOOP REQUIREMENTS
+
+Each track must be designed as a gameplay loop:
+
+- Begin immediately on a musically useful downbeat or pickup
+- No silence at the beginning
+- No long introductory sound effect
+- No fade-in
+- No fade-out
+- No final crash, held ending chord or definitive cadence
+- The final measure must lead naturally back into the first measure
+- Keep percussion and ambience consistent across the loop boundary
+- Aim for approximately 75 seconds of continuous musical material
+- Use a clear A–A′–B–A or A–B–A′ structure
+- Do not claim that a file is sample-perfectly seamless unless it has actually been inspected; record any file that will need its loop boundary trimmed later
+
+TRACKS
+
+1. TITLE SCREEN
+
+Output filename: `01_Title_Screen.wav`  
+Seed: 31001  
+Descriptive reference block: 00:01–01:27
+
+Stable Audio prompt:
+
+“Original instrumental title-screen music for a fictional retro science-fiction action-platform game called Polaris Man. Approximately 150 BPM, energetic 4/4. Begin with a brief sense of cosmic mystery and gathering danger, then quickly reveal a bold, optimistic heroic melody. Authentic constrained chiptune arrangement with a bright pulse-wave lead, answering pulse-wave countermelody, mobile triangle-wave bass and crisp noise percussion. Use rising arpeggios, purposeful harmonic escalation and a memorable four-to-eight-note identity motif suggesting a lone guiding star, navigation through darkness and an approaching mission. Balance determination, wonder and danger. Strong melodic development across contrasting A and B sections. No vocals, no cinematic orchestra, no modern synthesizer pads and no quotation of existing game music. Start immediately, avoid fades and finish with a musical pickup that leads naturally back into the opening.”
+
+2. MISSION SELECT
+
+Output filename: `02_Mission_Select.wav`  
+Seed: 31002  
+Descriptive reference block: 02:01–02:33
+
+Stable Audio prompt:
+
+“Original instrumental mission-selection loop for Polaris Man. Approximately 152 BPM in 4/4. Tense, focused and technological, representing a player choosing among dangerous missions on a star map. Use clipped pulse-wave signals, cycling arpeggios, a compact unresolved lead motif, active triangle bass and restrained noise percussion. Create the feeling of scanning targets, calculating risk and waiting for a decision. Keep the melodic range narrower and the structure more repetitive than a full level theme, but retain a compelling hook. Alternate between a questioning melodic phrase and a firmer response without reaching complete emotional resolution. Authentic dry chiptune texture, no vocals, no cinematic ambience and no recognizable existing melody. Immediate start, no fade-out, and a final phrase that circles directly back to the first beat.”
+
+3. MISSION TRACK 1
+
+Output filename: `03_Mission_Track_01.wav`  
+Seed: 31003  
+Descriptive reference block: 02:41–04:05  
+Priority influence: This is one of the two strongest creative references.
+
+Stable Audio prompt:
+
+“Original high-velocity mission-stage theme for Polaris Man. Approximately 178 BPM, urgent 4/4 with relentless forward propulsion. Use an angular but singable pulse-wave lead, rapid answering countermelody, continuous melodic triangle bass and tightly controlled noise percussion. Build excitement through rapid sixteenth-note figures, syncopated accents, short ascending runs and abrupt directional changes. The lead hook must be exceptionally memorable and heroic while the accompaniment communicates speed, precision and imminent danger. Include a clear A section, intensified variation, contrasting B section and return. Preserve clarity despite the speed; every channel should have a distinct function. Authentic constrained retro-console timbre, no vocals, no rock guitars, no modern EDM and no melodic quotation. Start in motion and end with an energetic pickup that connects naturally to the opening.”
+
+4. MISSION TRACK 2
+
+Output filename: `04_Mission_Track_02.wav`  
+Seed: 31004  
+Descriptive reference block: 04:06–05:32  
+Priority influence: This is the second of the two strongest creative references.
+
+Stable Audio prompt:
+
+“Original mechanical-industrial mission-stage theme for Polaris Man. Approximately 160 BPM in precise 4/4. Create a memorable pulse-wave melody over an interlocking second pulse voice, machine-like triangle bass and metallic-sounding noise percussion. The groove should feel like synchronized gears, conveyor belts, cutting tools and automated factory hazards. Use crisp repeated rhythmic cells, syncopated mechanical accents, short chromatic passing notes and a confident scalar hook that is catchy without resembling any existing composition. Balance disciplined industrial precision with heroic momentum. Give the B section a higher register and increased harmonic tension before returning to the main hook. Dry authentic chiptune production, no vocals, no orchestral instruments and no modern electronic drop. Immediate beginning, no fade and a final mechanical turnaround that leads into the first measure.”
+
+5. MISSION TRACK 3
+
+Output filename: `05_Mission_Track_03.wav`  
+Seed: 31005  
+Descriptive reference block: 05:33–06:55
+
+Stable Audio prompt:
+
+“Original aquatic technology mission-stage theme for Polaris Man. Approximately 142 BPM in buoyant 4/4. Use a flowing pulse-wave lead with wave-like rises and falls, a rippling arpeggiated second pulse voice, rounded melodic triangle bass and light syncopated noise percussion. Evoke submerged machinery, bubbles, currents, flooded corridors and graceful movement under pressure. The melody should be playful enough to feel mobile but remain in a minor, mysterious emotional world. Include small rhythmic displacements and cascading figures that suggest water without using realistic water recordings. Build a distinctly memorable main hook and a slightly darker B section representing deeper water. Authentic constrained chiptune sound, no vocals, no ambient pad wash and no existing melodic quotation. Begin cleanly on the groove and end with a rising current-like figure that reconnects to the opening.”
+
+6. MISSION TRACK 4
+
+Output filename: `06_Mission_Track_04.wav`  
+Seed: 31006  
+Descriptive reference block: 06:56–07:56
+
+Stable Audio prompt:
+
+“Original furnace and solar-fire mission-stage theme for Polaris Man. Approximately 174 BPM in aggressive 4/4. Use a sharp rising pulse-wave lead, urgent answering figures, a driving triangle bass line and rapid noise percussion with brief explosive accents. Suggest heat vents, molten machinery, unstable reactors and platforms surrounded by fire. Construct the main hook from short rising phrases that repeatedly threaten to overheat, followed by decisive descending responses. The B section should raise the tension with faster note density and higher melodic register before returning to the hook. Energetic and hazardous but still heroic and clearly melodic. Authentic dry chiptune palette, no vocals, no realistic guitar band, no cinematic booms and no recognizable existing tune. Start at full momentum, avoid fades and end on a rhythmic setup that reignites the opening phrase.”
+
+7. MISSION TRACK 5
+
+Output filename: `07_Mission_Track_05.wav`  
+Seed: 31007  
+Descriptive reference block: 07:57–09:17
+
+Stable Audio prompt:
+
+“Original forest-fortress mission-stage theme for Polaris Man. Approximately 148 BPM in sturdy 4/4. Combine an earthy march-like pulse with sophisticated mechanical counterpoint. Use a confident pulse-wave lead, a second pulse voice that alternates between chord fragments and countermelody, a weighty melodic triangle bass and firm noise percussion. Evoke enormous trees, hidden mechanisms, wooden fortifications and a determined advance through natural terrain converted into machinery. The melody should feel grounded, adventurous and slightly mysterious, using repeated rhythmic motifs and strong downward answers. Create a contrasting B section with more open harmony before returning to the grounded main hook. Authentic constrained chiptune instrumentation, no vocals, no folk-instrument imitation and no borrowed melody. Immediate downbeat, no fade and a firm final turnaround that loops back into the opening march.”
+
+8. MISSION TRACK 6
+
+Output filename: `08_Mission_Track_06.wav`  
+Seed: 31008  
+Descriptive reference block: 09:18–10:57
+
+Stable Audio prompt:
+
+“Original high-altitude airborne mission-stage theme for Polaris Man. Approximately 164 BPM in expansive 4/4. Use an ascending pulse-wave lead with wider melodic intervals, a fast swirling countermelody, buoyant triangle bass and rushing noise percussion. Evoke powerful wind, cloud-top machinery, suspended platforms and rapid movement through open sky. The primary hook should rise confidently and feel heroic, while short descending phrases suggest sudden loss of altitude. Use open harmonic spacing without adding modern pads or realistic wind effects. Let the B section become more turbulent and rhythmically dense before the main soaring hook returns. Authentic crisp chiptune production, no vocals and no recognizable existing melody. Start with immediate forward flight and end with an ascending pickup that naturally returns to the beginning.”
+
+9. MISSION TRACK 7
+
+Output filename: `09_Mission_Track_07.wav`  
+Seed: 31009  
+Descriptive reference block: 10:58–13:27
+
+Stable Audio prompt:
+
+“Original demolition-complex mission-stage theme for Polaris Man. Approximately 176 BPM in volatile 4/4. Use a forceful pulse-wave lead, rapidly cycling second pulse arpeggios, urgent triangle bass and noise percussion featuring sharp off-beat impact accents. Suggest timed explosives, unstable structures, flashing warning systems and controlled chain reactions. Build the main hook from a memorable syncopated phrase punctuated by sudden rhythmic gaps and explosive responses. The B section should feel as if the machinery is accelerating toward failure, but the rhythm must remain musically controlled and suitable for continuous gameplay. Authentic constrained chiptune sound, no vocals, no realistic explosions dominating the music, no EDM drop and no copied melody. Start immediately, maintain pressure throughout and finish with a countdown-like figure that reconnects to the opening.”
+
+10. MISSION TRACK 8
+
+Output filename: `10_Mission_Track_08.wav`  
+Seed: 31010  
+Descriptive reference block: 13:28–15:44
+
+Stable Audio prompt:
+
+“Original frozen-time and crystalline-technology mission-stage theme for Polaris Man. Approximately 146 BPM in precise 4/4. Use a cool, glassy pulse-wave lead, repeating second-pulse patterns, measured melodic triangle bass and crisp restrained noise percussion. Evoke time suspension, ice-like machinery, repeating events and a laboratory where motion is being interrupted. Create a memorable descending minor-key motif that appears to pause, restart and transform without actually disrupting the playable beat. Use repeating cells, suspended harmony and subtle rhythmic displacement. The B section should introduce increased urgency as time begins moving again. Authentic dry chiptune palette, no vocals, no ambient cinematic pad and no recognizable existing melody. Begin without silence and conclude with a suspended phrase whose resolution is the opening downbeat.”
+
+11. BOSS BATTLE
+
+Output filename: `11_Boss_Battle.wav`  
+Seed: 31011  
+Descriptive reference block: 15:45–16:26
+
+Stable Audio prompt:
+
+“Original boss-battle loop for Polaris Man. Approximately 184 BPM in relentless 4/4. Darker, denser and more threatening than every mission theme. Use an alarm-like pulse-wave threat motif, an urgent heroic response in the second pulse voice, aggressive melodic triangle bass and rapid noise percussion with tightly spaced impact accents. Keep harmonic tension high and emotional release minimal. Alternate between the boss’s descending chromatic threat and Polaris Man’s short rising response, allowing neither motif to achieve a complete victory. Use compact repeating phrases suitable for a prolonged combat encounter. Authentic constrained chiptune production, no vocals, no orchestra, no modern metal band and no quotation of existing boss music. Start at combat intensity, never fade and end on an unresolved dominant or rhythmic pickup that immediately restarts the battle.”
+
+12. VICTORY
+
+Output filename: `12_Victory.wav`  
+Seed: 31012  
+Descriptive reference block: 16:27–16:34
+
+Stable Audio prompt:
+
+“Original extended victory loop for Polaris Man. Approximately 156 BPM in bright 4/4. Triumphant, energetic and concise in spirit, expanding the emotional character of a short stage-clear fanfare into a continuous celebratory track. Use a bold rising pulse-wave melody, sparkling answering figures, confident melodic triangle bass and crisp upbeat noise percussion. Communicate accomplishment, new capability and readiness for the next mission. Use brighter harmony than the mission tracks while retaining the same retro science-fiction identity. Avoid a definitive final fanfare ending because the complete track must loop. Include a strong A theme, a playful celebratory B section and a return that ends with a pickup into the first phrase. Authentic chiptune texture, no vocals, no orchestral brass and no borrowed melody. No silence and no fade.”
+
+13. END BOSS
+
+Output filename: `13_End_Boss.wav`  
+Seed: 31013  
+Descriptive reference block: 22:34–22:44
+
+Stable Audio prompt:
+
+“Original final-boss confrontation theme for Polaris Man, translating the selected reference’s collapsing defeat character into an active climactic battle. Approximately 170 BPM in ominous 4/4. Use unstable descending pulse-wave figures representing a failing enemy machine, opposed by a rising heroic pulse-wave response. Add a deep, mobile triangle bass and severe noise percussion with mechanical collapse accents. The harmony should repeatedly approach resolution and then pull back into danger. Make the encounter feel larger and more consequential than the standard boss battle without using orchestra or modern cinematic sound design. Include a dark A section, a desperate escalating B section and an unresolved return. Authentic constrained chiptune production, no vocals and no existing melodic quotation. Begin immediately at maximum stakes and end with a falling figure whose last note creates the pickup into the opening attack.”
+
+14. GAME OVER
+
+Output filename: `14_Game_Over.wav`  
+Seed: 31014  
+Descriptive reference block: 25:01 onward
+
+Stable Audio prompt:
+
+“Original game-over loop for Polaris Man. Approximately 104 BPM in restrained 4/4. Somber, reflective and lonely, but not completely hopeless. Use a sparse pulse-wave lead with a memorable descending melody, a quiet answering pulse voice, slowly moving triangle bass and minimal noise percussion. Suggest a mission lost in a vast night sky while leaving a subtle emotional invitation to try again. Use minor harmony with one small warm or hopeful turn in the B section. Maintain the same retro science-fiction palette as the action tracks but greatly reduce note density. Do not become ambient or formless. Authentic dry chiptune sound, no vocals, no cinematic strings and no recognizable existing melody. Begin cleanly, avoid a terminal ending and let the last fragile phrase naturally return to the first note.”
+
+15. EPILOGUE
+
+Output filename: `15_Epilogue.wav`  
+Seed: 31015  
+Descriptive reference block: 23:55 onward
+
+Stable Audio prompt:
+
+“Original epilogue and credits-style loop for Polaris Man. Approximately 126 BPM in flowing 4/4. Reflective, bittersweet and ultimately hopeful, representing the return from danger and the continued presence of Polaris in the northern sky. Use a lyrical pulse-wave lead, gentle but active countermelody, warm melodic triangle bass and restrained noise percussion. Introduce a new closing melody that feels emotionally related to the soundtrack’s rising heroic shapes without repeating another track’s motif. Move from quiet reflection toward a confident, luminous B section, then return to the opening mood with greater warmth. Preserve clear melodic structure and authentic constrained chiptune production. No vocals, no orchestra, no lush modern pads and no borrowed melody. Begin without silence, avoid a final credits cadence and end with a gentle pickup that cycles naturally into the opening.”
+
+MANIFEST AND COMPLETION REPORT
+
+Create a text manifest named:
+
+`Polaris-Man-Audio-Generation-Manifest.md`
+
+Save it in the same Polaris Man destination folder.
+
+For every track, record:
+
+- Track name
+- Final filename
+- Exact Stable Audio prompt
+- Duration
+- Seed
+- Generation ID
+- Date generated
+- Original MCP output path
+- Final destination path
+- File size
+- Whether the generation completed successfully
+- Whether its loop boundary still needs manual trimming
+- Any API error or moderation response
+
+When all work is finished, report:
+
+1. Number of successful tracks
+2. Number of failed or incomplete tracks
+3. Total Stability credits expected to have been consumed
+4. Final destination folder
+5. Complete list of saved filenames
+6. Any tracks that need regeneration
+7. Any tracks whose loop boundary needs manual editing
+
+The full batch contains 15 paid generations. Do not create extra variations or automatic retries during this first pass.

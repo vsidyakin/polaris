@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { entry, T } from "../../lib/pages/resources-firmware";
+import { upgradeBand } from "../../lib/blocks";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="resources/firmware">
+  <PageIntro
+    route={"resources/firmware"}
+    tpl={"T8"}
+    open={"OPEN: NOTHING GATED"}
+    crumb={"Release notes & firmware"}
+    title={"Release notes &amp; <span class=\"warm\">firmware</span>."}
+    dek={"Every release, publicly logged: features, security patches, and fixes, dated and in the open. This page is the receipt that the subscription buys a living platform."}
+  />
+    <Fragment set:html={upgradeBand()} />
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">The principle</div>
+      <h2>If we shipped it, it's logged here.</h2>
+      <p>Hardware vendors do ship firmware &mdash; ScreenBeam shipped seventeen releases between 2024 and July 2026 &mdash; and they ship it free and ungated. What a subscription has to prove is that it keeps getting better, release by release, in public. The proof isn't a promise; it's a changelog anyone can read, release by release, without a login. When a vendor's update history is public, "what does the subscription actually fund?" answers itself.</p>
+      <p style="margin:0"><a href="/platform/tco">What the subscription funds: the 10-year math →</a></p>
+    </div>
+
+    <div class="cnv-band reveal">
+      <div class="kicker">How the update reaches the room</div>
+      <h2>The update either works or it never happened.</h2>
+      <p>Polaris firmware is delivered over the air from Polaris Cloud: staged rollout, so you update ten rooms and watch them before the rest; A/B partitions, so the new image installs beside the running one instead of over it; and automatic rollback, so a room that fails to come up on the new version comes up on the old one. Note that rollback here means recovery from a <b>failed</b> load &mdash; a deliberate downgrade to older firmware is refused. No extra licence, no support contract, no truck roll.</p>
+      <p>That last part is the one that matters at 3am. An update that can fail safely is the difference between a bad release and a bad week &mdash; and it is why the rollout can be staged at all: the first ten rooms are a test you can afford to lose.</p>
+      <p style="margin:0"><a href="/compare/hub">How other platforms deliver firmware &rarr;</a></p>
+    </div>
+
+    <div class="kicker" style="margin-top:20px">The canonical changelogs: live today</div>
+    <div class="prddocs reveal">
+      <a href="https://documentation.mersive.com/en/mcs/mersive-release-notes.html" target="_blank" rel="noopener"><b>Polaris release notes ↗</b>The current platform's full release history: updated roughly monthly at documentation.mersive.com.</a>
+      <a href="https://documentation.mersive.com/en/solstice/solstice-release-notes.html" target="_blank" rel="noopener"><b>Mersive Solstice Gen 3 release notes ↗</b>The Mersive Solstice Gen 3 estate's history: staying public through end of support.</a>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Recent releases: concept rendering</div>
+      <h2>The changelog, on the page.</h2>
+      <p class="sdek">Summarized from Mersive&rsquo;s own release notes, newest first: the <a href="https://documentation.mersive.com/en/mcs/mersive-release-notes.html" target="_blank" rel="noopener">Mersive Release Notes</a> and the <a href="https://documentation.mersive.com/en/solstice/solstice-release-notes.html" target="_blank" rel="noopener">Solstice Release Notes</a> at documentation.mersive.com, both read 15 August 2026. The canonical changelogs above stay the source of truth; production renders this list straight from the release pipeline. [verify: this is a selection, not the complete log. The source also carries Solstice 6.2.4 and 6.1.3 (both April 2026), 6.2.2 (May 2025), 6.1.2 (February 2024), 6.1 (July 2023) and 6.0 (June 2023), and MCS releases for March 2025 and January 2025. Product to decide which belong on this page - the omissions are deliberate only if someone chose them]</p>
+      <div class="fx-filter"><button class="on" onclick="fxFilterPlat(this,'all')">All</button><button onclick="fxFilterPlat(this,'polaris')">Polaris</button><button onclick="fxFilterPlat(this,'solstice')">Mersive Solstice Gen 3</button></div>
+      <div class="fx-log">
+        <Fragment set:html={entry("August 2026","Polaris (MCS)",T.f+T.s+T.x,"<b>Signage caching and single sign-on.</b> Videos now cache to the device and play from local storage, so signage keeps running when the network does not, and cached video can be made the primary source rather than a fallback. Different videos can be assigned per room state. The first phase of SSO ships with Ping Identity integration. Plus a bulk device-information endpoint, a paginated Devices page, and authentication now required on the sleep, wake and reboot scheduling endpoints.","polaris")} />
+        <Fragment set:html={entry("July 2026","Polaris (MCS)",T.x+T.s,"<b>Sharing, Wi-Fi, and browser hardening.</b> Smoother simultaneous sharing to one pod, a Pro dual-display output fix, Wi-Fi drops that now recover without a reboot, Chromium sandboxing enabled, and browser access to system APIs tightened.","polaris")} />
+        <Fragment set:html={entry("June 2026","Polaris (MCS)",T.f+T.s,"<b>Event-driven signage and bulk APIs.</b> Idle screens now react to live room status (booked, available, cannot book); bulk device and calendar APIs validated at 6,000-device scale; calendar and Wi-Fi secrets encrypted at rest.","polaris")} />
+        <Fragment set:html={entry("May 2026","Polaris (MCS)",T.x,"<b>Stability wave.</b> The Wi-Fi chip memory leak behind the Aw-Snap crashes fixed, intermittent Wi-Fi drops resolved, Miracast enabled on the Mini, and the video decoder now recovers on its own instead of waiting for a reboot.","polaris")} />
+        <Fragment set:html={entry("April 2026","Polaris (MCS)",T.f+T.x,"<b>Usage analytics arrive.</b> Room and device utilization charts land in the portal&rsquo;s new Analytics tab; share sessions that silently dropped after 1 to 6 hours are now stable; the OTA path from older firmware repaired.","polaris")} />
+        <Fragment set:html={entry("August 2025","Polaris (MCS)",T.f,"<b>The API and fleet wave.</b> Remote reboot, sleep and wake, display-info and device-info APIs; bulk edit and CSV onboarding; WPA2-Enterprise onboarding with EAP-TLS and PEAP; the calendar overlay on idle displays.","polaris")} />
+        <Fragment set:html={entry("February 2025","Polaris (MCS)",T.f,"<b>Digital signage debuts.</b> Seamless image, video, YouTube, Google Slides and HTML URLs on idle displays, custom instructions, and show-or-hide control over four idle-screen elements: display name, screen key, messaging and clock.","polaris")} />
+        <Fragment set:html={entry("6.3.2 · April 2026","Mersive Solstice Gen 3",T.x,"<b>Maintenance release.</b> Bug fixes for Pods running 6.3.1 or earlier, with upgrades available across the Solstice product suite.","solstice")} />
+        <Fragment set:html={entry("6.3.1 · April 2026","Mersive Solstice Gen 3",T.x,"<b>Client fixes.</b> Resolves the Windows 10 desktop-sharing flicker in the 6.3 client, among other fixes for Pods on 6.3 or earlier.","solstice")} />
+        <Fragment set:html={entry("6.3 · March 2026","Mersive Solstice Gen 3",T.x+T.s,"<b>Client and certificate fixes.</b> Fixes PowerPoint slide advancement in the Solstice client for Windows, updates the SSL certificate used with share.mersive.com, improves handling of invalid SSL certificates, and corrects the licenseStatus API, which reported an expired subscription as OK.","solstice")} />
+        <Fragment set:html={entry("6.2.3 · May 2025","Mersive Solstice Gen 3",T.x,"<b>Language fixes.</b> Two regressions from 6.2.2: non-English characters displaying incorrectly in the Windows and Mac client, and a black screen and UI restart when sharing to a Pod set to Arabic, Japanese, Korean, Simplified or Traditional Chinese, or Turkish.","solstice")} />
+        <Fragment set:html={entry("6.2.1 · February 2025","Mersive Solstice Gen 3",T.x+T.s,"<b>Active Learning, and a new certificate.</b> Performance improvements for Pods on 6.2: a dropped secondary-display connection now re-establishes itself, Active Learning is hardened against session freezes, and a new share.mersive.com certificate ships with a 24-hour refresh check that removes the reboot.","solstice")} />
+        <Fragment set:html={entry("6.2 · July 2024","Mersive Solstice Gen 3",T.x+T.s,"<b>Web server hardening and an API security update.</b> The HSTS flag added to the Pod&rsquo;s web server response headers, a V2 API update Mersive describes as enhancing security and performance, and a correction to the subscription expiration date shown on multi-bundle Pods.","solstice")} />
+        <Fragment set:html={entry("6.1.1 · February 2024","Mersive Solstice Gen 3",T.f+T.s+T.x,"<b>Guided setup, and the web app released.</b> First-plug-in setup screens that check network, internet and Solstice Cloud connectivity; the share.mersive.com web app fully released; Huddly L1 with USB adapter added to the tested peripherals; the factory-reset keyboard shortcut fixed; video conferencing resolved on Intel Macs running macOS Sonoma; and a Pod UI software upgrade Mersive describes as improving security and signage stability.","solstice")} />
+      </div>
+    </section>
+
+    <div class="g3band reveal"><b>This page is the update-policy receipt.</b> Every entry above ships to every subscribed room on the same day, and the warranty rides the same subscription. <a class="btn accent" href="/platform/tco">The 10-year platform →</a></div>
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/filters";
+</script>

@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { def } from "../../lib/pages/resources-glossary";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="resources/glossary">
+  <PageIntro
+    route={"resources/glossary"}
+    tpl={"T8"}
+    title={"BYOD vs BYOM vs room-hosted: <span class=\"warm\">the field guide</span>."}
+    dek={"The meeting-room market's vocabulary, defined in plain language: the same terms used consistently across every page of this site, and by a growing share of the market."}
+  />
+
+    <div class="fx-sum reveal"><b>The short version:</b> <b>BYOD</b> (bring your own device) means you share your screen to the room's display; the meeting stays on your laptop. <b>BYOM</b> (bring your own meeting) means your video call borrows the room's camera and mic, wired or wirelessly; the laptop still hosts. <b>Room-hosted</b> means the room itself starts, controls, and shares the meeting, no user device required. Rooms are also either <b>platform-locked</b> (a Zoom Room does not natively host a Teams meeting) or <b>platform-agnostic</b> (works with Teams, Zoom, Webex, and Meet, chosen per meeting). Polaris is the platform-agnostic answer at every rung: a multi-share <b>workspace</b> on any display, joined from the browser with no app and no download, across networks nobody bridged.</div>
+
+    <div class="fx-defs reveal">
+      <Fragment set:html={def("BYOD","bring your own device","You share pixels; the room adds the display. The meeting, if there is one, lives on your laptop.",
+      `<p>The bottom rung and the commodity layer: everyone can share a screen wirelessly. The differentiation is what the display does next: mirror one screen, or composite a workspace of many.</p><p>If the laptop closes, everything on the display goes with it. <a href="/platform/taxonomy">See where BYOD sits on the ladder →</a></p>`)} />
+      <Fragment set:html={def("BYOM","bring your own meeting","Your Teams/Zoom/Webex call, with the room's camera and mic bridged in. The laptop still hosts the meeting.",
+      `<p>Two modes, worth distinguishing. <b>Wired BYOM:</b> one USB-C cable tethers your laptop to the room's AV: simple, single-presenter, a cable on the table. <b>True wireless BYOM:</b> the room's camera and mic reach your call over the air, multi-user, no cable: the mode Polaris Pro ships and most rivals don't.</p><p><a href="/products/pro">Polaris Pro →</a> · <a href="/solutions/hybrid">The hybrid story →</a></p>`)} />
+      <Fragment set:html={def("Room-hosted","hosted BY the room","The room itself starts, controls, and shares the meeting. Walk in with a phone, or nothing. The rung has two steps: with Link, the pod hosts the call: the meeting runs on the room hardware, started from your device. With Host, no device is needed at all: the room starts, controls, and shares the meeting itself.",
+      `<p>The top of the ladder: no user device is load-bearing. The honest sub-distinction is <b>native clients vs web-wrapped</b>: a re-rendered meeting loses chat, layouts, and Copilot-class features; the real Teams/Zoom/Webex/Meet client doesn't. Polaris reaches this rung with native clients, chosen per meeting <span class="tag t-pre">Host: PRE-LAUNCH</span>.</p><p><a href="/products/hybrid">The hybrid family →</a></p>`)} />
+      <Fragment set:html={def("Workspace","","The composited surface on the display: multiple live sources side by side, laid out automatically as sources join and leave, not one mirrored screen. (Per-tier source counts publish with the datasheet.)",
+      `<p>The room's own silicon decodes and composites simultaneous sources (a deck, a browser tab, photos from a phone, a dashboard), compared, annotated, and rearranged from any seat. It's the difference between a display that mirrors and a room that collaborates.</p><p><a href="/solutions/collab">Why the workspace wins →</a></p>`)} />
+      <Fragment set:html={def("Web-join","browser-based screen sharing","Share from the browser on the device you walked in with, nothing to install. The URL on the display is the entire onboarding.",
+      `<p>The market's term is <b>browser-based screen sharing</b>; ours is web-join. No client, no admin rights, no dongle drawer: guest-proof and Chromebook-native. Web-join also crosses networks natively, because the browser doesn't care what VLAN the display lives on.</p><p><a href="/platform/how">How web-join works →</a></p>`)} />
+      <Fragment set:html={def("Cross-network sharing","","Content crosses subnets, VLANs, guest Wi-Fi, or the internet: no VPN, no UC call, no bridged networks.",
+      `<p>Sessions are brokered by the cloud: same-network traffic stays on your LAN; cross-network traffic flows over a direct, cloud-negotiated encrypted connection. The networks stay segmented; the content moves anyway. Among the twelve competitors checked in August 2026, only DisplayNote Montage documents a comparable cloud relay; the rest document LAN-local media only.</p><p><a href="/platform/cross-network">The architecture →</a></p>`)} />
+      <Fragment set:html={def("Meeting parity","every seat, same screen","Everyone in the meeting sees the same content, in the room or remote. No second-class seats.",
+      `<p>The workspace on the room's display is mirrored live to app.mersive.com, so every participant gets the identical view on their own screen: no craning at a far display, no "can you re-share that."</p><p><a href="/solutions/hybrid">Hybrid meeting rooms →</a></p>`)} />
+      <Fragment set:html={def("Platform-agnostic","","The room works with Teams, Zoom, Webex, and Meet; the platform is chosen per meeting, not bolted to the room.",
+      `<p>The opposite of a certified appliance: an MTR is a Teams appliance, a Zoom Room is a Zoom appliance, and each hosts its own platform natively, and crossing over means reduced-feature guest joins at best. A platform-agnostic room takes whichever meeting walks in, which is why the lock's cost is invisible right up until the day it isn't.</p><p><a href="/compare/mtr">The Microsoft Teams Rooms alternative →</a></p>`)} />
+      <Fragment set:html={def("Wireless presentation system","the category term","The umbrella term for everything that puts a screen on a room display without a cable: dongles, casting pucks, pods, and platforms alike.",
+      `<p>Three classes hide under one term. <b>Button/dongle systems</b> pair per-room transmitter hardware to a base unit. <b>Casting devices</b> receive native protocol streams, and most current models composite two to four of them; Crestron, WolfVision, ScreenBeam and BenQ all publish four. <b>Platforms</b> add the layers the first two can't: a multi-share workspace, cloud fleet management, and cross-network reach.</p><p>The comparison hub scores all three classes side by side. <a href="/compare/hub">Compare wireless presentation systems →</a></p>`)} />
+      <Fragment set:html={def("Screen mirroring vs casting","","Mirroring clones your whole screen to the display; casting hands a stream to the display to render. Both are one source, one way.",
+      `<p>Useful distinction, shared limitation: one mirror or one cast puts one source on the glass, owned by one device. Receivers that composite several of them publish a hard ceiling &mdash; four on Crestron, WolfVision, ScreenBeam and BenQ, two on Barco, one on Cisco &mdash; and none of them survives the sharing device leaving the room.</p><p>The workspace is the layer above both: simultaneous sources, composited by the room. <a href="/platform/taxonomy">Where each sits on the map →</a></p>`)} />
+      <Fragment set:html={def("AirPlay · Miracast · Google Cast","the native protocols","The share buttons already built into iPhones, Macs, Windows, and Chrome. Polaris receives all three, simultaneously, alongside web-join.",
+      `<p>Native protocols are the zero-training path: users share the way their device taught them. By design they discover displays on the same network, so they carry same-network sharing; guests and cross-network sources use web-join instead, and every source lands in the same workspace either way.</p><p><a href="/platform/how">How the protocols and web-join fit together →</a></p>`)} />
+      <Fragment set:html={def("Dongle-based sharing","the button in the drawer","A paired USB transmitter carries one screen to a per-room base unit: effortless in the demo, expensive as an estate.",
+      `<p>The dongle model buys its simplicity with hardware: a button per presenter per room, pairing maintenance, and a guest experience that starts with "who has the button?" The display shows one screen per transmitter, and the estate view is only as good as the base units' management layer &mdash; which at Barco, Kramer and BenQ is a separate cloud platform on a separate SKU.</p><p><a href="/compare/dongles">Why not a dongle? →</a></p>`)} />
+      <Fragment set:html={def("Microsoft Teams Rooms · Zoom Rooms","certified room appliances","A room permanently signed into one meeting platform: excellent inside that platform, locked outside it.",
+      `<p>Certified rooms are the platform-locked column of the map: per-room licenses priced annually, a lock that means a Zoom Room does not natively host a Teams meeting, and content sharing that routes through joining a call. For single-platform organizations they're a coherent choice — until the day the other platform walks in.</p><p><a href="/compare/mtr">The Microsoft Teams Rooms alternative →</a> · <a href="/platform/taxonomy">Locked vs agnostic →</a></p>`)} />
+      <Fragment set:html={def("Digital signage","displays that never go dark","Between meetings, the same display runs schedules, dashboards, and announcements, managed from the same portal as the rooms.",
+      `<p>Every meeting-room display is idle most of its life. Signage mode puts the idle hours to work: content scheduled from the same cloud pane that manages sharing, so the estate has one owner instead of a second vendor.</p><p><a href="/solutions/signage">Signage on the displays you already own →</a></p>`)} />
+    </div>
+
+    <div class="two">
+      <h2 class="sr-only">How to use this glossary</h2>
+      <div class="card"><h3>The map these terms draw</h3><p>Two questions classify every room ever built: where does the meeting live, and is the room locked or agnostic.</p><a href="/platform/taxonomy">The full map →</a></div>
+      <div class="card"><h3>See the ladder in rooms</h3><p>BYOD, BYOM, and room-hosted as actual room diagrams: cables, wireless, and where the meeting lives.</p><a href="/solutions/hybrid">Hybrid meeting rooms →</a></div>
+    </div>
+</BaseLayout>

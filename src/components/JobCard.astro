@@ -1,0 +1,78 @@
+---
+/**
+ * One open role, as a card.
+ *
+ * Used by /careers, where the listing and the company page now live together — the listing
+ * is the same object in both places, and it was two copies of the same markup
+ * before this component existed.
+ *
+ * The whole tile is the anchor rather than a card with a link inside it: a
+ * candidate scanning a list aims at the title, and a 300px target that only
+ * responds on its last two words is a worse version of the same design.
+ *
+ * Two icons, both load-bearing. The left one says what kind of work it is, from
+ * the title and team; the one on the location row says whether it is remote. See
+ * src/data/job-icons.ts.
+ */
+import { jobPath, jobPostedLabel, jobSnippet, locationLabel, type Job } from "../data/jobs";
+import { jobIcon, jobLocationIcon, jobWorkplaceLabel } from "../data/job-icons";
+
+interface Props {
+  job: Job;
+  /** Department shown by the section heading already; omitted from the card. */
+  hideDepartment?: boolean;
+  /** Drops the description snippet, for the shorter list on Work at Mersive. */
+  compact?: boolean;
+}
+
+const { job, hideDepartment = false, compact = false } = Astro.props;
+
+const snippet = compact ? "" : jobSnippet(job);
+const posted = jobPostedLabel(job);
+const workplace = jobWorkplaceLabel(job);
+/* The team is more specific than the department the group heading shows; only
+   worth a line when it actually says something different. */
+const team = hideDepartment && job.team === job.department ? null : (job.team ?? job.department);
+---
+
+<a class="job-card" href={jobPath(job)}>
+  <span class="job-card-rule" aria-hidden="true"></span>
+
+  <div class="job-card-head">
+    <span class="job-card-icon" aria-hidden="true" set:html={jobIcon(job)} />
+    <div class="job-card-title">
+      <h3>{job.name}</h3>
+      {team && <div class="job-card-team">{team}</div>}
+    </div>
+    {workplace && <span class="job-card-badge">{workplace}</span>}
+  </div>
+
+  {snippet && <p class="job-card-snippet">{snippet}</p>}
+
+  <dl class="job-card-meta">
+    <div class="job-card-row">
+      <dt aria-hidden="true" set:html={jobLocationIcon(job)} />
+      <dd>{locationLabel(job)}</dd>
+    </div>
+    {
+      job.employmentType && (
+        <div class="job-card-row">
+          <dt class="job-card-lbl">Type</dt>
+          <dd>{job.employmentType}</dd>
+        </div>
+      )
+    }
+    {
+      posted && (
+        <div class="job-card-row">
+          <dt class="job-card-lbl">Posted</dt>
+          <dd>
+            <time datetime={job.postedOn}>{posted}</time>
+          </dd>
+        </div>
+      )
+    }
+  </dl>
+
+  <span class="job-card-cta">See the role <span aria-hidden="true">→</span></span>
+</a>

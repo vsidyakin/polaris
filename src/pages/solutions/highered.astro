@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/highered">
+  <Fragment set:html={indHead("solutions/highered","Higher Education","A thousand rooms. A three-person AV team.","Lecture halls, labs, libraries, seminar rooms, spread across buildings, VLANs, and decades of renovation budgets. Polaris runs the whole estate from one pane and gives lean AV teams the deep-end capabilities the campus network demands.")} />
+    <Fragment set:html={indPains("Campus scale, campus problems.","A university is an enterprise network wearing a hundred years of buildings, and the sharing tools assume neither.",[
+      ["Every building is its own network","Residence-hall Wi-Fi, eduroam, lab VLANs, AV subnets that don't route to each other. Casting dies at every boundary.","Cross-network sharing: any device on any campus network lands on the right display: no VPN, no flat-network project."],
+      ["Hybrid lectures with second-class seats","Remote students squint at a camera pointed at a projector and type 'can you re-share the slide?'","Meeting parity: the workspace on the hall's display mirrors live to app.mersive.com: every student sees the same content, front row or off-campus."],
+      ["The room changes hands every 50 minutes","Eight instructors a day, each with a different device and platform, and the podium PC is the bottleneck.","Any device, nothing to install: the next instructor opens a browser and teaches. The room resets itself."],
+      ["Fleet work eats the summer","Firmware and dead displays across 40 buildings: found by walking, fixed by ladder.","Polaris Cloud: staged rollouts, templates that re-apply when you edit them, and health alerts across the whole estate."]
+    ])} />
+    <Fragment set:html={indStack("Pro where it's hard, Essentials everywhere else.","Pro carries lecture halls, hybrid spaces, and anything that crosses a VLAN; Essentials + Route covers the teaching classroom fleet.",[
+      {hot:true,name:"Polaris Pro",tfor:"Lecture halls & hybrid spaces",pts:["True wireless BYOM for any-platform hybrid teaching","HDMI input and dual 4K60 output for lecture-hall AV","802.1x / EAP-TLS: a first-class citizen of campus NAC","Meeting parity for remote students"],msrp:"from $575.86",msub:"/ room / year · warranty included for life of the subscription",link:"products/pro",lbl:"See Pro"},
+      {name:"Essentials + Route <span class='tag t-ship al-flag'>SHIPS Q1 2027</span>",tfor:"Teaching classrooms",pts:["Student screen routing and instructor moderation","Polling with Engage: anonymous or named, reviewable afterward","Web-join on every student device, Chromebooks included","Same portal as the lecture halls"],msrp:"[MSRP placeholder]",msub:"/ room / year · EDU packaging [placeholder]",link:"products/route",lbl:"Explore Route"},
+      {name:"Launch",ship:"Shipping Q1 2027",tfor:"Signage & overflow displays",pts:["Idle-screen signage from the same portal","One-time purchase for spaces that only need sharing","Steps up later without a forklift"],msrp:"[MSRP placeholder]",msub:"one-time purchase · pre-launch",link:"products/element",lbl:"Launch placeholder"}
+    ],"Campus and consortium pricing routes through education partners; MSRP public on product pages. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Why campuses pick Polaris","Deep-end capability, three-person-team operations.","The four capabilities that make a thousand-room estate runnable by a lean team.",[
+      {ic:XIC.crossnet,h:"Cross-network, building to building",p:"Engineering in Building C shares to the seminar room in Building A, across VLANs and fiber, no VPN, no UC call spun up just to move pixels. Isolation stays intact; the workspace is the only shared surface.",link:"platform/cross-network",lbl:"The architecture"},
+      {ic:XIC.workspace,h:"Active-learning classrooms <span class='tag t-ship al-flag'>SHIPS Q1 2027</span>",p:"Route gives you multi-display routing and student screen sharing with instructor moderation; Engage adds polling from any seat via web-join, anonymous or named, with every session reviewable afterward. The Mersive Solstice Active Learning lineage, continued on Polaris.",link:"products/route",lbl:"Explore Route"},
+      {ic:XIC.cloudx,h:"Fleet management at thousands of rooms",p:"Templates by room type that re-apply when you edit them, staged firmware over term breaks, and alerts routed to the right tech: the operational difference between owning an estate and being owned by one. [verify: staged firmware confirmed by Damian Blazy 14 Aug 2026. ALERTS ROUTED TO THE RIGHT TECH is still open and implies a routing model: alerts go by email to the signed-in administrator plus up to five addresses, each choosing which of six triggers they want. Reword, or confirm the routing - engineering]",link:"platform/cloud",lbl:"Polaris Cloud"},
+      {ic:XIC.persist,h:"Meeting parity for hybrid lectures",p:"The display mirrors live to app.mersive.com, so the student on the bus sees exactly what the front row sees: same content, their own screen, no capture-cart ceremony.",link:"platform/how",lbl:"How it works"}
+    ])} />
+    <Fragment set:html={indProof("Students and professors expect wireless sharing to just work, like it does on their phones. Now, it does.","Regina Greenwood","University Audio Visual Services IT Director · Texas A&amp;M",[["600+","learning spaces standardized on Mersive Solstice"],["1","cloud tenant for every campus Pod since 2023"],["100+","AV projects completed in one year"]],"[Gen 3-era proof from the published Texas A&amp;M case study. The Stevens, George Mason, RIT, Broward, and Warwick stories live in the <a href='/resources/cases'>case-study library</a>.]")} />
+    <Fragment set:html={indRes([
+      ["Trust Center","The security read for the campus network team, in the open.","platform/security"],
+      ["Deployment guide","Ports, VLAN guidance, 802.1x / eduroam notes, ungated. [placeholder]","resources/docs"],
+      ["Case studies","Campus deployments, filterable by scale. [placeholder]","resources/cases"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { MDNA } from "../../data/compare";
+import CtaBand from "../../components/CtaBand.astro";
+import { compMatrix, compPicker, deepMatrix } from "../../lib/matrix";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="compare/hub">
+  <PageIntro
+    route={"compare/hub"}
+    tpl={"T6"}
+    crumb={"Compare"}
+    section={false}
+    title={"Compare Mersive Polaris with anyone."}
+  />
+  <p class="dek">
+    ClickShare, Airtame, ScreenBeam, Microsoft Teams Rooms. Tick any combination, or all of them.
+    <em>(Placeholder data pending the canonical matrix.)</em> &nbsp;<a href="/platform/tco"
+      >What does the difference cost? The 10-year TCO calculator →</a
+    >
+  </p>
+    <p class="note">Every Polaris hardware value in the matrix &mdash; ports, silicon, the 10-year platform lifecycle and the invariants it holds constant &mdash; is documented once, on <a href="/products/pro/spec#platform-lifecycle">the Pro spec sheet</a>, and is not restated here. Competitor cells keep their own published sources.</p>
+
+  <div class="taxq">
+    <b>The grid is ours on purpose.</b> These rows aren't a feature checklist. They're the two questions
+    that sort the market: <b>where does the meeting live</b> (your device → your device + the room's AV
+    → hosted BY the room) and <b>is the room platform-locked or agnostic</b>, then security, silicon,
+    and lifecycle. Ask any vendor these questions in this order, then ask what each answer costs at 500 rooms, across three networks, and the moment a guest walks in with a Chromebook.
+    <a href="/platform/taxonomy">See where meetings live →</a>
+  </div>
+
+  {/* Both matrices are rendered HERE, at build time, by src/lib/matrix.ts — the
+      same function that renders the Trust Center's slice. Until 15 Aug 2026 they
+      were built in the browser into two empty divs, so this page served 0 <td>
+      cells and 0 source links while grading fourteen vendors on whether THEIR
+      evidence is retrievable. The picker below hides columns with a class and
+      never removes them: script off gets every column and every citation. */}
+  <Fragment set:html={compPicker()} />
+
+  {/* The outline used to run H1 → H3 here and no guard caught it, because the
+      "Our take" panel was written by script after the page loaded. Making the
+      matrix static made the skip real and check-outline.py found it the same
+      minute — a small argument for putting things in the HTML. */}
+  <h2 class="sr-only">The comparison matrix: 27 questions across 14 vendors</h2>
+
+  <Fragment set:html={compMatrix()} /><p class="note">Vivi is graded partial on warranty because Vivi contradicts itself: its FAQ says hardware replacement is covered, while its pricing update states that &ldquo;Vivi hardware replacements purchased on or after July 1, 2026 will be available at a one-time cost of $129.&rdquo;</p>
+  {/* "Our take" across the whole field is the default selection, so it is served
+      as HTML. The script rewrites it only when a reader narrows to one brand. */}
+  <div id="mdna">
+    <div class="mdna reveal vis">
+      <h3>Our take</h3>
+      <p set:html={MDNA._all.why} />
+      <div class="concede" set:html={MDNA._all.concede} />
+    </div>
+  </div>
+
+  <Fragment set:html={deepMatrix()} />
+  <p class="note">
+    Published single-display source ceilings: Kramer Campus&sup2; 6 &middot; Crestron 4 &middot;
+    WolfVision 4 &middot; ScreenBeam 4 &middot; Extron 4 &middot; BenQ 4 &middot; Vivi 4 &middot;
+    Yealink 4 &middot; DisplayNote 4, or 9 in Extended Gridview &middot; Barco 2, and only by
+    consuming two physical displays &middot; Cisco 1 &middot; Airtame not published. Several carry
+    conditions the spec line does not show: Crestron&rsquo;s Canvas layout is automatic with no user
+    control and one factory system mode pins the limit to 1; ScreenBeam&rsquo;s Multi-View is
+    unavailable during a BYOM session; DisplayNote&rsquo;s Grid View requires Moderator Mode;
+    Vivi&rsquo;s split screen is unavailable in Multi-Display and Combined Rooms. [Workspace/silicon
+    rows describe Essentials and Pro; Launch derates. Campus PA/alerts is Vivi&rsquo;s, not ours.]
+  </p>
+
+  <div class="two">
+    <div class="card">
+      <h2 class="sr-only">Where to start comparing</h2>
+      <h3>The bigger question</h3>
+      <p>Vendor vs vendor matters less than which cell of the market you buy into.</p>
+      <a href="/platform/taxonomy">See where meetings live →</a>
+    </div>
+    <div class="card">
+      <h3>Considering a VTC room system?</h3>
+      <p>
+        MTR, Zoom Rooms: a per-room platform license, one vendor by default, and a design where the default motion is start-a-call just to
+        share, so heads drop into laptops.
+      </p>
+      <a href="/compare/mtr">Why not a VTC room system? →</a>
+    </div>
+    <div class="card">
+      <h3>Still handing out dongles?</h3>
+      <p>Buttons and sticks replaced the cable. The meeting moved on.</p>
+      <a href="/compare/dongles">Why not a dongle? →</a>
+    </div>
+    {/* /compare/barco and /compare/airtame were reachable from nowhere at all —
+        no nav entry and no link in any page's body copy, so nothing on the site
+        pointed at them and nothing ever would have. They are siblings of the two
+        cards above and belong in the same group. Card copy stays neutral and
+        makes no comparative claim: the head-to-head pages carry the sourced
+        detail, and the claims on them are still under review. */}
+    <div class="card">
+      <h3>Comparing against Barco ClickShare?</h3>
+      <p>The incumbent in a lot of rooms. Where it is strong, and where the model differs.</p>
+      <a href="/compare/barco">Polaris vs Barco ClickShare →</a>
+    </div>
+    <div class="card">
+      <h3>Comparing against Airtame?</h3>
+      <p>Strong on signage and simplicity. Where the two overlap, and where they do not.</p>
+      <a href="/compare/airtame">Polaris vs Airtame →</a>
+    </div>
+  </div>
+
+  <CtaBand />
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/compare";
+</script>

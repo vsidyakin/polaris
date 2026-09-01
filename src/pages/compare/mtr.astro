@@ -1,0 +1,92 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { MDNA } from "../../data/compare";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="compare/mtr">
+  <PageIntro
+    route={"compare/mtr"}
+    tpl={"T6"}
+    title={"The Microsoft Teams Rooms alternative."}
+    dek={"One that doesn't pick your platform for you, Zoom Rooms included. Certified room systems solved \"walk in and it works\", and charged three ways for it: a per-room, per-year license; one vendor bolted to the room; and a design where sharing a screen means starting a call, so heads drop into laptops. Polaris reaches the same summit without any of the three."}
+  />
+
+    <div class="taxq"><b>What a certified room actually is.</b> A Microsoft Teams Room is a Teams appliance; a Zoom Room is a Zoom appliance. On the ladder it sits on the top rung (hosted BY the room) in the locked column: proven at scale, and committed to one ecosystem for the life of the hardware. <a href="/platform/taxonomy">See where meetings live →</a></div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Count one · the license stack</div>
+      <h2>What Microsoft Teams Rooms licensing costs at fleet scale.</h2>
+      <p class="sdek">Every certified room carries its own recurring platform license on top of the certified hardware, renewed annually, forever. At fleet scale, the license stack is a budget line of its own.</p>
+      <table>
+        <tr><th style="width:44%">Cost line</th><th>Certified room (MTR / Zoom Rooms)</th><th>Polaris</th></tr>
+        <tr><td>Room platform license, per room / year</td><td class="p">[$ placeholder]</td><td class="y">none: no per-platform room license</td></tr>
+        <tr><td>Certified hardware bundle, per room</td><td class="p">[$ placeholder]</td><td class="y">[$ placeholder — pod hardware]</td></tr>
+        <tr><td>Subscription, per room / year</td><td class="n">– (the platform licence above is required [MTR and Zoom Rooms terms pending wave-4 verification])</td><td class="y">[$ placeholder], warranty &amp; updates included</td></tr>
+        <tr><td>100 rooms · 5 years, all-in</td><td class="p">[$ placeholder]</td><td class="y">[$ placeholder]</td></tr>
+        <tr><td>Cost to change meeting platform later</td><td class="n">re-provision or replace every room</td><td class="y">none: chosen per meeting</td></tr>
+      </table>
+      <p class="note">[All figures placeholder — real license and hardware numbers pending Q6 committee + legal review. Run your own numbers on the <a href="/platform/tco">10-year platform calculator</a>.]</p>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Count two · the lock</div>
+      <h2>A vendor-locked room hosts one platform's meetings — Teams or Zoom, by design.</h2>
+      <p class="sdek">The scenario that finds every locked fleet eventually.</p>
+      <div class="cardrow">
+        <div class="card"><h3>Day one: it's fine</h3><p>Your org is all-Teams (or all-Zoom). Every certified room matches the policy, and the lock-in costs nothing you can see.</p></div>
+        <div class="card"><h3>The day it isn't</h3><p>An acquisition arrives on Zoom. A major client insists on Webex. Legal signs a second platform. The locked room can't take the meeting: the room, not the software, is the wrong vendor.</p></div>
+        <div class="card"><h3>The renovation</h3><p>Changing a certified room's platform isn't a setting; it's re-provisioning or replacing hardware, room by room, across the fleet. The license stack you paid annually bought the privilege.</p></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Count three · the behavioral cost</div>
+      <h2>Spin up a call just to share a screen.</h2>
+      <p class="sdek">The cost nobody puts on the invoice: what a certified room does to the people sitting in it.</p>
+      <div class="cnv-flow">
+        <div class="cnv-step"><span class="n">1 · the default path</span><b>Sharing is designed around the call</b><p>A certified room is designed around one path to the display: the meeting. Local inputs exist on some bundles, but the default motion is start-a-call — so five co-located people launch a video call to look at one document.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">2 · the reflex</span><b>Heads drop into laptops</b><p>The moment the call window opens, everyone watches their own screen. The room becomes a place people sit while looking down; the display is scenery.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step hot"><span class="n">the alternative</span><b>Polaris shares straight to the display</b><p>No call required: content lands on the workspace, share after share, side by side, and heads come up. The display is the meeting again.</p></div>
+      </div>
+    </section>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">Same summit, no lock</div>
+      <h2>Room-hosted meetings with native clients: platform chosen per meeting.</h2>
+      <p>Polaris reaches the same room-hosted summit with Polaris Host, pre-launch: walk in with a phone (or nothing) and the room starts, controls, and shares the meeting with the real Teams, Zoom, Webex, or Meet client. Everything below that rung &mdash; the workspace, web-join, wireless BYOM &mdash; ships today, and runs alongside the certified rooms you already own. The difference is that the platform is <b>chosen per meeting, not per room</b>: platform-agnostic: works with Teams, Zoom, Webex, and Meet. Monday's Teams call and Tuesday's Zoom call happen on the same hardware, and sharing to the display never needs a call at all.</p>
+      <div class="chips"><span>✓ Polaris Host <span class="tag t-pre" style="margin-left:4px">PRE-LAUNCH</span></span><span>✓ on Polaris Pro or Essentials</span><span>✓ native clients, per-meeting choice</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/products/hybrid">The hybrid family →</a> &nbsp; <a class="btn accent" href="/products/host">Polaris Host →</a></p>
+    </div>
+
+    <div class="mdna reveal vis"><h3>Our take, and the honest concessions</h3>
+      <p><Fragment set:html={MDNA["MTR / Zoom Rooms"].why} /></p>
+      <div class="concede"><Fragment set:html={MDNA["MTR / Zoom Rooms"].concede} /></div>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Row by row</div>
+      <h2>Polaris vs certified rooms.</h2>
+      <table>
+        <tr><th style="width:44%">Capability</th><th>MTR / Zoom Rooms</th><th>Polaris</th></tr>
+        <tr><td>Room-hosted meetings, native client</td><td class="y">✓ one platform's client, forever</td><td class="y">✓ Teams/Zoom/Webex/Meet, per meeting <span class="tag t-pre">Host: PRE-LAUNCH</span></td></tr>
+        <tr><td>Share to the display without a call</td><td class="p">local inputs on some bundles; the default motion is start-a-call</td><td class="y">✓ straight to the workspace</td></tr>
+        <tr><td>Multi-source workspace: sources laid out automatically as they join</td><td class="n">—</td><td class="y">✓</td></tr>
+        <tr><td>Guest shares with no app, no download</td><td class="n">—</td><td class="y">✓ browser web-join</td></tr>
+        <tr><td>Cross-network / VLAN sharing, no VPN</td><td class="n">—</td><td class="y">✓ every tier</td></tr>
+        <tr><td>Per-room platform license</td><td class="p">required, annually [$ placeholder]</td><td class="y">none</td></tr>
+        <tr><td>Certified-ecosystem polish &amp; single-vendor accountability</td><td class="y">✓ strong</td><td class="p">platform-agnostic by design</td></tr>
+      </table>
+      <p class="note">[Rows illustrative — canonical matrix (Q6 committee) supplies final claims and legal review.]</p>
+    </section>
+
+    <div class="two">
+      <div class="card"><h3>Compare by vendor instead</h3><p>Barco, Airtame, ScreenBeam, WolfVision, Kramer. Pick anyone, read the matrix row by row.</p><a href="/compare/hub">Open the compare hub →</a></div>
+      <div class="card"><h3>The other category question</h3><p>Dongles and buttons: hardware that replaced the cable in 2015, and stopped there.</p><a href="/compare/dongles">Why not a dongle? →</a></div>
+    </div>
+    <p class="note">Every Polaris hardware value in the matrix &mdash; ports, silicon, the 10-year platform lifecycle and the invariants it holds constant &mdash; is documented once, on <a href="/products/pro/spec#platform-lifecycle">the Pro spec sheet</a>, and is not restated here. Competitor cells keep their own published sources.</p>
+    <CtaBand />
+</BaseLayout>

@@ -1,0 +1,195 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { node } from "../../lib/pages/platform-lineage";
+import CtaBand from "../../components/CtaBand.astro";
+import { stars } from "../../lib/blocks";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/lineage">
+  <PageIntro
+    route={"platform/lineage"}
+    tpl={"T9"}
+    title={"Fifteen years, one platform story."}
+    dek={"Mersive Solstice taught the market wireless collaboration. Mersive Polaris is what it grew into: same mission, same sky, next platform generation. This page is the story; if you&rsquo;re ready to move your rooms, the <a href=\"/products/transition\">transition path</a> is the plan."}
+  />
+
+    <div class="linwrap reveal"><Fragment set:html={stars(26)} />
+      <svg viewBox="0 0 780 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Timeline: Mersive Sol 2012, Solstice Gen 1 2013, Gen 2 2015, Gen 2i 2017, Gen 3 2019, to Mersive Polaris 2026, drawn over the real northern sky with Polaris at the final milestone">
+        <defs><linearGradient id="ling1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a3d7d"/><stop offset=".62" stop-color="#8f7ae0"/><stop offset="1" stop-color="#7ce3a8"/></linearGradient></defs>
+        <!-- The north-polar group (Ursa Minor, Ursa Major, Draco, Cepheus,
+             Cassiopeia) carries catalogue positions: HYG v4.1 J2000, projected
+             stereographically about the pole and mapped in by a single
+             similarity transform pinned so Polaris lands exactly on the node the
+             timeline hangs from. Everything further out is a strip map, which
+             stops being one projection, so those figures stay as drawn. -->
+        <g class="lin-sky" transform="translate(700 62) scale(1.14) translate(-700 -62)">
+          <!-- declination arcs: the polar-chart grid, faint -->
+          <circle cx="700" cy="62" r="52" fill="none" stroke="#8a7fb8" stroke-width=".7" opacity=".12" stroke-dasharray="1 5"/>
+          <circle cx="700" cy="62" r="104" fill="none" stroke="#8a7fb8" stroke-width=".7" opacity=".10" stroke-dasharray="1 5"/>
+          <circle cx="700" cy="62" r="156" fill="none" stroke="#8a7fb8" stroke-width=".7" opacity=".08" stroke-dasharray="1 5"/>
+          <!-- URSA MINOR: handle from the pole star (the green node) to the bowl -->
+          <path d="M700 62 L696.6 52.7 L690.4 42.7 L679 37.3 M679 37.3 L680 30.3 L665.9 28.7 L666.7 36.8 L679 37.3" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".5"/>
+          <circle cx="696.6" cy="52.7" r=".9" fill="#cbb8ff"/><circle cx="690.4" cy="42.7" r=".9" fill="#cbb8ff"/><circle cx="679" cy="37.3" r="1" fill="#cbb8ff"/><circle cx="680" cy="30.3" r=".8" fill="#8a7fb8"/><circle cx="665.9" cy="28.7" r="1.2" fill="#e2d9ff"/><circle cx="666.7" cy="36.8" r="1.5" fill="#e2d9ff"/>
+          <!-- URSA MAJOR: the Big Dipper, bowl + handle -->
+          <path d="M599.5 22 L611.2 36.6 L611.5 48.5 L613.6 63.2 L605.1 72.3 L617 90.5 L630.4 85 L613.6 63.2" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".5"/>
+          <circle cx="599.5" cy="22" r="1.5" fill="#e2d9ff"/><circle cx="611.2" cy="36.6" r="1.4" fill="#e2d9ff"/><circle cx="611.5" cy="48.5" r="1.5" fill="#e2d9ff"/><circle cx="613.6" cy="63.2" r="1" fill="#cbb8ff"/><circle cx="605.1" cy="72.3" r="1.3" fill="#cbb8ff"/><circle cx="617" cy="90.5" r="1.3" fill="#cbb8ff"/><circle cx="630.4" cy="85" r="1.6" fill="#e2d9ff"/>
+          <!-- DRACO: tail winding between the Bears -->
+          <path d="M647.4 72.3 L647.4 58.3 L639.7 32.7 L643 3.8" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="647.4" cy="72.3" r=".9" fill="#8a7fb8"/><circle cx="647.4" cy="58.3" r=".9" fill="#8a7fb8"/><circle cx="639.7" cy="32.7" r="1.1" fill="#cbb8ff"/><circle cx="643" cy="3.8" r="1" fill="#cbb8ff"/>
+          <!-- CEPHEUS: the house, top right -->
+          <path d="M747.3 10.9 L734.3 27.4 L729 55.3 L754.1 37.5 L767.3 17 L747.3 10.9" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".45"/>
+          <circle cx="747.3" cy="10.9" r="1.4" fill="#e2d9ff"/><circle cx="734.3" cy="27.4" r="1.1" fill="#cbb8ff"/><circle cx="729" cy="55.3" r="1.1" fill="#cbb8ff"/><circle cx="754.1" cy="37.5" r="1" fill="#8a7fb8"/><circle cx="767.3" cy="17" r="1" fill="#cbb8ff"/>
+          <!-- CASSIOPEIA: Segin, Ruchbah, gamma, Schedar, Caph. On the catalogue
+               positions the W sits past the right edge, so the chart window shows
+               Segin and the line leaving the frame. The previous placement had it
+               ~10px inboard, which put the dots on the wrong stars. -->
+          <path d="M760.1 87.5 L771.7 82.2 L772.5 72.5 L784.4 68.2 L777.5 56.8" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".45"/>
+          <circle cx="760.1" cy="87.5" r="1" fill="#cbb8ff"/><circle cx="771.7" cy="82.2" r="1.2" fill="#cbb8ff"/><circle cx="772.5" cy="72.5" r="1.5" fill="#e2d9ff"/><circle cx="784.4" cy="68.2" r="1.5" fill="#e2d9ff"/><circle cx="777.5" cy="56.8" r="1.4" fill="#e2d9ff"/>
+          <!-- CANES VENATICI: under the Dipper's handle -->
+          <path d="M567.2 41.1 L573.7 54.5" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".45"/>
+          <circle cx="567.2" cy="41.1" r="1.2" fill="#e2d9ff"/><circle cx="573.7" cy="54.5" r=".9" fill="#8a7fb8"/>
+          <!-- COMA BERENICES -->
+          <path d="M516.1 21.1 L542.6 25.7 L540.6 57.1" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="516.1" cy="21.1" r=".9" fill="#8a7fb8"/><circle cx="542.6" cy="25.7" r="1" fill="#cbb8ff"/><circle cx="540.6" cy="57.1" r=".9" fill="#8a7fb8"/>
+          <!-- CORVUS: the sail, far west -->
+          <path d="M407.5 74.5 L420.4 67.4 L423.3 49.9 L405.7 43.7 L407.5 74.5" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".45"/>
+          <circle cx="420.4" cy="67.4" r="1.1" fill="#cbb8ff"/><circle cx="423.3" cy="49.9" r="1" fill="#cbb8ff"/><circle cx="405.7" cy="43.7" r="1.1" fill="#e2d9ff"/><circle cx="407.5" cy="74.5" r=".9" fill="#8a7fb8"/>
+          <!-- AURIGA: the pentagon, Capella brightest -->
+          <path d="M731.1 172.1 L740.1 175.2 L752.3 200.2 L712.2 198.8 L710.5 178.6 L731.1 172.1" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".45"/>
+          <circle cx="731.1" cy="172.1" r="1.6" fill="#e2d9ff"/><circle cx="710.5" cy="178.6" r="1.3" fill="#cbb8ff"/><circle cx="712.2" cy="198.8" r="1" fill="#8a7fb8"/><circle cx="752.3" cy="200.2" r="1" fill="#cbb8ff"/><circle cx="740.1" cy="175.2" r=".9" fill="#8a7fb8"/>
+          <!-- PERSEUS: cropping in at the frame edge -->
+          <path d="M759.4 124.5 L760.3 137.3 L757.3 147 L768 152" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="759.4" cy="124.5" r="1" fill="#8a7fb8"/><circle cx="760.3" cy="137.3" r="1.5" fill="#e2d9ff"/><circle cx="757.3" cy="147" r="1.1" fill="#cbb8ff"/>
+          <!-- FAR SIDE of the sphere: past the SCP the strip climbs the RA ~0.35h meridian back toward the equator -->
+          <!-- OCTANS: sigma Octantis is the southern pole star, right at the crossing -->
+          <path d="M229.3 59.7 L199.2 39.4 L209.6 52.8 L229.3 59.7" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".35"/>
+          <circle cx="229.3" cy="59.7" r=".8" fill="#8a7fb8"/><circle cx="199.2" cy="39.4" r=".9" fill="#cbb8ff"/><circle cx="209.6" cy="52.8" r=".8" fill="#8a7fb8"/>
+          <!-- HYDRUS -->
+          <path d="M158 92.2 L198.8 62.7 L190.9 98.4 L158 92.2" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="158" cy="92.2" r="1.1" fill="#cbb8ff"/><circle cx="198.8" cy="62.7" r="1.1" fill="#cbb8ff"/><circle cx="190.9" cy="98.4" r=".9" fill="#8a7fb8"/>
+          <!-- TUCANA -->
+          <path d="M154.7 22.5 L149.4 40.3 L161.7 65.2 L166.7 61.7" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="154.7" cy="22.5" r="1.2" fill="#e2d9ff"/><circle cx="149.4" cy="40.3" r=".9" fill="#8a7fb8"/><circle cx="161.7" cy="65.2" r=".8" fill="#8a7fb8"/><circle cx="166.7" cy="61.7" r=".9" fill="#cbb8ff"/>
+          <!-- PHOENIX: Ankaa brightest, nearly back at the equator band -->
+          <path d="M116.9 56.8 L108 64.6 L119.4 82 L110.6 93.7 M119.4 82 L141.6 79.7" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="116.9" cy="56.8" r=".8" fill="#8a7fb8"/><circle cx="108" cy="64.6" r="1.3" fill="#e2d9ff"/><circle cx="119.4" cy="82" r="1" fill="#cbb8ff"/><circle cx="110.6" cy="93.7" r=".9" fill="#8a7fb8"/><circle cx="141.6" cy="79.7" r=".9" fill="#8a7fb8"/>
+          <!-- far-side field stars -->
+          <circle cx="135" cy="30" r=".7" fill="#8a7fb8" opacity=".24"/><circle cx="180" cy="75" r=".6" fill="#8a7fb8" opacity=".22"/>
+          <circle cx="125" cy="95" r=".7" fill="#cbb8ff" opacity=".22"/><circle cx="98" cy="40" r=".6" fill="#8a7fb8" opacity=".2"/>
+          <circle cx="170" cy="22" r=".7" fill="#8a7fb8" opacity=".22"/>
+          <!-- the map's true left terminus: the south celestial pole (dec -90) -->
+          <path d="M238.9 143.3 A468 468 0 0 1 238.9 16.5" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".22" stroke-dasharray="4 6"/>
+          <circle cx="259.8" cy="64.7" r=".9" fill="#8a7fb8"/>
+          <!-- CRUX, the Southern Cross: the far-southern edge of the frame -->
+          <path d="M302.1 50.9 L318 43.3 M313.6 15.6 L313.4 70.4" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".5"/>
+          <circle cx="302.1" cy="50.9" r="1.4" fill="#e2d9ff"/><circle cx="318" cy="43.3" r="1.3" fill="#e2d9ff"/><circle cx="313.6" cy="15.6" r="1.4" fill="#cbb8ff"/><circle cx="313.4" cy="70.4" r="1" fill="#8a7fb8"/>
+          <!-- MUSCA, faint, south of Crux -->
+          <path d="M287.5 30.9 L291.6 15.1 M287.5 30.9 L279.2 39.2" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".35"/>
+          <circle cx="287.5" cy="30.9" r="1" fill="#cbb8ff"/><circle cx="291.6" cy="15.1" r=".8" fill="#8a7fb8"/><circle cx="279.2" cy="39.2" r=".8" fill="#8a7fb8"/>
+          <!-- CENTAURUS, western fragment: bridges Hydra to Crux; alpha and beta Cen are above the frame -->
+          <path d="M340.3 28.3 L335.6 49 L334.6 80.5" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="340.3" cy="28.3" r="1.1" fill="#cbb8ff"/><circle cx="335.6" cy="49" r=".9" fill="#8a7fb8"/><circle cx="334.6" cy="80.5" r="1" fill="#cbb8ff"/>
+          <!-- HYDRA: the body, arcing left of Corvus down through the south; head and tail out of frame -->
+          <path d="M380.2 100.2 L389.9 126.5 L445 167.9 L455.9 194.6 L475.1 204.3" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="380.2" cy="100.2" r="1.2" fill="#cbb8ff"/><circle cx="389.9" cy="126.5" r="1" fill="#8a7fb8"/><circle cx="445" cy="167.9" r=".9" fill="#8a7fb8"/><circle cx="455.9" cy="194.6" r="1" fill="#cbb8ff"/><circle cx="475.1" cy="204.3" r=".9" fill="#8a7fb8"/>
+          <!-- CRATER: the cup, west of the Gen 3 label -->
+          <path d="M435.7 158.9 L419.6 148.5 L428.2 129 L437.4 134.7 M428.2 129 L421.7 105.6 L422.9 91.4 M437.4 134.7 L445.2 110.8" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="435.7" cy="158.9" r="1" fill="#cbb8ff"/><circle cx="419.6" cy="148.5" r="1" fill="#8a7fb8"/><circle cx="428.2" cy="129" r=".9" fill="#8a7fb8"/><circle cx="437.4" cy="134.7" r=".9" fill="#8a7fb8"/><circle cx="421.7" cy="105.6" r=".9" fill="#8a7fb8"/><circle cx="422.9" cy="91.4" r=".9" fill="#cbb8ff"/><circle cx="445.2" cy="110.8" r=".9" fill="#8a7fb8"/>
+          <!-- VIRGO, partial: between Corvus and Coma; Spica is above the frame -->
+          <path d="M457.4 8.7 L463.3 39.8 L477.5 27 L498 24.2 M463.3 39.8 L464.3 62.2" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="457.4" cy="8.7" r=".9" fill="#8a7fb8"/><circle cx="463.3" cy="39.8" r="1.1" fill="#cbb8ff"/><circle cx="477.5" cy="27" r="1" fill="#8a7fb8"/><circle cx="498" cy="24.2" r="1.1" fill="#cbb8ff"/><circle cx="464.3" cy="62.2" r=".9" fill="#8a7fb8"/>
+          <!-- constellation names, chart-style -->
+          <g fill="#8a7fb8" font-size="6.5" letter-spacing="1.5" opacity=".55" font-family="ui-monospace,Menlo,monospace">
+            <text x="662" y="14" text-anchor="middle">URSA</text>
+            <text x="662" y="22" text-anchor="middle">MINOR</text>
+            <text x="712" y="20" text-anchor="middle">CEPHEUS</text>
+            <text x="570" y="65.5" text-anchor="middle">CANES VENATICI</text>
+            <text x="520" y="16.5" text-anchor="middle">COMA BERENICES</text>
+            <text x="415" y="35" text-anchor="middle">CORVUS</text>
+            <text x="729" y="164" text-anchor="middle">AURIGA</text>
+            <text x="372" y="92" text-anchor="middle">HYDRA</text>
+            <text x="404" y="123" text-anchor="middle">CRATER</text>
+            <text x="497" y="40" text-anchor="middle">VIRGO</text>
+            <text x="350" y="17" text-anchor="middle">CRUX</text>
+            <text x="268" y="54" text-anchor="middle">MUSCA</text>
+            <text x="310" y="135.5" text-anchor="middle">CENTAURUS</text>
+            <text x="268" y="80" text-anchor="middle">CHAMAELEON</text>
+            <text x="215.4" y="28.4" text-anchor="middle">OCTANS</text>
+            <text x="176.3" y="110.5" text-anchor="middle">HYDRUS</text>
+            <text x="152.1" y="17.5" text-anchor="middle">TUCANA</text>
+            <text x="112.9" y="43.4" text-anchor="middle">PHOENIX</text>
+          </g>
+          <!-- anonymous field stars, west of the chart -->
+        
+          <circle class="lin-bgstar" cx="238" cy="44" r="1.2" fill="#e2d9ff" opacity=".4"/>
+          <circle cx="352" cy="38" r="1" fill="#cbb8ff" opacity=".3"/>
+          <circle class="lin-bgstar" cx="404" cy="18" r="1.1" fill="#e2d9ff" opacity=".45" style="animation-delay:1.3s"/><circle cx="452" cy="52" r=".7" fill="#8a7fb8" opacity=".26"/>
+          <circle cx="498" cy="30" r=".9" fill="#cbb8ff" opacity=".28"/>
+        
+          <circle cx="388" cy="72" r=".8" fill="#cbb8ff" opacity=".24"/><circle cx="446" cy="88" r=".6" fill="#8a7fb8" opacity=".2"/>
+          <circle cx="400" cy="196" r=".6" fill="#8a7fb8" opacity=".16"/>
+          <circle class="lin-bgstar" cx="310" cy="64" r="1" fill="#cbb8ff" opacity=".3" style="animation-delay:.7s"/>
+        
+        
+          <circle cx="262" cy="88" r=".8" fill="#cbb8ff" opacity=".24"/>
+          <circle cx="342" cy="102" r=".7" fill="#8a7fb8" opacity=".22"/><circle cx="238" cy="186" r=".6" fill="#8a7fb8" opacity=".16"/>
+          <circle cx="430" cy="166" r=".6" fill="#8a7fb8" opacity=".18"/>
+        </g>
+        <g class="lin-sky-fill">
+          <!-- LYNX: the faint zigzag that really fills the gap between Ursa Major and Auriga -->
+          <path d="M566 124 L590 138 L582 156 L612 170 L634 183 L658 176" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="566" cy="124" r=".9" fill="#8a7fb8"/><circle cx="590" cy="138" r=".8" fill="#8a7fb8"/><circle cx="582" cy="156" r="1" fill="#cbb8ff"/><circle cx="612" cy="170" r=".8" fill="#8a7fb8"/><circle cx="634" cy="183" r="1.2" fill="#e2d9ff"/><circle cx="658" cy="176" r=".8" fill="#8a7fb8"/>
+          <!-- CAMELOPARDALIS: faint chain between the pole and Auriga/Perseus -->
+          <path d="M690 130 L708 141 L700 157 M708 141 L722 150" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".35"/>
+          <circle cx="690" cy="130" r=".8" fill="#8a7fb8"/><circle cx="708" cy="141" r="1" fill="#cbb8ff"/><circle cx="700" cy="157" r=".8" fill="#8a7fb8"/><circle cx="722" cy="150" r=".9" fill="#8a7fb8"/>
+          <!-- ERIDANUS: the river's tail, ending at bright Achernar just south of Phoenix -->
+          <path d="M12 157 L28 170 L20 188 L34 203" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".4"/>
+          <circle cx="12" cy="157" r=".8" fill="#8a7fb8"/><circle cx="28" cy="170" r="1.4" fill="#e2d9ff"/><circle cx="20" cy="188" r=".8" fill="#8a7fb8"/><circle cx="34" cy="203" r=".9" fill="#8a7fb8"/>
+          <!-- CANCER: the faint inverted Y between Lynx and Hydra -->
+          <path d="M472 160 L479 176 M479 176 L464 194 M479 176 L497 184 L507 198" fill="none" stroke="#8a7fb8" stroke-width=".8" opacity=".38"/>
+          <circle cx="472" cy="160" r=".8" fill="#8a7fb8"/><circle cx="479" cy="176" r="1" fill="#cbb8ff"/><circle cx="464" cy="194" r=".9" fill="#8a7fb8"/><circle cx="497" cy="184" r=".8" fill="#8a7fb8"/><circle cx="507" cy="198" r="1" fill="#cbb8ff"/>
+          <g fill="#8a7fb8" font-size="6.5" letter-spacing="1.5" opacity=".55" font-family="ui-monospace,Menlo,monospace">
+            <text x="610" y="107" text-anchor="middle">URSA MAJOR</text>
+            <text x="660" y="45" text-anchor="middle">DRACO</text>
+            <text x="746" y="120" text-anchor="end">PERSEUS</text>
+            <text x="568" y="176" text-anchor="middle">LYNX</text>
+            <text x="40" y="152" text-anchor="middle">ERIDANUS</text>
+            <text x="455" y="178" text-anchor="end">CANCER</text>
+            <text x="686" y="148" text-anchor="end">CAMELOPARDALIS</text>
+            <text x="182" y="7" text-anchor="middle" opacity=".7">SOUTH CELESTIAL POLE</text>
+          </g>
+        </g>
+        <path d="M24 138.9 Q390 138.9 756 46.4" stroke="url(#ling1)" stroke-width="1" fill="none" opacity=".4"/>
+        <path d="M24 140.9 Q390 140.9 756 48.4" stroke="url(#ling1)" stroke-width="2.5" fill="none"/>
+        <Fragment set:html={node(96,140,"Mersive Sol","2012","wireless sharing arrives")} />
+        <Fragment set:html={node(198,135.7,"Solstice Gen 1","2013","")} />
+        <Fragment set:html={node(300,127.7,"Solstice Gen 2","2015","")} />
+        <Fragment set:html={node(388,118,"Gen 2i","2017","")} />
+        <Fragment set:html={node(508,100.5,"Solstice Gen 3","2019","")} />
+        <Fragment set:html={node(700,62,"MERSIVE POLARIS","2026","",true)} />
+      </svg>
+      <p class="lin-note">One path, fifteen years of light. The sky behind it is the real one: follow the Dipper&rsquo;s pointer stars and they land on Polaris.</p>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Reassurance</div>
+      <h2>What carries forward.</h2>
+      <p class="sdek">The names change; the muscle memory doesn't. Three things move with you.</p>
+      <div class="three">
+        <div class="card"><h3>Your rooms</h3><p>Mersive Solstice Gen 3 hardware has a mapped transition path: supported through 2029, with a trade-in program in motion. Polaris Pro continues the line your rooms already run.</p><a href="/products/transition">The transition path →</a></div>
+        <div class="card"><h3>Your workflows</h3><p>Walk up, share, sources side by side on the display. The habits your users built on Mersive Solstice work the same on Polaris. The workspace simply evolved around them: web-join, the Dock, cross-network reach.</p><a href="/platform/how">Meet Polaris →</a></div>
+        <div class="card"><h3>Your management</h3><p>Mersive Solstice Cloud keeps running your Gen 3 units exactly as today, linked straight from Polaris Cloud: one starting point while rooms move generation by generation, with none of the tooling your team knows going dark. [Unified in-pane claim retired pending cloud-team confirmation.]</p><a href="/platform/cloud">Polaris Cloud →</a></div>
+      </div>
+    </section>
+
+    <div class="mdna reveal">
+      <h3>Why the name?</h3>
+      <p>Mersive Solstice was named for the sky, and so is its successor. Polaris is the fixed point the whole northern sky turns around, the star every navigator steers by. Fifteen years of Mersive Solstice taught rooms to share wirelessly; Polaris is the generation where the room itself joins, hosts, and carries the meeting, the one reliable point in a shifting sky of platforms, networks, and devices.</p>
+      <p class="concede">One company, one mission, one platform generation to the next. The name is the promise, in writing: whatever the meeting runs on, the room holds steady.</p>
+    </div>
+
+    <div class="g3band reveal"><b>Mersive Solstice Gen 3 owner?</b> Your platform is supported, documented, and has a mapped road ahead; nothing here is a surprise deprecation. <span class="btns"><a class="btn accent" href="/products/solstice">Mersive Solstice today →</a><a class="btn accent" href="/products/transition">Mersive Solstice Gen 3 → Polaris →</a></span></div>
+    <div class="g3band reveal" style="background:linear-gradient(90deg,rgba(47,138,168,.16),rgba(124,227,168,.08));border-color:#2f6a80"><b>New to Mersive?</b> Skip the history. Start with the family and pick the tier your rooms need. <span class="btns"><a class="btn accent" href="/products/family">The Polaris family →</a></span></div>
+    <CtaBand variant="story" />
+</BaseLayout>

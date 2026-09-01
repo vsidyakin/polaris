@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { REG_SPINE } from "../../data/industries";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indSpine, indRouter, indProof } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/regulated">
+  <Fragment set:html={indHead("solutions/regulated","Regulated Industries","Where the security review <span style='color:#b09aff;font-weight:700'>is</span> the buying process.","Government, healthcare, financial services. Three procurement worlds with one thing in common: nothing touches the network until the review board says so. Polaris is built to pass that reading, and the reading is public.")} />
+    <Fragment set:html={indRouter([
+      {link:"solutions/government",k:"Public sector",h:"Government",p:"TAA front and center: trusted supply chain, secure boot, procurement facts on the page, and postures for networks that never touch the internet.",go:"Cleared for the review board"},
+      {link:"solutions/healthcare",k:"Health systems",h:"Healthcare",p:"Clinical and administrative spaces on networks segmented by mandate, with the security story your CISO requires, told in the open.",go:"Collaboration care can run on"},
+      {link:"solutions/finance",k:"Banking · markets · insurance",h:"Financial Services",p:"Trading floors to boardrooms, where segmented networks are the norm and compliance reads everything. Cross-network sharing was built for this floor plan.",go:"Segmented by design"}
+    ])} />
+    <Fragment set:html={indSpine("The shared compliance spine","One security story, told three times.","Every page in this family stands on the same six commitments. Read them once, cite them everywhere.",REG_SPINE)} />
+    <Fragment set:html={indProof("The Trust Center answered our questionnaire before we'd finished sending it.","[Named regulated customer — placeholder]","Information Security Officer · [organization placeholder]",[["0","NDAs required to read the architecture"],["1","section still gated, and it is named on the page: update policy"],["3","industries, one compliance spine"]],"[Proof slot — one named reference per child industry required before those pages publish; quote and figures are illustrative placeholders.]")} />
+    <section class="sect reveal flush">
+      <div class="kicker">The paperwork, pre-answered</div>
+      <h2>Your control numbers, already mapped.</h2>
+      <p class="sdek">The SOC 2 Type 2 report publishes a control-by-control mapping of NIST SP 800-171 Rev. 2, as required by DFARS, so a reviewer matches our controls to the requirement numbers they already use instead of translating a marketing page into evidence. The same opinion covers controls implemented to meet 45 C.F.R. &#167;164.308, the HIPAA Security Rule administrative safeguards, and the report maps the same controls to HITRUST CSF v11.5 &mdash; a mapping, not a HITRUST certification. ISO/IEC 27001:2022 certificate 011964-03 sits alongside both, valid to 26 June 2028, and the June 2026 surveillance audit closed with no nonconformities. [2026 SOC 2 Type 2: confirm the NIST 800-171 and HIPAA mappings carry forward, and whether either can be released separately from the full report - CISO] [verify: TAA and NDAA 889 are tracked internally as UNCONFIRMED - country-of-origin documentation per SKU owed by legal, product and engineering before this family implies either]</p>
+    </section>
+
+    <CtaBand />
+</BaseLayout>

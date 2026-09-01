@@ -1,0 +1,90 @@
+---
+import ProductPage from "../../layouts/ProductPage.astro";
+---
+
+<ProductPage
+  route="products/transition"
+  tpl="T9"
+  title={"From Mersive Solstice Gen 3 to Mersive Polaris."}
+  dek={"The upgrade path &amp; timeline. You're invested in Mersive Solstice Gen 3. Here's exactly what happens next, by starting point, with what carries forward, which tier your rooms map to, and the swap program that pays down the change."}
+  crumb={"Mersive Solstice Gen 3 → Polaris"}
+>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Why move</div>
+      <h2>What Mersive Polaris adds to Mersive Solstice.</h2>
+      <p class="sdek">Polaris is the next generation of Mersive Solstice. Gen 3 and Polaris run side by side in the same estate, so you upgrade room by room as budgets allow instead of replacing an estate at once. What a room gains when it moves, feature by feature.</p>
+      <div class="famtbl"><table>
+        <tr><th style="width:26%">Capability</th><th>Mersive Solstice Gen 3</th><th>Mersive Polaris</th></tr>
+        <tr><td>Sharing</td><td class="p">Desktop client, browser, or the mobile app &mdash; provided the device is on the same VLAN as the pod</td><td class="y">The same three ways in, and none of them have to be in the room: share to the display from the guest network, another VLAN, or off-site. Browser sharing at app.mersive.com installs nothing, guests included</td></tr>
+        <tr><td>The workspace</td><td class="p">Multi-source on the room display(s)</td><td class="y">Multi-source on the room display(s), and remote people open that same workspace in a browser &mdash; they see what the room sees</td></tr>
+        <tr><td>Cross-network sharing</td><td class="n">Same network only</td><td class="y">Guest Wi-Fi, another VLAN, another building &mdash; anywhere on earth with an internet connection. No VPN, on every tier</td></tr>
+        <tr><td>Hybrid meetings</td><td class="p">BYOD sharing</td><td class="y">Wireless BYOM (Pro), and with Link the pod itself hosts the call; Host runs the room with no laptop at all <span class="tag t-ship">SHIPS Q3–Q4 2026</span></td></tr>
+        <tr><td>Polaris Cloud</td><td class="y">Managed in Mersive Solstice Cloud, linked straight from Polaris Cloud: one starting point with your Polaris fleet</td><td class="y">All of that, plus deployment templates, fleet-wide security policy, and a redesigned admin experience [cloud team: name the headline improvements]</td></tr>
+        <tr><td>Hardware</td><td class="p">Qualcomm MSM8996 on an Inforce MER-6641 carrier, Android 7; two HDMI outputs and one HDMI input; one wired Ethernet port with PoE+; eMMC storage [Gen 3, proven from the Gen 3 build config, Gen3-gated code and shipped release notes. Deliberately not extended with RAM or storage size, link speed, an 802.3 clause, a refresh rate, or the name "Snapdragon 820" &mdash; none of those appear in either Gen 3 repository]</td><td class="y">New-generation silicon: real-time encode for wireless BYOM, on-device NPU. Pro drives two displays at dual 4K (3840 &times; 2160) 60&nbsp;Hz and carries a wired + wireless dual-network posture [Mersive hardware requirement, rev. Nov 2024: one GbE with PoE+, verify posture wording] [hardware team to verify part-level claims incl. Gen 3 output comparison] [verify: the NPU is silicon that is present but not yet used &mdash; no inference runtime ships in the current Polaris image, while Gen 3 links TensorFlow Lite into its shipped APK and runs occupancy inference today. As written, this row offers an existing Gen 3 customer an AI capability they already have. Decide whether the NPU belongs on an upgrade page before launch - Damian and engineering]</td></tr>
+        <tr><td>Fit for every room</td><td class="p">One pod, one shape: every room gets the same hardware whether it needs it or not</td><td class="y">Three devices matched to the room: Launch for share-first displays, Essentials for standard rooms, Pro for conferencing and complex networks. Link and Host extend any of them <span class="tag t-ship">SHIPS Q3–Q4 2026</span></td></tr>
+        <tr><td>Security</td><td class="p">TLS 1.2 on the pod&rsquo;s own HTTPS interface, with TLS 1.0 and 1.1 refused. 802.1X with EAP-TLS, PEAP, TTLS or EAP-PWD, on wired Ethernet and on Wi-Fi. Upload your own CA bundle, your own 802.1X certificates and your own certificate for the pod&rsquo;s web interface, or generate a signing request on the pod. HSTS is set on the pod&rsquo;s HTTPS responses. No secure boot and no secure element &mdash; that is the generational difference [Gen 3, proven from source: the listener is created with OpenSSL&rsquo;s version-specific TLSv1_2 method, so 1.0 and 1.1 are not negotiable. This is a statement about Gen 3&rsquo;s own listener, not a Polaris Cloud version claim; the cloud-leg rule in src/data/security.ts still stands]</td><td class="y">Hardened by design: mandatory secure boot on production firmware, and no HTTPS listener on the device at all &mdash; signalling and fleet management run <b>outbound</b> over HTTPS to Polaris Cloud, so a port scan of the pod finds nothing to negotiate against, where Gen 3 served its own web interface over TLS. Security settings are enforced fleet-wide from Polaris Cloud instead of room by room [security team to verify the claim set before publish]</td></tr>
+        <tr><td>Getting it on the network</td><td class="p">Same-VLAN discovery; segmented networks meant network engineering</td><td class="y">Cloud-brokered sessions across VLANs and guest networks: the two endpoints connect directly, with no VPN and no inbound firewall rules to negotiate. Native AirPlay and Google Cast discovery still needs multicast on the room network; web-join does not</td></tr>
+        <tr><td>Lifecycle</td><td class="p">Released 2019 &middot; supported through 2029</td><td class="y">Mersive commits to a 10-year manufacturing lifecycle for Polaris hardware, held constant by the platform invariants rather than by a fixed parts list. [10-year basis pending definition &mdash; manufacture-from-launch or support-from-purchase: Damian Blazy] The subscription carries warranty and updates throughout [Ruling A, Damian Blazy, 26 Aug 2026 &mdash; <a href="/products/pro/spec#platform-lifecycle">the platform invariants</a>]</td></tr>
+      </table></div>
+      <p class="note">Your Mersive Solstice Gen 3 estate stays visible in Polaris Cloud through the whole transition. Nothing goes dark while you move. Curious how the platform got here? <a href="/platform/lineage">The fifteen-year story →</a></p>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Start where you are</div>
+      <h2>Three starting points, three mapped paths.</h2>
+      <div class="cardrow">
+        <div class="card"><h3>"I have 10 rooms."</h3><p>One trial kit proves it, one partner order swaps it. Pro continues your Gen 3 rooms one for one; Essentials is the new lower tier for rooms that only ever share. Typical cutover: room by room, no downtime beyond the swap itself. [Path detail placeholder.]</p><a href="/trial">Start with a trial →</a></div>
+        <div class="card"><h3>"I run a campus."</h3><p>Classrooms map to Essentials (+ Route, shipping Q1 2027, where it teaches), conferencing rooms to Pro. Migrate building by building while Mersive Solstice Cloud keeps running the Gen 3 estate, linked from Polaris Cloud. [Path detail placeholder.]</p><a href="/solutions/highered">The higher-ed story →</a></div>
+        <div class="card"><h3>"I manage an enterprise fleet."</h3><p>Phased by region or business unit, with your integrator running the swap program and Polaris Cloud templates carrying room profiles at scale. Security pack goes to your review board first. [Path detail placeholder.]</p><a href="/solutions/enterprise">The enterprise story →</a></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Reassurance, itemized</div>
+      <h2>What carries forward.</h2>
+      <div class="three">
+        <div class="card"><h3>Your rooms</h3><p>Displays, mounts, cabling, and room AV stay. The swap is the pod behind the display: supported Mersive Solstice Gen 3 hardware until published EOL dates, trade-in when you move.</p></div>
+        <div class="card"><h3>Your workflows</h3><p>Walk up, share, sources side by side on the display. The habits your users built on Mersive Solstice work the same on Polaris, with web-join and the Dock added around them.</p></div>
+        <div class="card"><h3>Your management</h3><p>Both estates, one starting point: Mersive Solstice Cloud keeps managing your Gen 3 units exactly as it does today, and Polaris Cloud links straight through to it. Your Gen 3 rooms stay supported, managed, and documented for the whole migration — nothing goes dark while you move. [Unified in-pane Gen 3 management: do not claim unless cloud team confirms post-2026-04-14.]</p><a href="/platform/cloud">Polaris Cloud →</a></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Tier mapping</div>
+      <h2>What you used → where it lives now.</h2>
+      <table>
+        <tr><th style="width:52%">How you use Mersive Solstice Gen 3 today</th><th>Polaris tier</th></tr>
+        <tr><td>Wireless sharing + the multi-source canvas: the Mersive Solstice Gen 3 baseline</td><td class="y">Pro &mdash; the successor to Gen 3, and where the line continues</td></tr><tr><td>Rooms that only need sharing, at a lower price point</td><td class="y">Essentials &mdash; a new secondary tier, with no Gen 3 equivalent</td></tr>
+        <tr><td>Room camera &amp; mic bridged into Teams/Zoom/Webex calls</td><td class="y">Pro</td></tr>
+        <tr><td>Segmented networks: sharing across VLANs or from guest devices</td><td class="y">Any tier &mdash; cross-network sharing is on Launch, Essentials and Pro</td></tr>
+        <tr><td>Active-learning classrooms</td><td class="y">Essentials or Pro + Route <span class="tag t-ship al-flag">SHIPS Q1 2027</span></td></tr>
+        <tr><td>Digital signage: dedicated screens and idle displays</td><td class="y">Any tier: managed in Polaris Cloud</td></tr>
+        <tr><td>Hosted by the room (BYOM+): no user device at all</td><td class="p">Pro or Essentials + Host <span class="tag t-ship">SHIPS Q4 2026</span></td></tr>
+      </table>
+      <p class="note">Pro is the successor to Mersive Solstice Gen 3 and continues that line; Essentials is a new secondary tier for rooms that only share. <a href="/products/selector">Not sure? Four questions →</a></p>
+    </section>
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">The swap program</div>
+      <h2>Trade in Mersive Solstice Gen 3. Trade up to Polaris.</h2>
+      <p>A Mersive Solstice Gen 3 swap program runs today: trade-in credit against Polaris hardware, handled through your reseller. [Program mechanics placeholder — production folds in the live swap program currently published on marketing.mersive.com: eligibility, credit amounts, and process.]</p>
+      <p style="margin:0"><a class="btn accent" href="/partners/where">Ask your partner about the swap →</a></p>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Timeline</div>
+      <h2>The dates that matter.</h2>
+      <div class="cnv-flow">
+        <div class="cnv-step hot"><span class="n">today</span><b>Mersive Solstice Gen 3 supported · swap open</b><p>Rooms supported, docs public, trade-in program running. Polaris Essentials and Pro shipping.</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">v6.4</span><b>Mersive Solstice Gen 3 &mdash; next feature release</b><p>Improved Mac client. Further feature releases are planned beyond 6.4, and security and maintenance updates continue past them. [Release contents and dates from the published release notes.]</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">2029</span><b>Mersive Solstice Gen 3 end of maintenance</b><p>Final security and maintenance window. Migrations should be scheduled, not started, by here. [Exact date from the published EOL policy.]</p></div>
+        <div class="cnv-arrow">→</div>
+        <div class="cnv-step"><span class="n">2029</span><b>Mersive Solstice Gen 3 end of support</b><p>Final year for support requests; by here the estate runs on Polaris. [Exact date from the published EOL policy &mdash; /solstice-eol-policy/.]</p></div>
+      </div>
+    </section>
+
+    <div class="g3band reveal"><b>Your reseller runs the migration.</b> Trade-in, staging, cutover, and the converted trial all route through the partner who already knows your rooms: same relationship, no direct end-run. <a class="btn accent" href="/partners/where">Find your partner →</a></div>
+</ProductPage>

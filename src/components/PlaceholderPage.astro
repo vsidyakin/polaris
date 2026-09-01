@@ -1,0 +1,37 @@
+---
+/**
+ * The generic IA template: heading, deck, optional product media, then a stack
+ * of placeholder sections. Drives the routes that have no bespoke design yet.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageIntro from "./PageIntro.astro";
+import MediaBand from "./MediaBand.astro";
+import Ph from "./Ph.astro";
+import CtaBand from "./CtaBand.astro";
+import { PLACEHOLDER_PAGES } from "../data/placeholder-pages";
+import type { Route } from "../data/routes";
+
+interface Props {
+  route: Route;
+}
+const { route } = Astro.props;
+
+const pg = PLACEHOLDER_PAGES[route];
+if (!pg) throw new Error(`No placeholder page defined for route "${route}"`);
+---
+
+{/* No `title` override: seo.ts now carries a real SEO title for every route,
+    which beats the short <h1> name these pages used to fall back to. */}
+<BaseLayout route={route}>
+  <PageIntro route={route} title={pg.t} dek={pg.dek} tpl={pg.tpl} gate={pg.gate} pre={pg.pre} />
+
+  {pg.media && <MediaBand kind={pg.media} title={pg.t} />}
+
+  {
+    pg.secs.map((s) =>
+      s.t === "raw" ? <Fragment set:html={s.html} /> : <Ph lbl={s.lbl} h={s.h} d={s.d} link={s.link} />
+    )
+  }
+
+  <CtaBand />
+</BaseLayout>

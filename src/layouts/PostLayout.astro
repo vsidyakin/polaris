@@ -1,0 +1,383 @@
+---
+/**
+ * The shared long-form article shell for blog posts AND case studies — one
+ * `<article class="bpx">`, extracted from what was originally only the blog
+ * post template. Wraps BaseLayout itself so a caller only renders one layout.
+ *
+ * Intentionally knows nothing about where its data came from: every page that
+ * renders through this (currently `resources/blog/[slug].astro` and
+ * `resources/cases/[slug].astro`) computes its own `getStaticPaths`, its own
+ * `articleSchema()` call (blog posts and case studies stay factually different
+ * in the JSON-LD graph — see data/schema.ts), and its own "foot nav" cards
+ * (topic neighbours for blog, same-sector stories for case studies), then
+ * hands this component plain data.
+ *
+ * `org`/`logo`/`logoAspect` are the one piece of furniture only a case study
+ * populates — a customer's mark, shown on the hero and folded into the
+ * eyebrow line. Every other prop is exactly the shape a blog post's `body`
+ * already used.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import { stars, roomScene } from "../lib/blocks";
+import CtaBand from "../components/CtaBand.astro";
+import { imgSrc } from "../lib/blog-img";
+import { lockup } from "../lib/logo-lockup";
+import { href, type Route } from "../data/routes";
+import type { BlogSection } from "../data/blog";
+
+interface FootCard {
+  href: string;
+  topicClass?: string;
+  topicLabel?: string;
+  title: string;
+  ctaLabel: string;
+}
+
+interface Props {
+  route: Route;
+  childPath: string;
+  childName: string;
+  title: string;
+  description: string;
+  schema: object[];
+
+  crumbHubHref: string;
+  crumbHubLabel: string;
+  topicLabel: string;
+  org?: string;
+  headline: string;
+  dek: string;
+  author?: { name: string; url?: string; role?: string };
+  publishedISO?: string;
+  publishedLong?: string | null;
+  updatedISO?: string;
+  updatedLong?: string | null;
+  readTime?: string;
+
+  hero?: string;
+  heroFit?: boolean;
+  logo?: string;
+  logoAspect?: number;
+
+  lede: string[];
+  takeaways: string[];
+  asideLabel: string;
+  body: BlogSection[];
+  topicKey: string;
+  pull?: string;
+  pullWho?: string;
+  sourceNote?: string;
+  /** An in-body conversion prompt right after the sections — only a case
+      study populates this ("Want this in your rooms? Book a demo"). */
+  midCta?: { heading: string; body: string; ctaLabel: string; ctaHref: string };
+
+  footLabel?: string;
+  footDest?: { href: string; label: string; line: string };
+  footRelated: FootCard[];
+  backHref: string;
+  backLabel: string;
+}
+
+const {
+  route,
+  childPath,
+  childName,
+  title,
+  description,
+  schema,
+  crumbHubHref,
+  crumbHubLabel,
+  topicLabel,
+  org,
+  headline,
+  dek,
+  author,
+  publishedISO,
+  publishedLong,
+  updatedISO,
+  updatedLong,
+  readTime,
+  hero,
+  heroFit = false,
+  logo,
+  logoAspect,
+  lede,
+  takeaways,
+  asideLabel,
+  body,
+  topicKey,
+  pull,
+  pullWho,
+  sourceNote,
+  midCta,
+  footLabel,
+  footDest,
+  footRelated,
+  backHref,
+  backLabel,
+} = Astro.props;
+
+const mark = logo ? lockup(logoAspect || 3.5, { maxW: 260, maxH: 84, area: 6400 }) : null;
+
+/* Anchor ids for the on-page TOC: one entry per top-level section head,
+   slugified from the head itself, deduped with a numeric suffix. */
+const slugifyHead = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-+|-+$)/g, "");
+const seen = new Map<string, number>();
+const anchor = (h: string) => {
+  const base = slugifyHead(h) || "section";
+  const n = (seen.get(base) || 0) + 1;
+  seen.set(base, n);
+  return n > 1 ? base + "-" + n : base;
+};
+const sections = body.map((s) => ({ ...s, id: s.head && !s.sub ? anchor(s.head) : undefined }));
+const toc = sections.filter((s) => s.head && !s.sub);
+
+/* Named site figures a body section can request via `fig` — currently the
+   three room-model scenes shared with /platform/taxonomy. */
+const FIGS: Record<string, string> = {
+  rs1: roomScene(1),
+  rs2: roomScene(2),
+  rs3: roomScene(3),
+};
+
+/* The foot nav's middle "on the site" card only exists for blog posts. When
+   present it sits between the two related cards (footRelated[0]/[1]); when
+   absent (case studies), up to three related cards render in sequence. */
+const [foot0, foot1, foot2] = footRelated;
+---
+
+<BaseLayout route={route} child={{ path: childPath, name: childName }} title={title} description={description} schema={schema}>
+  <article class="bpx">
+    <header class="bpx-top">
+      <div class="bpx-topin">
+        <p class="bpx-crumbs">
+          <a href="/">Home</a><span class="crumb-sep">/</span><a href={crumbHubHref}>{crumbHubLabel}</a><span class="crumb-sep">/</span>{topicLabel}
+        </p>
+        <div class="bpx-eyebrow">{org ? `${topicLabel} · ${org}` : topicLabel}</div>
+        <h1 class="bpx-h">{headline}</h1>
+        <p class="bpx-dek">{dek}</p>
+        {
+          (readTime || author || publishedLong) && (
+            <div class="bpx-meta">
+              {author && (
+                <span>
+                  By {author.url ? <a href={author.url} rel="author">{author.name}</a> : author.name}
+                  {author.role && `, ${author.role}`}
+                </span>
+              )}
+              {publishedLong && <span><time datetime={publishedISO}>{publishedLong}</time></span>}
+              {updatedLong && <span>Updated <time datetime={updatedISO}>{updatedLong}</time></span>}
+              {readTime && <span>{readTime}</span>}
+            </div>
+          )
+        }
+      </div>
+    </header>
+
+    <div class="bpx-shell">
+    {
+      hero && (
+        <div class:list={["bpx-hero", heroFit && "bpx-hero-fit"]}>
+          {heroFit ? (
+            <img src={hero} alt="" decoding="async" />
+          ) : (
+            <img src={hero} alt="" width="1200" height="514" decoding="async" />
+          )}
+          {mark && (
+            <>
+              <span class="bpx-hero-wash" />
+              <span class="bpx-hero-mark" style={`width:${mark.w}px;height:${mark.h}px`}>
+                <img src={logo} alt={org} loading="lazy" decoding="async" />
+              </span>
+            </>
+          )}
+        </div>
+      )
+    }
+
+    <div class="bpx-body">
+      <div class="bpx-prose">
+        {lede.map((para) => <p class="bpx-lede">{para}</p>)}
+
+        {
+          takeaways.length > 0 && (
+            <div class="bpx-short">
+              <div class="bpx-kicker">{asideLabel}</div>
+              <ul>
+                {takeaways.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          sections.map((s) => (
+            <section class:list={["bpx-sec", s.sub && "bpx-sub"]}>
+              {s.kicker && <div class="bpx-kicker">{s.kicker}</div>}
+              {s.head && s.sub && (
+                <h3>
+                  {s.num && <i class:list={["bpx-num", `cat-${topicKey}`]}>{s.num}</i>}
+                  {s.head}
+                </h3>
+              )}
+              {s.head && !s.sub && (
+                <h2 id={s.id}>
+                  {s.num && <i class:list={["bpx-num", `cat-${topicKey}`]}>{s.num}</i>}
+                  {s.head}
+                </h2>
+              )}
+              {(s.paras || []).map((para) => <p>{para}</p>)}
+              {s.bullets && s.bullets.length > 0 && (
+                <ul class="bpx-list">
+                  {s.bullets.map((b) => (
+                    <li>{b}</li>
+                  ))}
+                </ul>
+              )}
+              {s.fig && FIGS[s.fig] && (
+                <div class="bpx-scene">
+                  <Fragment set:html={FIGS[s.fig]} />
+                </div>
+              )}
+              {s.table && (
+                <div class="bpx-tablewrap">
+                  <table class="bpx-table">
+                    <thead>
+                      <tr>{s.table.cols.map((c) => <th>{c}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                      {s.table.rows.map((r) => (
+                        <tr>{r.map((c) => <td>{c}</td>)}</tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {s.quote && (
+                <figure class="bpx-q">
+                  <blockquote>{s.quote}</blockquote>
+                  {s.quoteWho && <figcaption>{s.quoteWho}</figcaption>}
+                </figure>
+              )}
+              {(s.after || []).map((para) => <p>{para}</p>)}
+              {imgSrc(s.img, s.imgRemote) && (
+                <figure class="bpx-fig">
+                  <span
+                    class:list={["bpx-frame", (s.img || "").includes("/poc-") && "bpx-frame-fit"]}
+                    style={s.imgRatio ? `aspect-ratio:${s.imgRatio.replace("/", " / ")}` : undefined}
+                  >
+                    <img src={imgSrc(s.img, s.imgRemote)} alt={s.caption || ""} loading="lazy" decoding="async" />
+                  </span>
+                  {s.caption && <figcaption>{s.caption}</figcaption>}
+                </figure>
+              )}
+            </section>
+          ))
+        }
+
+        {
+          pull && (
+            <figure class="bpx-pull">
+              <blockquote>{pull}</blockquote>
+              {pullWho && <figcaption>{pullWho}</figcaption>}
+            </figure>
+          )
+        }
+
+        {
+          midCta && (
+            <div class="bpx-cta">
+              <div>
+                <b>{midCta.heading}</b>
+                <span>{midCta.body}</span>
+              </div>
+              <a class="btn primary" href={midCta.ctaHref}>{midCta.ctaLabel} <i>&rsaquo;</i></a>
+            </div>
+          )
+        }
+      </div>
+
+      <aside class="bpx-aside">
+        {
+          toc.length > 0 && (
+            <nav class="bpx-toc" aria-label="On this page">
+              <p class="bpx-toct">On this page</p>
+              <ol>
+                {toc.map((s) => (
+                  <li>
+                    <a href={"#" + s.id}>{s.head}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+        <a class="bpx-act bpx-act-b" href={href("resources/glossary")}>
+          Open the glossary <i>&rsaquo;</i>
+        </a>
+      </aside>
+    </div>
+
+    {sourceNote && <p class="note">[{sourceNote}]</p>}
+
+    <nav class="bpx-foot">
+      {footLabel && <div class="kicker bpx-footlbl">{footLabel}</div>}
+      {
+        foot0 && (
+          <a class="bpx-fcard" href={foot0.href}>
+            {foot0.topicLabel && <span class:list={["bpx-fk", foot0.topicClass]}>{foot0.topicLabel}</span>}
+            <b>{foot0.title}</b>
+            <span class="bpx-fgo">{foot0.ctaLabel} <i>&rsaquo;</i></span>
+          </a>
+        )
+      }
+      {
+        footDest && (
+          <a class="bpx-fcard bpx-fmid" href={footDest.href}>
+            <span class="bpx-fsky" aria-hidden="true"><Fragment set:html={stars(14)} /></span>
+            <span class="bpx-fk">On the site</span>
+            <b>{footDest.label}</b>
+            <span class="bpx-fline">{footDest.line}</span>
+            <span class="bpx-fgo">Go <i>&rsaquo;</i></span>
+          </a>
+        )
+      }
+      {
+        foot1 && (
+          <a class="bpx-fcard" href={foot1.href}>
+            {foot1.topicLabel && <span class:list={["bpx-fk", foot1.topicClass]}>{foot1.topicLabel}</span>}
+            <b>{foot1.title}</b>
+            <span class="bpx-fgo">{foot1.ctaLabel} <i>&rsaquo;</i></span>
+          </a>
+        )
+      }
+      {
+        !footDest && foot2 && (
+          <a class="bpx-fcard" href={foot2.href}>
+            {foot2.topicLabel && <span class:list={["bpx-fk", foot2.topicClass]}>{foot2.topicLabel}</span>}
+            <b>{foot2.title}</b>
+            <span class="bpx-fgo">{foot2.ctaLabel} <i>&rsaquo;</i></span>
+          </a>
+        )
+      }
+    </nav>
+
+    <p class="bpx-back">
+      <a class="btn ghost" href={backHref}>&lsaquo; {backLabel}</a>
+    </p>
+    </div>
+  </article>
+
+  <CtaBand />
+</BaseLayout>
+
+<script>
+  import "../scripts/pages/blog-post";
+</script>

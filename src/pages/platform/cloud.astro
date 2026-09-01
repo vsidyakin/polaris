@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/cloud">
+  <PageIntro
+    route={"platform/cloud"}
+    tpl={"T5"}
+    title={"Mersive Polaris Cloud"}
+    dek={"One management plane for every room, and everything plugged into it. Analytics, activation, fleet operations, and health for the whole estate, from a browser."}
+  />
+
+    <div class="reveal" style="margin:20px 0 6px">
+      <img class="cldshot" src="/images/portal-devices.png" alt="Polaris Cloud console: Devices view listing rooms, tiers, firmware and status, with fleet KPIs" width="1858" height="650" loading="lazy" decoding="async">
+    </div>
+
+    <section class="sect reveal tight">
+      <div class="kicker">What it runs</div>
+      <h2>Manage the room, not just the box.</h2>
+      <p class="sdek">Scoped to shipping capability: every card below is a portal tab, not a promise.</p>
+      <div class="prdgrid">
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.cloudx} /></div><h3>Analytics</h3><p>Usage per room, per day: meetings, total connections, hours in use, posts shared, and average meeting length, over the last 7, 30, 60 or 90 days or all time, with breakdowns by connection mode, sharing protocol, client operating system and conferencing platform &mdash; plus downtime, unreachable and reboot counts per room, and CSV export of any view. <span class="note">[verify: OCCUPANCY IS OFF THIS PAGE UNTIL AUTUMN 2026. Ruled by Damian Blazy 14 Aug 2026: occupancy sensing shipped on Gen 3 and is on the Gen 4 roadmap, but it is not in Polaris today &mdash; the word occupancy appears nowhere in the platform codebase, and motion-sensor state feeds no metric, chart or table. It reaches the portal only as a connected-peripheral icon, and the raw events only through the cloud API. Revisit this card in autumn 2026 and write it from what has shipped by then, rather than from the Gen 3 capability - Damian and product]</span></p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.crossnet} /></div><h3>Open cloud API</h3><p>A REST API out of Polaris Cloud, enabled per organisation. Reboot a device or switch its HDMI input; sleep and wake a display, one at a time or every device in the organisation at once; send HDMI-CEC or serial power commands; set the display to mirror or extend; read device, display, network and aggregate status across the fleet; read motion-sensor state and history; set a room&rsquo;s digital-signage URL, or set one URL across the whole organisation; and read, create, update and delete room calendar events. Pull the fleet into the monitoring and automation tooling you already run.</p><p class="note">[Full API reference publication pending — see the documentation gap list. D-19 resolved-negative: no partner names publish without a contract or working integration in evidence.]</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.oneplat} /></div><h3>Activation &amp; licensing</h3><p>Claim devices, assign subscriptions, and see exactly what's licensed where: renewals and entitlements in one view, partner-visible where you want them to be.</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.workspace} /></div><h3>Fleet management</h3><p>Configuration templates: define a room profile once &mdash; appearance and idle-screen content, signage, share protocols, network and proxy, calendar integration, display power and reboot schedule, and the firmware-update window &mdash; then assign it to as many devices as you select. Each device carries one template, and editing the template re-applies it to every device assigned to it. Devices can also be edited in bulk without a template, and onboarded in bulk from a CSV of up to 1,000 devices. Firmware updates are scheduled per device or fleet-wide through a template: turn auto-update on, then choose &lsquo;as soon as possible&rsquo; or a weekly window &mdash; a day and a time &mdash; and optionally hold the update back while people are still connected. You can also select any set of devices and update them immediately. [verify: the templates nav item and the weekly-window option are each behind a LaunchDarkly flag whose in-repo production fallback is off, so the shipped visibility of both is unprovable from the repository. Confirm the production flag state before launch - engineering]</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.shieldx} /></div><h3>Alerts &amp; health</h3><p>A room that&rsquo;s offline, a display that dropped, firmware that failed to take, surfaced before the 9am meeting finds it. Alerts arrive by email. Six triggers: a pod unreachable for a number of minutes you set (1 to 60, default 5), a pod rebooted, a pod unassigned from its template, and firmware update available, about to begin, and completed. Alerts go to the signed-in administrator plus up to five additional email addresses, and each recipient chooses which of the six they want. [verify: TABLED 14 Aug 2026 pending Damian&rsquo;s decision. The portal has exactly six alert ids &mdash; unreachable, rebooted, unassignedFromTemplate, firmwareAvailable, firmwareAboutToBegin, firmwareCompleted &mdash; and none of them covers a dropped display or a FAILED firmware update. The product alerts on firmware completing, not on firmware failing, and HDMI-out disconnect exists only as raw device telemetry, never as an alert. So the first sentence promises two alerts that do not exist while the list beneath it enumerates the six that do, which is a contradiction inside one card. Decide: cut the two, or build them - Damian, then engineering] [verify: the whole alerts tab is gated by a build-time env var declared in no file in the repository, so its shipped visibility is unprovable - engineering]</p></div>
+      </div>
+    </section>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">During your migration</div>
+      <h2>Both estates, one starting point.</h2>
+      <p>Running Mersive Solstice Gen 3 rooms alongside new Polaris rooms? Mersive Solstice Cloud keeps managing your Gen 3 estate exactly as it does today, and Polaris Cloud links straight through to it, so your team works from one starting point and loses none of the tooling they already know.</p>
+      <p>Your Gen 3 rooms stay supported, managed, and documented for the whole migration. Nothing goes dark while you move. [Do not restore any claim of unified in-pane Gen 3 monitoring/analytics/power-cycling unless the cloud team confirms it shipped after 2026-04-14.]</p>
+      <div class="chips"><span>✓ Gen 3 estate fully managed</span><span>✓ Polaris rooms managed</span><span>✓ One starting point through the transition</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/products/transition">The Mersive Solstice Gen 3 → Polaris path →</a> &nbsp; <a class="btn accent" href="/products/solstice">Mersive Solstice today →</a></p>
+    </div>
+
+    <div class="g3band reveal"><b>Signage lives here too.</b> The same portal manages the meeting estate and the signage estate: one login, one fleet, one set of policies. Signage is included, not licensed separately: no second CMS stack and no second vendor. On at least one platform in our compare matrix, signage requires a $999.99 administrative-tools licence plus that vendor&rsquo;s own cloud subscription. <span class="btns"><a class="btn accent" href="/solutions/signage">Digital signage →</a></span></div>
+
+    <div class="kicker" style="margin-top:26px">Deploy it: open, no forms</div>
+    <div class="prddocs reveal">
+      <a href="/resources/docs"><b>Deployment guide</b>Network requirements, ports, proxy and SSO configuration: ungated, one click. [placeholder]</a>
+      <a href="/resources/docs"><b>Admin &amp; API documentation</b>Console administration and the management API, organized by task. [placeholder]</a>
+      <a href="/resources/firmware"><b>Firmware &amp; release notes</b>Every release publicly logged: the update-policy receipt.</a>
+    </div>
+    <section class="sect reveal flush">
+      <div class="kicker">Attested, and this is the system</div>
+      <h2>This page is what the audit covers.</h2>
+      <p class="sdek">When the SOC 2 Type 2 and SOC 3 reports name their system, they name this: the Polaris cloud management console. BARR Advisory, period 1 March &ndash; 31 May 2025, on security, confidentiality and availability, with the HIPAA Security Rule administrative safeguards in the same opinion and a NIST SP 800-171 mapping published inside the report. Google Cloud underneath, TLS in transit, administrative access behind IAM and multi-factor authentication, failover across availability zones. The cloud application is also penetration-tested annually by an outside firm: the July 2026 assessment ran against OWASP ASVS 5.0.0, every Level 1 control plus a subset of Level 2, and returned no critical and no high-severity findings, with token integrity, object-level authorization on tenant-owned records, injection defences and mass-assignment protection all holding up under testing. [2026 SOC 2 Type 2: swap in the period and opinion date when the auditors issue - CISO]</p>
+      <p class="note">Scope, stated plainly: the reports cover this console and do not extend to the Pod, the Mini or Smart. The devices carry their own independent testing &mdash; see <a href="/platform/security">the Trust Center</a>.</p>
+    </section>
+
+    <CtaBand variant="platform" />
+</BaseLayout>

@@ -1,0 +1,236 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CNVIC } from "../../data/icons";
+import { crumbs, dxL, dxSec, upgradeBand, DXU } from "../../lib/blocks";
+import { secDocCards } from "../../lib/security-hub";
+---
+
+<BaseLayout route="resources/docs">
+  <Fragment set:html={crumbs("resources/docs","Documentation hub")} />
+    <div class="pageinfo"><span class="tag t-tpl">T8</span><span class="tag t-open">OPEN: NOTHING GATED</span></div>
+    <h1 class="pg">Documentation, <span class="warm">in the open</span>.</h1>
+    <p class="dek">Every deployment guide, admin manual, API reference, and release note: public, current, and searchable at <a href="https://documentation.mersive.com" target="_blank" rel="noopener">documentation.mersive.com</a>. That is our policy, not a claim about anyone else: no forms, no logins, no &ldquo;talk to sales to see the specs.&rdquo; Crestron, WolfVision, Extron, ScreenBeam and Airtame publish ungated technical documentation too; Barco&rsquo;s ClickShare security whitepaper needs a myBarco login. Every link below goes straight to a real page on the live portal.</p>
+    <div class="dxleg reveal"><span class="lp"><i></i>Polaris · current platform</span><span class="lg"><i></i>Mersive Solstice Gen 3</span></div>
+    <Fragment set:html={upgradeBand()} />
+
+    <div class="cnv-search reveal" style="border:1.5px solid rgba(165,140,255,.55);border-radius:14px;box-shadow:0 0 26px rgba(143,122,224,.22);padding:6px"><div class="kicker" style="margin:6px 0 4px 8px">Search the docs</div><input id="docq" style="font-size:16px" type="text" placeholder="Search the documentation: e.g. 802.1x, port matrix, API auth" onkeydown="if(event.key==='Enter')cnvDocSearch()"><button class="btn accent" onclick="cnvDocSearch()">Search</button></div>
+
+    {/* Two per row, deliberately: training on the first row, reference
+        documentation on the second. auto-fit would reflow these four into a
+        single row on a wide monitor and lose that pairing. Collapses to one
+        column under 720px. */}
+    <div class="cnv-doors reveal dx2">
+      <h2 class="sr-only">Documentation and learning resources</h2>
+      <a class="cnv-door" href="https://www.youtube.com/playlist?list=PLblQAuomS_194D8E2KdmS5To_8OszjVbs" target="_blank" rel="noopener"><div class="ic"><Fragment set:html={CNVIC.collat} /></div><div class="rk">Watch it instead · YouTube</div><h3>Learning Videos</h3><p>The Mersive learning playlist: short videos that show the thing rather than describing it. Useful when you are training a room's users, or when a written procedure would be three paragraphs and one gesture.</p><span class="go">youtube.com playlist ↗</span></a>
+      <a class="cnv-door" href="https://mersive.learnupon.com/users/sign_in?next=%2Fdashboard" target="_blank" rel="noopener"><div class="ic"><Fragment set:html={CNVIC.docs} /></div><div class="rk">Courses &amp; certification · sign in</div><h3>Mersive Learning Lab</h3><p>Structured courses and certification tracks for partners and administrators, in Mersive's LearnUpon tenant. This one needs an account: it is training with progress and completion, not reference documentation.</p><span class="go">mersive.learnupon.com ↗</span></a>
+      <a class="cnv-door dxp" href={`${DXU}/en/mcs/mersive-collaboration-suite.html`} target="_blank" rel="noopener"><div class="ic"><Fragment set:html={CNVIC.docs} /></div><div class="rk">Current platform · Polaris</div><h3>Polaris documentation</h3><p>The current platform: the portal publishes it as the Mersive Collaboration Suite (Polaris): pods, the cloud admin portal, network requirements, and connect-and-share guides, updated roughly monthly as the product ships.</p><span class="go">documentation.mersive.com/en/mcs ↗</span></a>
+      <a class="cnv-door dxg3" href={`${DXU}/en/solstice/about-solstice.html`} target="_blank" rel="noopener"><div class="ic"><Fragment set:html={CNVIC.collat} /></div><div class="rk">The estate you run today · Mersive Solstice Gen 3</div><h3>Mersive Solstice Gen 3 documentation</h3><p>Everything for the Mersive Solstice estate you already operate: deployment and network guides, Mersive Solstice Cloud administration, Active Learning, the OpenControl API, and firmware history through 6.3.2. Staying reachable is the point: legacy owners are not second-class readers.</p><span class="go">documentation.mersive.com/en/solstice ↗</span></a>
+    </div>
+    {/* ── Security & compliance ──────────────────────────────────────────────
+        Added Aug 2026. A vendor-review pack is the single most-requested thing on a
+        documentation hub and it had no home here: certifications were on the Trust
+        Center, the testing record was nowhere, and a reviewer looking for evidence
+        had to guess which page held it. This section is the index, not the content —
+        every card points at the page or the artefact that answers it.
+
+        Deliberately first on the page. The audience for a docs hub at 9am on a
+        Monday is someone filling in a security questionnaire. */}
+    <section class="sect reveal flush">
+      <div class="kicker">For the security reviewer</div>
+      <h2>The evidence pack.</h2>
+      <p class="sdek">
+        Certifications, scope statements and the independent testing record, with the scope limits
+        stated rather than trimmed. Nothing here is behind a form; the two items that carry
+        control-by-control test detail go out under NDA and are marked.
+      </p>
+      <p class="sdek">
+        This is the same set that appears on the <a href="/platform/security">Trust Center</a>, which
+        also carries the security architecture narrative and the security rows of the comparison
+        matrix. Filed in both places on purpose: some people want the security documents on the
+        security page, others want every document in one library.
+      </p>
+      <Fragment set:html={secDocCards("/resources/docs")} />
+      <p class="note">
+        [Compliance-matrix workbook mapping our controls to a customer questionnaire template is
+        still owed &mdash; security. The mappings above ship inside the SOC 2 report today, which
+        answers most of it under NDA but does not replace an open one-pager.]
+      </p>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">For your network team</div>
+      <h2>The architecture, on one page.</h2>
+      <div class="cnv-doors" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door dxp" href="/resources/network"><div><b>Network requirements · Polaris — ports, endpoints, VLANs</b><p>The complete inventory our diagnostic tool validates: 14 cloud endpoints, casting ports, WebRTC ranges, and the recommended VLAN architecture. Now a full page.</p></div></a>
+        <a class="cnv-door dxg3" href="/platform/security"><div><b>Security whitepaper · Gen 3-era</b><p>The multi-layer security model, hardware to cloud. [Current PDF is Gen 3-era and marketing-voiced — being rewritten as an engineering brief per SE; publish after rewrite]</p></div></a>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">For the AV administrator</div>
+      <h2>Rack it, cable it, run it.</h2>
+      <p class="sdek">The operational view: what it physically takes to put each product in a room, and how the fleet is run afterward. Where a document doesn&rsquo;t exist yet, the card says so and the gap register (workbook 5) owns it.</p>
+
+      <div class="kicker" style="margin:22px 0 2px">Physically deploy each product</div>
+      <div class="cnv-doors gp" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/mcs/mcs-quick-start.html`} target="_blank" rel="noopener"><div><b>Polaris Pro: one cable ↗</b><p>PoE+ (802.3at) from the switch carries power and network: no outlet needed behind the display. Mount the pod, connect up to two displays over HDMI (optional HDMI input for wired ingest or a room system), activate from the cloud. Quick start is the interim guide. [Full install guide owed: T-06]</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/mcs/mcs-quick-start.html`} target="_blank" rel="noopener"><div><b>Polaris Essentials: plan the outlet ↗</b><p>Essentials powers from a 12V barrel supply, not PoE, so every install needs an outlet behind the display. One HDMI to the screen (4K30), network over GbE or Wi-Fi, then cloud activation. Quick start is the interim guide. [Full install guide owed: T-06]</p></div></a>
+        <a class="cnv-door" href="/products/launch"><div><b>Launch <span class="tag t-ship">Shipping Q1 2027</span></b><p>Share-first device for signage, offices, and inexpensive rooms. Physical install guidance publishes with the hardware documentation. [Blocked: no Launch hardware PRD yet — T-05/T-13]</p></div></a>
+        <a class="cnv-door" href="/products/hybrid"><div><b>Link &amp; Host <span class="tag t-ship">SHIPS Q3&ndash;Q4 2026</span></b><p>Hybrid additions install onto an existing Pro (Link) or Essentials/Pro (Host) room. Install guides ship with the hardware. [T-11/T-12]</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/mcs/mcs-quick-start/gen4-pod-safety-and-compliance-statement.html`} target="_blank" rel="noopener"><div><b>Safety &amp; compliance ↗</b><p>The regulatory and safety statement for Polaris pod hardware: the page your facilities and compliance reviewers ask for.</p></div></a>
+      </div>
+
+      <div class="kicker" style="margin:22px 0 2px">Run the fleet</div>
+      <div class="cnv-doors gp" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/mcs/cloud-management.html`} target="_blank" rel="noopener"><div><b>Admin portal ↗</b><p>Organizations, devices, users, and plans at app.mersive.com/admin: onboard pods, assign rooms, manage the estate from anywhere.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/mcs/mersive-release-notes.html`} target="_blank" rel="noopener"><div><b>Firmware &amp; updates ↗</b><p>Monthly release notes: what shipped, what changed, what to schedule. Bulk templates and scheduled OTA guidance are part of the fleet-management guide. [Owed: T-07]</p></div></a>
+        <a class="cnv-door" href="/partners/program"><div><b>Managing fleets as a partner</b><p>Integrators quoting and managing on behalf of customers work through the partner portal. [Co-management documentation owed: T-08 — model to be confirmed with the partner team before this card publishes]</p></div></a>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Apps &amp; downloads</div>
+      <h2>Get the apps.</h2>
+      <div class="cnv-doors" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+        <a class="cnv-door dxg3" href="https://www.mersive.com/download/" target="_blank" rel="noopener"><div><b>Desktop app · Mersive Solstice Gen 3 only</b><p>Windows &amp; macOS clients for Mersive Solstice Gen 3 rooms. Polaris has no desktop app: the browser is the app.</p></div></a>
+        <a class="cnv-door" href="/resources/downloads"><div><b>Mobile apps · one per generation</b><p>iOS &amp; Android: separate apps, one for Polaris, one for Mersive Solstice Gen 3. All apps →</p></div></a>
+        <a class="cnv-door dxp" href="/platform/how"><div><b>Polaris needs no download</b><p>Share from the browser at app.mersive.com: nothing to install. Here's how it works →</p></div></a>
+      </div>
+    </section>
+
+    <p class="note">Both destinations are live today: this hub fronts the real portal, split exactly the way the portal splits: Polaris and Mersive Solstice Gen 3. Naming note: the live portal still uses internal pre-launch names for the Polaris platform; its labels update at launch.</p>
+
+    <section class="sect reveal flush">
+      <div class="kicker">The library, mapped</div>
+      <h2>Twelve pages, four jobs, two platforms: never mixed.</h2>
+      <p class="sdek">The portal runs deep; these are the pages an evaluating IT team or a deploying integrator actually opens, grouped by the job in front of you: within each job, Polaris first, then the Mersive Solstice Gen 3 estate. Every link goes to a live page on the portal, checked against the real site.</p>
+
+      <div class="kicker" style="margin:22px 0 2px">Deploy it · Polaris</div>
+  <div class="cnv-doors gp" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/mcs/network-requirements.html`} target="_blank" rel="noopener"><div><b>Network requirements · Polaris ↗</b><p>Sharing runs over WebRTC, so users don&rsquo;t need to be on the device&rsquo;s network. DNS and firewall guidance from simple to complex sites.</p></div></a>
+      </div>
+      <div class="kicker" style="margin:14px 0 2px">Deploy it · Mersive Solstice Gen 3</div>
+      <div class="cnv-doors gg3" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/solstice/deploy-solstice/solstice-setup/network-requirements.html`} target="_blank" rel="noopener"><div><b>Network requirements &amp; ports · Gen 3 ↗</b><p>TCP and UDP port tables, firewall URL exceptions, the Windows program allowlist, and a network diagram. The page your firewall team asks for first.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/solstice/deploy-solstice/deploy-solstice-with-solstice-cloud.html`} target="_blank" rel="noopener"><div><b>Deploy with Mersive Solstice Cloud ↗</b><p>The recommended rollout in nine steps: import Pods, configure templates, set network and base security, add room calendars, validate.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/solstice/deploy-solstice/deploy-the-mersive-solstice-app/centrally-deploy-app-with-msi.html`} target="_blank" rel="noopener"><div><b>Roll out the app with MSI ↗</b><p>Silent msiexec installs with every documented parameter, worked examples included. SCCM and macOS defaults are one click away.</p></div></a>
+      </div>
+    <div class="kicker" style="margin:22px 0 2px">Secure it · Polaris</div>
+      <p class="note" style="margin:6px 2px 2px">No Polaris hardening-template page exists yet: 802.1x / WPA2-Enterprise onboarding is documented only in release notes so far. [docs gap list]</p>
+      <div class="kicker" style="margin:14px 0 2px">Secure it · Mersive Solstice Gen 3</div>
+      <div class="cnv-doors gg3" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/solstice/manage-solstice/manage-solstice-with-solstice-cloud/pod-settings-and-templates/security-template.html`} target="_blank" rel="noopener"><div><b>Security template ↗</b><p>Fleet-wide hardening in one template: admin passwords, HTTPS redirect, traffic encryption, custom TLS and CA certificates, ICMP controls.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/solstice/deploy-solstice/deploy-solstice-locally-with-solstice-dashboard.html`} target="_blank" rel="noopener"><div><b>Deploy on a closed network ↗</b><p>Batch configuration over the local network for Pods that can&rsquo;t touch the internet. The portal says plainly that Dashboard is legacy and cloud is the path.</p></div></a>
+      </div>
+    <div class="kicker" style="margin:22px 0 2px">Run it · Polaris</div>
+  <div class="cnv-doors gp" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/mcs/cloud-management.html`} target="_blank" rel="noopener"><div><b>Admin portal · Polaris ↗</b><p>Organizations, devices, users, and plans at app.mersive.com/admin: the day-to-day console for the current platform.</p></div></a>
+      </div>
+      <div class="kicker" style="margin:14px 0 2px">Run it · Mersive Solstice Gen 3</div>
+      <div class="cnv-doors gg3" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/solstice/manage-solstice/manage-solstice-with-solstice-cloud.html`} target="_blank" rel="noopener"><div><b>Manage with Mersive Solstice Cloud ↗</b><p>Create the organization, onboard Pods with the Deploy app, run the fleet from anywhere. Standard management is included for every Pod.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/solstice/manage-solstice/monitor-your-deployment.html`} target="_blank" rel="noopener"><div><b>Monitor the deployment ↗</b><p>Availability graphs, update status, automated email alerts filtered by category, and CSV export of the whole fleet.</p></div></a>
+        <a class="cnv-door" href={`${DXU}/en/solstice/solstice-release-notes.html`} target="_blank" rel="noopener"><div><b>Release notes · Gen 3 ↗</b><p>The full version history, publicly logged, latest release 6.3.2. What shipped, what&rsquo;s fixed, what&rsquo;s known-broken.</p></div></a>
+      </div>
+    <div class="kicker" style="margin:22px 0 2px">Build on it · Polaris</div>
+  <div class="cnv-doors gp" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/en/mcs/mersive-release-notes.html`} target="_blank" rel="noopener"><div><b>Release notes · Polaris ↗</b><p>Monthly notes that double as the API changelog for now: remote reboot, sleep and wake, and device info endpoints are described here.</p></div></a>
+      </div>
+      <div class="kicker" style="margin:14px 0 2px">Build on it · Mersive Solstice Gen 3</div>
+      <div class="cnv-doors gg3" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <a class="cnv-door" href={`${DXU}/content/topics/opencontrolapi_2_0.html`} target="_blank" rel="noopener"><div><b>OpenControl API v2 · Gen 3 ↗</b><p>The complete REST reference: authentication, configuration, calendar, HDMI input control, and schemas, with bash and Python examples for every call.</p></div></a>
+      </div>
+  
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Start from the task</div>
+      <h2>One map, both platforms.</h2>
+      <p class="sdek">Documentation organized by what you&rsquo;re trying to do, not by which team wrote it. Each section pairs the current platform&rsquo;s pages with their Mersive Solstice Gen 3 equivalents, and says so plainly where a Polaris document doesn&rsquo;t exist yet.</p>
+    </section>
+
+    <Fragment set:html={dxSec(true,"Deploy &amp; network","Get devices on the network and rooms live: requirements, firewall rules, activation, and rollout.",
+      dxL(`${DXU}/en/mcs/network-requirements.html`,"Network Requirements","Internet + DNS, WebRTC sharing across networks, firewall guidance from simple to complex sites.")+
+      dxL(`${DXU}/en/mcs/network-requirements/sharing-protocols.html`,"Sharing Protocols","How WebRTC-based sharing traverses the network: the page to hand your network team.")+
+      dxL(`${DXU}/en/mcs/network-requirements/recommended-network-performance-metrics.html`,"Network Performance Metrics","Bandwidth, latency, and loss targets for a good sharing experience.")+
+      dxL(`${DXU}/en/mcs/getting-started.html`,"Getting Started: Device Activation","Guided activation flow: the device tracks progress and walks you through it.")+
+      dxL(`${DXU}/en/mcs/mcs-quick-start.html`,"Polaris Quick Start Guides","Unbox-to-first-share guides for Smart, Essentials, and Pro tiers.")+
+      dxL(`${DXU}/en/mcs/mcs-quick-start/gen4-pod-safety-and-compliance-statement.html`,"Polaris Pod Safety &amp; Compliance","Regulatory and safety statement for Polaris pod hardware."),
+      "No consolidated port-matrix page at the depth of Mersive Solstice Gen 3&rsquo;s network requirements yet; 802.1x / WPA2-Enterprise onboarding is documented only in release notes so far.",
+      dxL(`${DXU}/en/solstice/deploy-solstice.html`,"Deploy Mersive Solstice (section home)","The full deployment guide: setup, configuration paths, app rollout.")+
+      dxL(`${DXU}/en/solstice/deploy-solstice/solstice-setup/network-requirements.html`,"Network Requirements &amp; Ports","The canonical port matrix: TCP/UDP tables, firewall URLs, program allowlists, network diagram.")+
+      dxL(`${DXU}/en/solstice/deploy-solstice/deploy-solstice-with-solstice-cloud.html`,"Deploy with Mersive Solstice Cloud","Cloud-first Pod deployment, including network and base security settings.")+
+      dxL(`${DXU}/en/solstice/deploy-solstice/deploy-video-conferencing-with-solstice.html`,"Deploy Video Conferencing","BYOM conferencing rooms: USB cameras, mics, and supported peripherals.")+
+      dxL(`${DXU}/en/solstice/deploy-solstice/deploy-the-mersive-solstice-app.html`,"Deploy the Mersive Solstice App","Central rollout with MSI, SCCM, and macOS defaults.")+
+      dxL(`${DXU}/en/solstice/deploy-solstice/solstice-discovery-service--sds-.html`,"Mersive Solstice Discovery Service (SDS)","Non-broadcast display discovery for enterprise networks."),
+      "Mersive Solstice Gen 3 deployment docs are the most mature on the portal. Use them as the reference for what Polaris docs should grow into.")} />
+
+    <Fragment set:html={dxSec(false,"Administer &amp; manage","Run the fleet after day one: devices, users, plans, analytics, signage, and updates.",
+      dxL(`${DXU}/en/mcs/cloud-management.html`,"Cloud Management (admin portal)","The Mersive Management Console at app.mersive.com/admin: orgs, devices, users, plans.")+
+      dxL(`${DXU}/en/mcs/cloud-management/managing-devices.html`,"Managing Devices","Device list, status, customization, plan assignment, offline checks.")+
+      dxL(`${DXU}/en/mcs/cloud-management/organizations.html`,"Organizations","Model your business structure; switch between orgs from one login.")+
+      dxL(`${DXU}/en/mcs/cloud-management/users.html`,"Users","Invite admins, manage privileges, suspend and restore access.")+
+      dxL(`${DXU}/en/mcs/cloud-management/mersive-plans.html`,"Mersive Plans","Subscriptions and licensing as the portal manages them.")+
+      dxL(`${DXU}/en/mcs/cloud-management/home-page-and-analytics.html`,"Home Page &amp; Analytics","Fleet overview plus the new device-utilization reporting.")+
+      dxL(`${DXU}/en/mcs/cloud-management/digital-signage---display-customization.html`,"Digital Signage &amp; Display Customization","Idle-screen signage, custom instructions, show/hide display elements."),
+      "",
+      dxL(`${DXU}/en/solstice/manage-solstice.html`,"Manage Mersive Solstice (section home)","All management paths: Mersive Solstice Cloud, per-Pod config, legacy Dashboard.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/manage-solstice-with-solstice-cloud.html`,"Manage with Mersive Solstice Cloud","Onboarding via Mersive Solstice Deploy, categories, templates, users and roles.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/manage-solstice-with-solstice-cloud/pod-settings-and-templates.html`,"Pod Settings &amp; Templates","Configuration templates (Ethernet, proxy, security) applied fleet-wide.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/monitor-your-deployment.html`,"Monitor Your Deployment","Health, availability, and usage monitoring.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/schedule-solstice-pod-updates.html`,"Schedule Pod Updates","Fleet-wide software updates on your calendar, not ours.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/manage-solstice-locally-with-solstice-dashboard.html`,"Mersive Solstice Dashboard (legacy, local)","On-premises management when cloud isn&rsquo;t an option."),
+      "")} />
+
+    <Fragment set:html={dxSec(false,"Use in the room","For the people in the meeting: connect, share to the workspace, and moderate, on the device they walked in with.",
+      dxL(`${DXU}/en/mcs/connect-and-share.html`,"Connect and Share","Browser-based sharing: no downloads, no accounts. Screen key in, content up.")+
+      dxL(`${DXU}/en/mcs/connect-and-share/what-you-need.html`,"What You Need","Prerequisites for connecting to a Mersive-enabled display.")+
+      dxL(`${DXU}/en/mcs/connect-and-share/sharing-content-with-audio.html`,"Sharing Content with Audio","Getting sound to the room along with the picture.")+
+      dxL(`${DXU}/en/mcs/connect-and-share/about-the-idle-screen.html`,"About the Idle Screen","Reading the screen key, instructions, and calendar overlay.")+
+      dxL(`${DXU}/en/mcs/moderation.html`,"Moderation","Disconnect other users from the display: the first stage of in-room moderation."),
+      "No Active Learning equivalent for the current platform yet; multi-display routed learning spaces remain a Mersive Solstice Gen 3 capability, documented at right.",
+      dxL(`${DXU}/en/solstice/using-solstice.html`,"Using Mersive Solstice + 1-Page Room Guides","User guide home, with printable quick-reference guides to leave in rooms.")+
+      dxL(`${DXU}/en/solstice/using-solstice/meeting-collaboration-with-solstice/the-mersive-solstice-app.html`,"The Mersive Solstice App","Laptop and mobile sharing with full workspace control.")+
+      dxL(`${DXU}/en/solstice/using-solstice/meeting-collaboration-with-solstice/share-content-with-the-solstice-web-app.html`,"Share with the Mersive Solstice Web App","App-free browser sharing on Mersive Solstice Gen 3.")+
+      dxL(`${DXU}/en/solstice/using-solstice/meeting-collaboration-with-solstice/other-ways-to-share-to-solstice.html`,"App-Free Sharing","AirPlay, Miracast, and HDMI-in paths.")+
+      dxL(`${DXU}/en/solstice/using-solstice/video-conferencing-with-solstice/use-solstice-with-your-video-conference.html`,"Video Conferencing with Mersive Solstice","Connect room cameras and mics to the conference you brought.")+
+      dxL(`${DXU}/en/solstice/solstice-active-learning.html`,"Mersive Solstice Active Learning","Routed multi-screen learning spaces: setup, space design, app settings and sessions."),
+      "")} />
+
+    <Fragment set:html={dxSec(false,"Develop &amp; integrate","Automate and integrate: control displays, pull device data, and wire the estate into your tooling.",
+      dxL(`${DXU}/en/mcs/mersive-release-notes.html`,"Polaris API surface (via release notes)","Remote reboot, sleep/wake, display info, and device info APIs shipped in Aug 2025, currently described in the release notes.")
+      ,"The Polaris REST API is enabled per organisation and covers device power, display and device information, signage URL, and room-calendar endpoints, but the reference itself is not published on the portal yet. Publishing it is the single highest-impact docs fix for evaluators.",
+      dxL(`${DXU}/content/topics/opencontrolapi_2_0.html`,"Mersive Solstice OpenControl API v2","Full REST reference (auth, config, calendar, HDMI input, metadata) with bash and Python examples."),
+      "OpenControl is the pattern to beat: complete, public, copy-paste examples.")} />
+
+    <Fragment set:html={dxSec(false,"Release notes &amp; lifecycle","What shipped, what&rsquo;s fixed, and where each platform is in its life: the receipt behind the evolving-platform story.",
+      dxL(`${DXU}/en/mcs/mersive-release-notes.html`,"Polaris Release Notes","Roughly monthly: new features, fixes, and known issues for the current platform."),
+      "",
+      dxL(`${DXU}/en/solstice/solstice-release-notes.html`,"Mersive Solstice Release Notes","The full 6.x history (latest 6.3.2), publicly logged.")+
+      dxL(`${DXU}/en/solstice/solstice-release-notes/solstice-cloud-release-notes.html`,"Mersive Solstice Cloud Release Notes","Management portal changes, separately tracked.")+
+      dxL(`${DXU}/en/solstice/solstice-release-notes/solstice-active-learning-release-notes.html`,"Active Learning Release Notes","Release history for routed learning spaces."),
+      "Also see this site&rsquo;s <a href='/resources/firmware'>firmware &amp; release notes page</a> for the lifecycle narrative across both platforms.")} />
+
+    <Fragment set:html={dxSec(false,"Security &amp; compliance","The security architecture in citable form: hardening baselines, encryption posture, and cloud security briefs.",
+      dxL(`${DXU}/en/mcs/network-requirements.html`,"Security posture via Network Requirements","WebRTC sharing model and firewall guidance: the closest thing to a Polaris security overview today."),
+      "No dedicated Polaris security brief or hardening baseline exists yet; the Mersive Solstice Gen 3 PDFs at right have no Polaris counterparts. Until they ship, this site&rsquo;s <a href='/platform/security'>Trust Center</a> carries the architecture narrative.",
+      dxL(`${DXU}/content/pdf/baselinesecuritystandards.pdf`,"Baseline Security Standards (PDF)","The Pod hardening baseline: encryption, settings, and audit-via-API guidance.")+
+      dxL(`${DXU}/content/pdf/solsticecloudsecuritybrief.pdf`,"Mersive Solstice Cloud Security Brief (PDF)","What the cloud sees (de-identified events), how traffic is encrypted.")+
+      dxL(`${DXU}/content/pdf/solsticeconferencesecurityoverview.pdf`,"Conference Security Overview (PDF)","How room A/V devices sit behind the Pod&rsquo;s security layer.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/manage-solstice-with-solstice-cloud/pod-settings-and-templates/security-template.html`,"Security Template (Mersive Solstice Cloud)","Fleet-wide security settings as a template.")+
+      dxL(`${DXU}/en/solstice/manage-solstice/manage-solstice-locally-with-solstice-dashboard/security-settings.html`,"Security Settings (Dashboard)","Local hardening: access, capture protection, certificates."),
+      "")} />
+
+    <div class="cnv-band green reveal">
+      <div class="kicker" style="color:#7ce3a8">The principle</div>
+      <h2>Nothing gated. Ever.</h2>
+      <p>Open documentation is the category norm (the best vendors in this market publish everything) and it is our policy: specs, guides, security architecture, and release notes stay public. If an evaluation needs a document you can&rsquo;t reach from this page, that&rsquo;s a bug in the website, not a sales strategy.</p>
+      <p style="margin:0"><a href="/platform/security">The Trust Center: security documentation in the same spirit →</a></p>
+    </div>
+
+    <div class="cnv-buildnote reveal"><b>[BUILD DECISION:</b> consolidate documentation.mersive.com content under mersive.com/docs at production, or keep the subdomain with strong cross-linking — SEO assessment pending. This POC page assumes the subdomain stays and deep-links into it; the structure above doubles as the proposed information architecture for the portal itself. Portal naming must converge to &ldquo;Polaris&rdquo; before launch (the docs portal still carries the internal pre-launch platform name).<b>]</b></div>
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/docs";
+</script>

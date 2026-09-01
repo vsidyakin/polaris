@@ -1,0 +1,89 @@
+---
+import Crumbs from "./Crumbs.astro";
+
+interface Props {
+  route: string;
+  /** <h1> text. Also the trailing breadcrumb unless `crumb` overrides it. */
+  title: string;
+  /** Deck paragraph. Accepts inline HTML. */
+  dek?: string;
+  /**
+   * Trailing breadcrumb, where it differs from the route's PAGE_TITLES entry.
+   *
+   * Unset is the normal case and means "use PAGE_TITLES" — that entry is the
+   * page's short human name, which is what a breadcrumb wants. It is NOT the
+   * <h1>: "One platform. Choose your power." is a headline, "The Polaris
+   * family" is a breadcrumb.
+   */
+  crumb?: string;
+  /** Overrides the middle crumb; `false` drops it. See Crumbs.astro. */
+  section?: string | false;
+  /** Makes the middle crumb a link. See Crumbs.astro. */
+  sectionHref?: string;
+  /** IA template code, e.g. "T4" — shown as a review chip. */
+  tpl?: string;
+  /**
+   * Text of the green chip. Defaults to "OPEN"; /platform/security says
+   * "OPEN: NOTHING GATED". `false` drops it — /partners/portal is gated
+   * outright and carries no open chip at all.
+   */
+  open?: string | false;
+  /** Blocking owner + date, e.g. "BLOCKED: counsel — D-15". */
+  gate?: string;
+  /**
+   * Pre-launch chip. `true` gives the placeholder wording the generic IA pages
+   * use; a string is the chip's own text, e.g. "PRE-RELEASE" on
+   * /solutions/hybrid.
+   */
+  pre?: boolean | string;
+  /**
+   * Raw HTML appended inside the chip row, for chips that carry more than
+   * their text.
+   *
+   * The case this exists for is /products/route, whose ship chip is
+   * `<span class="tag t-ship al-flag">`: the al-flag class is how the September
+   * early publish finds every Route and Engage mention (CLAUDE.md, "September
+   * early publish"), so it has to stay a literal string in the page that owns
+   * it and must not be assembled out of props here.
+   */
+  chipsExtra?: string;
+  /** Set false on pages that render their own chip row. */
+  chips?: boolean;
+}
+const {
+  route,
+  title,
+  dek,
+  crumb,
+  section,
+  sectionHref,
+  tpl,
+  open = "OPEN",
+  gate,
+  pre,
+  chipsExtra,
+  chips = true,
+} = Astro.props;
+---
+
+<Crumbs route={route} title={crumb} section={section} sectionHref={sectionHref} />
+
+{
+  chips && (
+    <div class="pageinfo">
+      {tpl && <span class="tag t-tpl">{tpl}</span>}
+      {open && <span class="tag t-open">{open}</span>}
+      {gate && <span class="tag t-gated">{gate}</span>}
+      {pre && <span class="tag t-pre">{pre === true ? "PRE-LAUNCH: internal placeholder" : pre}</span>}
+      {chipsExtra && <Fragment set:html={chipsExtra} />}
+    </div>
+  )
+}
+
+{/* A band that belongs above the heading rather than in the body — the
+    availability notice on /products/hybrid is the one in use. Empty on every
+    other page, and an empty slot renders nothing. */}
+<slot name="banner" />
+
+<h1 class="pg" set:html={title} />
+{dek && <p class="dek" set:html={dek} />}

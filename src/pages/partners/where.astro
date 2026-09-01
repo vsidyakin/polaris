@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { cards } from "../../lib/pages/partners-where";
+import { crumbs } from "../../lib/blocks";
+---
+
+<BaseLayout route="partners/where">
+  <Fragment set:html={crumbs("partners/where","Where to buy")} />
+    <div class="pageinfo"><span class="tag t-tpl">T7</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Buy from people who&rsquo;ll <span class="warm">make it work</span>.</h1>
+    <p class="dek">Mersive sells through partners: the integrators and resellers below are how you buy, and more importantly, how your deployment succeeds. This is a curated directory, not a logo wall: every profile is sales-approved, and every listing is a company we know by name.</p>
+    <div class="cnv-chips reveal">
+      <button class="cnv-chip on" onclick="cnvRegion('all',this)">All regions</button>
+      <button class="cnv-chip" onclick="cnvRegion('na',this)">North America</button>
+      <button class="cnv-chip" onclick="cnvRegion('emea',this)">EMEA</button>
+      <button class="cnv-chip" onclick="cnvRegion('apac',this)">APAC</button>
+      <button class="cnv-chip" onclick="cnvRegion('latam',this)">LATAM</button>
+    </div>
+    <div class="cnv-chips reveal" style="margin-top:6px">
+      <button class="cnv-chip on" onclick="cnvType('all',this)">All partner types</button>
+      <button class="cnv-chip" onclick="cnvType('ri',this)">Resellers &amp; integrators</button>
+      <button class="cnv-chip" onclick="cnvType('dist',this)">Distributors</button>
+      <input type="text" placeholder="City or ZIP" style="flex:1;min-width:220px;background:#171231;border:1px solid #3a3160;border-radius:20px;padding:7px 16px;color:#d6cdf2;font:inherit;font-size:13px" onkeydown="if(event.key==='Enter')alert('POC mock: production geocodes and sorts the list by distance.')">
+    </div>
+    <p class="note">[Locator search is a POC mock: production geocodes the input and sorts partners by distance &mdash; owner and data source owed]</p>
+    <div class="wmap reveal">Interactive partner map: production component. The list below is the source of truth; the map is its view. [Map placeholder]</div>
+    <div class="cnv-partners reveal"><Fragment set:html={cards} /></div>
+    <p class="note">[All eight cards are placeholders — production lists named, sales-approved partner profiles with real logos and outbound links. Distributors carry the gold border and are listed alongside resellers, labeled.] Listing here is a <a href="/partners/program">partner-program benefit</a>: profiles are submitted in the portal and approved by sales before they publish.</p>
+
+    <section class="sect reveal tight">
+      <div class="kicker">Distribution</div>
+      <div class="dstrip">
+        <span>[Distributor A — logo placeholder]</span><span>[Distributor B — logo placeholder]</span><span>[Distributor C — logo placeholder]</span><span>[Distributor D — logo placeholder]</span>
+      </div>
+    </section>
+
+    <div class="g3band reveal" style="background:linear-gradient(90deg,rgba(109,91,184,.16),rgba(124,227,168,.08))"><b>Want to sell Mersive?</b> Resellers and integrators evaluating vendors: the partner program comes with protected registration, real margin, and a directory listing on this page. <span class="btns"><a class="btn accent" href="/partners/become">Become a partner →</a></span></div>
+
+    <div class="cnv-band reveal">
+      <div class="kicker">Not sure who to pick?</div>
+      <h2>Tell us the shape of the project and we&rsquo;ll match you.</h2>
+      <p>Two minutes of context routes you to the right partner for your region, industry, and scale. Matched by our sales team; answered by the partner. (Form mock: nothing is sent in this POC.)</p>
+      <div class="cnv-fgrid" style="margin-top:14px">
+        <div class="cnv-field"><label>Work email</label><input type="email" placeholder="you@company.com"></div>
+        <div class="cnv-field"><label>Country</label><input type="text" placeholder="United States"></div>
+        <div class="cnv-field"><label>Rooms in scope</label><select><option>1–10</option><option>10–50</option><option>50–250</option><option>250+</option></select></div>
+        <div class="cnv-field"><label>Industry</label><select><option>Corporate</option><option>Education</option><option>Government</option><option>Healthcare</option><option>Other</option></select></div>
+      </div>
+      <button class="btn accent" style="margin-top:16px" onclick="cnvSubmit('partner match request')">Match me with a partner</button>
+    </div>
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/directory";
+</script>

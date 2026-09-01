@@ -1,0 +1,72 @@
+---
+/**
+ * /resources/cases — the case-studies hub.
+ *
+ * Same shell as the blog hub (HubLayout): one title, body copy, a row of
+ * selectable tags, then the grid. Unlike blog's tags, which are real linked
+ * topic pages, these stay a client-side chip filter (fxFilter in
+ * filters.ts) — thirteen stories across five sectors don't need their own
+ * indexed pages the way sixty blog posts across nine topics do — but they're
+ * styled through the exact same .bhx-topics rule as blog's tags, so a chip
+ * and a topic link read as the same kind of control.
+ */
+import HubLayout from "../../layouts/HubLayout.astro";
+import PostGrid from "../../components/PostGrid.astro";
+import { slot } from "../../lib/pages/resources-cases";
+import { CASES, CASE_SECTORS, caseCount } from "../../data/cases";
+import CtaBand from "../../components/CtaBand.astro";
+---
+
+<HubLayout route="resources/cases" crumbs={[{ label: "Case Studies" }]} pageTitle="Case Studies">
+  <Fragment slot="pageinfo">
+    <div class="pageinfo">
+      <span class="tag t-tpl">T8</span><span class="tag t-open">OPEN</span>
+    </div>
+  </Fragment>
+
+  <p slot="dek" class="bhx-dek">
+    Thirteen published deployments, filterable by sector. Most describe Gen 3-era Mersive
+    Solstice estates: they prove the company, and <a href="/products/transition">the transition
+    page</a> proves the path to Polaris.
+  </p>
+
+  <nav slot="tags" class="bhx-topics" aria-label="Browse by sector" data-fxchips="cases">
+    {
+      CASE_SECTORS.map((f, i) => (
+        <button class:list={[i === 0 && "on warm"]} data-fxchip onclick={`fxFilter('cases','${f.key}',this)`} type="button">
+          {f.label} <i>{caseCount(f.key)}</i>
+        </button>
+      ))
+    }
+  </nav>
+
+  <div class="fx-award reveal"><b>Award-winning platform.</b> Badge files on hand: AVTechnology Best in Show and SCN Installation Product Award (both InfoComm 2025) plus an ISE 2025 win. [verify: award program names, issuers and years, including any InfoComm 2026 win - marketing] Host shown at InfoComm as the Mersive Tablet.</div>
+
+  {/* Thirteen cards, one per published story, rendered from src/data/cases.ts
+      through the same PostGrid the blog hub uses, so the grid and the thirteen
+      sub-pages cannot drift apart. */}
+  <div class="reveal">
+    <PostGrid posts={CASES} basePath="resources/cases" filterGroup="cases" />
+  </div>
+
+  <p class="note">[Source: published Mersive case studies; refresh approvals tracked in the launch workbooks. Quotes are verbatim from the published PDFs; ambiguous figures carry verify flags inline.]</p>
+
+  <section class="sect reveal flush">
+    <div class="kicker">In the pipeline</div>
+    <h2>The stories one interview away.</h2>
+    <p class="sdek">Named accounts with real fleets and engaged contacts, not yet published. Each is a slot, not a story: nothing ships without customer approval and verified stats.</p>
+    <div class="fx-cards">
+      <Fragment set:html={slot(`enterprise`,`Enterprise`,`[JLL / C&amp;W]`,`The second Polaris enterprise flagship`,`JLL runs more than 2,000 Pods and Cushman &amp; Wakefield over 750: corporate real estate at fleet scale, with named, engaged contacts on the CAB list. The story is one interview away.`,[`&gt;2,000`,`Pods (JLL)`],[`&gt;750`,`Pods (Cushman &amp; Wakefield)`])} />
+      <Fragment set:html={slot(`k12`,`K-12 district`,`SAINT MARK'S · TEXAS`,`The first US K-12 Polaris story`,`Saint Mark's School of Texas put ~60 Pods into 1:1 device classrooms, an early Polaris adopter where students share with nothing installed. Would be Mersive's first published US K-12 story. [Interview pending: contact Kevin Boone.]`,[`~60`,`Pods`],[`Polaris`,`early adopter`])} />
+      <Fragment set:html={slot(`finance`,`Financial services`,`[BAXTER CU / KEESLER FCU]`,`A credit union's full-fleet swap`,`Baxter Credit Union swapped its full 70-room fleet and expanded after a competitive bid; Keesler FCU is on the Polaris path and willing to schedule a call. [Interview pending: CAB contacts.]`,[`70`,`rooms (Baxter)`],[`[outcome]`,`pending interview`])} />
+    </div>
+  </section>
+
+  <div class="cnv-buildnote reveal"><b>[DESIGN NOTE — proof at the point of doubt:</b> these stories don't just live here. Each one feeds stat + quote slots on the matching solution and industry pages, so the proof appears exactly where the reader is doubting, not three clicks away in a library. The thirteen cards above are built from published Mersive case studies; the pipeline slots are real logo-wall accounts pending interview, approval, and verified stats.<b>]</b></div>
+
+  <CtaBand slot="after" />
+</HubLayout>
+
+<script>
+  import "../../scripts/pages/filters";
+</script>

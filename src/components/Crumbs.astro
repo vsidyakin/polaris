@@ -1,0 +1,42 @@
+---
+import { NAV } from "../data/nav";
+import { PAGE_TITLES } from "../data/page-titles";
+
+interface Props {
+  route: string;
+  /** Overrides the PAGE_TITLES entry for the trailing crumb. */
+  title?: string;
+  /**
+   * Overrides the middle crumb; by default it is the owning nav menu.
+   *
+   * `false` drops the middle crumb altogether. That is not the same as leaving
+   * it unset: a page that is itself the owner of its nav menu — /compare/hub —
+   * would otherwise derive its own menu label and render "Home / Compare /
+   * Compare hub".
+   */
+  section?: string | false;
+  /**
+   * Makes the middle crumb a link. Used where the middle is a real parent page
+   * rather than a menu label: the spec sheets sit under /products/pro, a job
+   * sits under /careers.
+   *
+   * A rooted literal, like every other href in the markup — rebase-html.mjs
+   * prefixes it in dist/. Do not pass it through withBase().
+   */
+  sectionHref?: string;
+}
+const { route, title, section, sectionHref } = Astro.props;
+
+const owner = NAV.find((m) => m.items.some(([p]) => p === route || p === `_grpA:${route}`));
+const middle = section ?? owner?.label;
+const leaf = title ?? PAGE_TITLES[route] ?? route;
+---
+
+{/* The separator is real markup, not a " / " inside the expression: Astro
+    escapes what `{}` returns, so a span built in a template literal would print
+    its own tags on the page. Each piece is emitted adjacent to the next with no
+    whitespace between, because .crumb-sep carries the gap as margin — a stray
+    newline here would add a space on top of it. */}
+<div class="crumb">
+  <a href="/">Home</a>{middle && <Fragment><span class="crumb-sep">/</span>{sectionHref ? <a href={sectionHref}>{middle}</a> : middle}</Fragment>}<span class="crumb-sep">/</span>{leaf}
+</div>

@@ -1,0 +1,638 @@
+---
+/**
+ * 404. A real north-polar star chart with Polaris at dead centre: positions are
+ * projected from true J2000 coordinates at build time (see data/skymap404.ts),
+ * so the constellations hold their actual shapes. Three depth layers drift on
+ * scroll, the same treatment the home hero uses.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { STARS, FIGURES, LABELS, EQUATOR, project } from "../data/skymap404";
+import type { Route } from "../data/routes";
+
+const P = STARS.map((s) => project(s.ra, s.dec));
+const iPolaris = STARS.findIndex((s) => s.n === "Polaris");
+
+/* Three brightness tiers, and they are the whole hierarchy of the chart:
+   Polaris, then the stars a constellation line runs through, then the field.
+   The multipliers (1.5× and 1.25×) live in the keyframes, not here. */
+const tier = (s: (typeof STARS)[number], i: number) =>
+  i === iPolaris ? "pl" : s.f ? "cs" : "fs";
+
+/* Depth. The chart itself — figures, their member stars, Polaris, the equator —
+   rides one slow layer ("f"), because a constellation that shears apart as you
+   scroll is just wrong. The anonymous field spreads across three much faster
+   layers, so it drifts visibly past the fixed sky, the way the home hero does. */
+const layer = (s: (typeof STARS)[number], i: number) =>
+  s.f || i === iPolaris ? "f" : (i % 3) + 1;
+
+/* Radii are viewBox units — the box is 100 wide, so 0.4 is about 4px on a
+   900px card.
+   The old form was `max(0.07, 0.062 * 2.512^((3.2-m)/2.6))`, an exponential with a
+   floor, and the floor swallowed it: 1017 of the 1142 stars on this chart came out
+   at exactly 0.07, so 89% of the sky was identical dots and the only magnitudes
+   you could actually read were the two dozen brightest. On a 1142-star field that
+   is not a star chart, it is texture. This spans the range the catalogue actually
+   contains — Sirius at -1.4 to the rescued figure stars at 6.5 — with nothing
+   clamped: mag 4.8 lands at 0.042, mag 2 at 0.080, mag 0 at 0.138. */
+const dots = STARS.map((s, i) => {
+  const t = Math.max(0, (5.0 - s.m) / 6.4);
+  const base = 0.042 + 0.15 * Math.pow(t, 1.8);
+  const r = (i === iPolaris ? base * 1.6 : base).toFixed(3);
+  const dur = (2.2 + ((i * 37) % 52) / 10).toFixed(2);
+  /* --td, not animation-delay: each star carries two animations now (the
+     entrance and the scintillation) and an inline animation-delay would
+     clobber both. The stylesheet composes it. */
+  const td = (((i * 53) % 74) / 10).toFixed(2);
+  return `<circle class="nfs ${tier(s, i)} d${layer(s, i)}" cx="${P[i].x.toFixed(2)}" cy="${P[i].y.toFixed(2)}" r="${r}" style="--tw:${dur}s;--td:${td}s"/>`;
+}).join("");
+
+/* ---------------------------------------------------------------------------
+   The trace.
+
+   The old version animated each polyline independently over the same duration,
+   so a long line and a short one drew at wildly different speeds and the whole
+   sky arrived at once. It also normalised the dash with pathLength while
+   vector-effect: non-scaling-stroke was set — and non-scaling-stroke measures
+   the dash in screen pixels, so pathLength was ignored and a dasharray of 1
+   became a one-pixel dash and a one-pixel gap. That is where the dotted look
+   came from, and why it snapped to solid at the last keyframe.
+
+   This version treats the figures as what they are: a graph. Vertices are
+   shared points, edges are the segments between them. The light starts at the
+   single vertex nearest Polaris in each figure and propagates outward at a
+   constant speed, so every edge draws at the same rate whatever its length,
+   and where a vertex has three edges all three grow away from it together.
+   Whole constellations start in order of their distance from the pole, so the
+   sky lights up outward from the star the page is named after.
+
+   Dash values are in user units now, and each edge's dasharray is exactly its
+   own length, so the finished state is a solid line with no snap.
+--------------------------------------------------------------------------- */
+/* Polaris is the origin of the whole animation, so it has to exist first. */
+const pole = P[iPolaris];
+
+const SPEED = 46; /* chart units per second — one rate for the whole sky */
+const RADIAL = 0.55; /* how much a figure's distance from Polaris delays its start */
+const LIT_LAG = 0.22; /* how far the brightening wave trails the drawing one */
+const LIT_DUR = 0.9; /* how long an edge takes to come up to full strength */
+
+type V = { x: number; y: number };
+const vkey = (p: V) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`;
+const dist = (a: V, b: V) => Math.hypot(a.x - b.x, a.y - b.y);
+
+const verts = new Map<string, V>();
+const adj = new Map<string, string[]>();
+const edgeSet = new Set<string>();
+
+for (const seg of FIGURES) {
+  const pts = seg.map(([ra, dec]) => project(ra, dec));
+  for (const p of pts) if (!verts.has(vkey(p))) verts.set(vkey(p), p);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = vkey(pts[i]);
+    const b = vkey(pts[i + 1]);
+    if (a === b) continue;
+    const e = a < b ? `${a}|${b}` : `${b}|${a}`;
+    if (edgeSet.has(e)) continue; /* figures share segments; draw each once */
+    edgeSet.add(e);
+    (adj.get(a) ?? adj.set(a, []).get(a)!).push(b);
+    (adj.get(b) ?? adj.set(b, []).get(b)!).push(a);
+  }
+}
+
+/* Connected components: one per constellation, or per detached piece of one. */
+const comp = new Map<string, number>();
+const groups: string[][] = [];
+for (const k of verts.keys()) {
+  if (comp.has(k)) continue;
+  const id = groups.length;
+  const bag: string[] = [];
+  const stack = [k];
+  comp.set(k, id);
+  while (stack.length) {
+    const cur = stack.pop()!;
+    bag.push(cur);
+    for (const nb of adj.get(cur) ?? []) {
+      if (!comp.has(nb)) {
+        comp.set(nb, id);
+        stack.push(nb);
+      }
+    }
+  }
+  groups.push(bag);
+}
+
+const segs: string[] = [];
+for (const bag of groups) {
+  /* Root: the vertex of this figure closest to Polaris. The light enters each
+     constellation at the point nearest the pole and spreads from there. */
+  let root = bag[0];
+  let best = Infinity;
+  for (const k of bag) {
+    const d = dist(verts.get(k)!, pole);
+    if (d < best) {
+      best = d;
+      root = k;
+    }
+  }
+  const start = (RADIAL * best) / SPEED;
+
+  /* Breadth-first so distance-from-root is measured along the figure, not
+     as the crow flies: that is what keeps the speed constant through a bend. */
+  const dfr = new Map<string, number>([[root, 0]]);
+  const queue = [root];
+  while (queue.length) {
+    const cur = queue.shift()!;
+    const dc = dfr.get(cur)!;
+    for (const nb of adj.get(cur) ?? []) {
+      const cand = dc + dist(verts.get(cur)!, verts.get(nb)!);
+      if (!dfr.has(nb) || cand < dfr.get(nb)! - 1e-6) {
+        dfr.set(nb, cand);
+        if (!queue.includes(nb)) queue.push(nb);
+      }
+    }
+  }
+
+  for (const k of bag) {
+    for (const nb of adj.get(k) ?? []) {
+      if (k >= nb) continue; /* each undirected edge once */
+      const a = verts.get(k)!;
+      const b = verts.get(nb)!;
+      /* draw away from whichever end the light reaches first */
+      const kFirst = (dfr.get(k) ?? Infinity) <= (dfr.get(nb) ?? Infinity);
+      const from = kFirst ? a : b;
+      const to = kFirst ? b : a;
+      const L = dist(a, b);
+      const delay = start + (Math.min(dfr.get(k) ?? 0, dfr.get(nb) ?? 0) || 0) / SPEED;
+      const dur = L / SPEED;
+      /* Second wave. The line is drawn dim and comes up to full strength once
+         the light has passed it, so the brightening sweeps outward from Polaris
+         behind the trace rather than arriving with it. */
+      const lit = delay + dur + LIT_LAG;
+      segs.push(
+        `<line x1="${from.x.toFixed(2)}" y1="${from.y.toFixed(2)}" x2="${to.x.toFixed(2)}" y2="${to.y.toFixed(2)}" style="stroke-dasharray:${L.toFixed(2)};stroke-dashoffset:${L.toFixed(2)};animation-duration:${dur.toFixed(3)}s,${LIT_DUR}s;animation-delay:${delay.toFixed(3)}s,${lit.toFixed(3)}s"/>`
+      );
+    }
+  }
+}
+const lines = segs.join("");
+
+/* Names are pre-placed by the generator, which guarantees each one sits nearer
+   its own figure's stars than any neighbour's. Multi-line names carry their
+   own tspans so the box stays narrow in a crowded patch of sky. */
+const labels = LABELS.map((l) => {
+  const dy0 = l.t.length > 1 ? -1.5 : 0;
+  const spans = l.t
+    .map((s, j) => `<tspan x="${l.x}" dy="${j === 0 ? dy0 : 3}">${s}</tspan>`)
+    .join("");
+  /* a name arrives just behind the light that drew its figure */
+  const d = (RADIAL * Math.hypot(l.x - pole.x, l.y - pole.y)) / SPEED + 0.45;
+  return `<text x="${l.x}" y="${l.y}" style="animation-delay:${d.toFixed(3)}s">${spans}</text>`;
+}).join("");
+---
+
+<BaseLayout
+  route={"404" as Route}
+  bare
+  title="Page not found | Mersive"
+  description="That page isn't here. One way back: the home page."
+>
+  <section class="nf">
+    <div class="nfsky" aria-hidden="true">
+      <svg class="nfmap" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        <g class="nfl-eq">
+          <circle class="nfeq" cx={EQUATOR.cx} cy={EQUATOR.cy} r={EQUATOR.r} />
+          <path
+            id="eqp"
+            d={`M ${EQUATOR.cx - EQUATOR.r} ${EQUATOR.cy} a ${EQUATOR.r} ${EQUATOR.r} 0 1 1 ${EQUATOR.r * 2} 0`}
+            fill="none"
+          />
+          <text class="nfeqt"><textPath href="#eqp" startOffset="24%">CELESTIAL EQUATOR</textPath></text>
+        </g>
+        <g class="nffig"><Fragment set:html={lines} /></g>
+        <g class="nflab"><Fragment set:html={labels} /></g>
+        <g class="nfstars"><Fragment set:html={dots} /></g>
+        <g class="nfpol">
+          <text x={pole.x + 1.9} y={pole.y + 0.5}>POLARIS</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="nfin">
+      <div class="nfcode">404</div>
+      <h1>This signal never landed.</h1>
+      <p>
+        Moved, renamed, or never here. Nothing is wrong with your connection &mdash; which is more
+        than most rooms can say.
+      </p>
+      <p class="nfbtns">
+        <a class="btn primary" href="/">Return to home</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .nf {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    margin: 14px 0 6px;
+    /* No closing band under it any more, so the chart takes the room the band
+       was using and runs to the bottom of the screen. Polaris is centred in
+       this box (OFFY is 0 in the data), so the box has to be the screen or the
+       pole is not where the eye rests. */
+    min-height: calc(100vh - 46px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background:
+      radial-gradient(760px 380px at 62% 34%, rgba(109, 91, 184, 0.26), transparent 66%),
+      radial-gradient(520px 300px at 12% 96%, rgba(47, 138, 168, 0.14), transparent 65%),
+      #0b0918;
+    border: 1px solid var(--color-line);
+  }
+
+  /* ---------- the map ---------- */
+  .nf .nfsky {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .nf .nfmap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* stars: circles in projection space, so they cannot drift off their figures.
+     Three tiers, each 1.25× / 1.5× the peak opacity of the one below it —
+     .fs field, .cs on a constellation line, .pl Polaris. Ceilings are set low
+     enough that Polaris still has headroom instead of clipping at 1. */
+  /* Two animations per star. The first is the entrance: a straight linear
+     decline from first paint down to the tier's settled level — no steps, and
+     the same slope for every star so the field settles as one. The second is
+     the scintillation, which starts where the entrance finished. Both twinkle
+     keyframe sets now open AND close on the peak, so the handoff and the loop
+     are both seamless; previously 0% was the trough and the star dropped on
+     every cycle boundary. */
+  .nf .nfs {
+    fill: #fff;
+    animation:
+      nfInF 1.8s linear both,
+      nftwF var(--tw, 4s) ease-in-out calc(1.8s + var(--td, 0s)) infinite;
+  }
+  @keyframes nfInF {
+    from {
+      opacity: 0.85;
+    }
+    to {
+      opacity: 0.52;
+    }
+  }
+  @keyframes nftwF {
+    0%,
+    100% {
+      opacity: 0.52;
+    }
+    30% {
+      opacity: 0.24;
+    }
+    62% {
+      opacity: 0.52;
+    }
+    80% {
+      opacity: 0.38;
+    }
+  }
+  /* +25% on the field: the shapes should come forward before the field does */
+  .nf .nfs.cs {
+    animation-name: nfInC, nftwC;
+    filter: drop-shadow(0 0 0.35px rgba(214, 226, 255, 0.7));
+  }
+  @keyframes nfInC {
+    from {
+      opacity: 0.92;
+    }
+    to {
+      opacity: 0.65;
+    }
+  }
+  @keyframes nftwC {
+    0%,
+    100% {
+      opacity: 0.65;
+    }
+    30% {
+      opacity: 0.32;
+    }
+    62% {
+      opacity: 0.65;
+    }
+    80% {
+      opacity: 0.48;
+    }
+  }
+  /* Polaris: +50% again, a slower breath, and a glow the others don't get.
+     It barely declines — it is the one star that should not fade in. */
+  .nf .nfs.pl {
+    animation-name: nfInP, nftwP;
+    animation-duration: 1.8s, 5.6s;
+    filter: drop-shadow(0 0 1.1px rgba(255, 252, 240, 0.95))
+      drop-shadow(0 0 2.4px rgba(180, 205, 255, 0.55));
+  }
+  @keyframes nfInP {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.98;
+    }
+  }
+  @keyframes nftwP {
+    0%,
+    100% {
+      opacity: 0.98;
+    }
+    34% {
+      opacity: 0.66;
+    }
+    68% {
+      opacity: 0.98;
+    }
+    84% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Depth: four layers drifting at different rates on scroll, driven by custom
+     properties written once per frame — transform only, no layout, no paint.
+     translate3d keeps each layer on the compositor. */
+  .nf .nfs.d1 {
+    transform: translate3d(0, var(--sy1, 0px), 0);
+  }
+  .nf .nfs.d2 {
+    transform: translate3d(0, var(--sy2, 0px), 0);
+  }
+  .nf .nfs.d3 {
+    transform: translate3d(0, var(--sy3, 0px), 0);
+  }
+  /* The chart proper — figures, names, their member stars, Polaris, the
+     equator — moves as one slow object. Split these and the constellations
+     shear apart; hold them still and the field visibly slides past. */
+  .nf .nfs.df,
+  .nf .nffig,
+  .nf .nflab,
+  .nf .nfpol,
+  .nf .nfl-eq {
+    transform: translate3d(0, var(--syf, 0px), 0);
+  }
+
+  /* One edge of a figure. Its dasharray is set inline to its own length in
+     user units, so the dash is the line — no pattern, nothing to repeat, and
+     the finished state is solid without a keyframe that swaps the dash out.
+     No vector-effect here: non-scaling-stroke measures dashes in screen
+     pixels, which is what turned the old trace into a dotted line. */
+  .nf .nffig line {
+    fill: none;
+    stroke: rgba(186, 203, 255, 0.46);
+    /* drawn dim; the second wave brings it up. Because stroke-opacity is a
+       different property from stroke-dashoffset, the two animations run on the
+       same element without fighting each other. */
+    stroke-opacity: 0.36;
+    stroke-width: 0.115;
+    stroke-linecap: round;
+    animation-name: nfDraw, nfLit;
+    animation-timing-function: linear, linear;
+    animation-fill-mode: both, both;
+  }
+  /* linear, deliberately: the light travels at one speed, so a long edge takes
+     longer than a short one instead of every edge finishing together */
+  @keyframes nfDraw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes nfLit {
+    to {
+      stroke-opacity: 1;
+    }
+  }
+  .nf .nflab text {
+    animation: nfLab 0.7s ease-out both;
+  }
+  @keyframes nfLab {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @media (max-width: 640px) {
+    /* the card is smaller, so a user-unit stroke needs help to stay visible */
+    .nf .nffig line {
+      stroke-width: 0.2;
+    }
+  }
+
+  /* the celestial equator: dec 0, a true circle about the pole */
+  .nf .nfeq {
+    fill: none;
+    stroke: rgba(165, 140, 255, 0.32);
+    stroke-width: 0.9;
+    stroke-dasharray: 2 4.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .nf .nfeqt {
+    fill: rgba(176, 154, 255, 0.55);
+    font-size: 1.35px;
+    letter-spacing: 0.38px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+
+  /* constellation names, chart-style — as on the lineage figure */
+  /* Same formatting as before the zoom-out - monospace, uppercase, tracked - but
+     white rather than the old blue-grey, and 1.5px against the 1.35 it used to be.
+     The zoom-out briefly took these to 1px to keep them from swamping the smaller
+     figures; legibility on a 1142-star chart matters more than that did, and the
+     generator's box metrics below are sized to this number, so collisions are
+     resolved by moving names rather than by shrinking them. */
+  .nf .nflab text {
+    fill: rgba(255, 255, 255, 0.82);
+    font-size: 1.5px;
+    letter-spacing: 0.3px;
+    text-anchor: middle;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  /* the one named star: warmer and brighter than the constellation names,
+     because it is the subject of the chart rather than a caption on it */
+  .nf .nfpol text {
+    fill: rgba(255, 255, 255, 0.95);
+    font-size: 1.8px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+
+  /* ---------- the copy, bottom-left ----------
+     Clear of the pole either way: Polaris is dead centre, and the panel is
+     narrow enough and low enough to leave it alone. */
+  .nf .nfin {
+    position: relative;
+    z-index: 2;
+    max-width: 460px;
+    padding: 24px 26px 26px;
+    margin: 0 0 22px 22px;
+    border-radius: 14px;
+    background: rgba(11, 9, 24, 0.72);
+    border: 1px solid var(--color-glass-line);
+    backdrop-filter: blur(6px);
+  }
+  .nf .nfcode {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #a58cff, #7ce3a8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 6px;
+  }
+  .nf .nfin h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+    color: var(--color-bright);
+  }
+  .nf .nfin p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+  .nf .nfbtns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px !important;
+  }
+
+  /* Phones drop the explanatory line too, so the panel is the code, the
+     headline and the button. It stays in the markup for desktop and for
+     anything reading the page rather than looking at it. */
+  @media (max-width: 640px) {
+    .nf {
+      min-height: calc(100vh - 40px);
+    }
+    .nf .nfin {
+      margin: 0 12px 12px;
+      padding: 20px 18px 22px;
+    }
+    .nf .nfin h1 {
+      font-size: 22px;
+      margin-bottom: 0;
+    }
+    /* the explanatory line — .nfbtns is a <p> too, so it is excluded by name */
+    .nf .nfin > p:not(.nfbtns) {
+      display: none;
+    }
+    .nf .nfbtns {
+      margin-top: 18px !important;
+    }
+    /* full width, thumb-sized */
+    .nf .nfbtns .btn.primary {
+      display: block;
+      width: 100%;
+      padding-top: 11px;
+      padding-bottom: 11px;
+      text-align: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf .nfs {
+      animation: none !important;
+      opacity: 0.52;
+    }
+    .nf .nfs.d1,
+    .nf .nfs.d2,
+    .nf .nfs.d3,
+    .nf .nfs.df,
+    .nf .nffig,
+    .nf .nflab,
+    .nf .nfpol,
+    .nf .nfl-eq {
+      transform: none !important;
+    }
+    /* the hierarchy still has to survive with the animation switched off */
+    .nf .nfs.cs {
+      opacity: 0.68;
+    }
+    .nf .nfs.pl {
+      opacity: 1;
+    }
+    .nf .nffig line {
+      animation: none !important;
+      stroke-dasharray: none !important;
+      stroke-dashoffset: 0 !important;
+      stroke-opacity: 1 !important;
+    }
+    .nf .nflab text {
+      animation: none !important;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  /* Depth parallax on the star map, driven the same way as the home hero:
+     straight off scroll distance, so the field genuinely travels rather than
+     easing a couple of pixels around the card's midpoint. Four custom
+     properties are written per frame and nothing else touches the DOM.
+
+     The three field rates are far apart on purpose — the whole point is that
+     the anonymous stars separate from each other, not just from the chart.
+     FIG is deliberately slow: the constellations are the subject, so they
+     should feel anchored while the field slides. Skipped for reduced motion. */
+  const card = document.querySelector<HTMLElement>(".nf");
+  if (card && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const DEPTH = [0.06, 0.12, 0.2]; /* far -> near */
+    const FIG = 0.03; /* the chart itself, nearly fixed */
+    /* These properties drive transforms on SVG children, where a CSS px is one
+       USER UNIT of the viewBox rather than one screen pixel. The box is 100x100
+       against a card ~1200px wide, so an uncorrected 300px offset asked for 300
+       units of travel across a 100-unit sky: three times the whole chart, gone
+       instantly, leaving an empty card. Convert to user units first. `slice`
+       scales uniformly, so one divisor covers both axes. */
+    let sy = 0,
+      upp = 1 / 12,
+      queued = false;
+    const measure = () => {
+      const r = card.querySelector(".nfmap")?.getBoundingClientRect();
+      if (r && r.width && r.height) upp = 1 / Math.max(r.width / 100, r.height / 100);
+    };
+    const write = () => {
+      queued = false;
+      for (let i = 0; i < 3; i++)
+        card.style.setProperty(`--sy${i + 1}`, `${(sy * DEPTH[i] * upp).toFixed(3)}px`);
+      card.style.setProperty("--syf", `${(sy * FIG * upp).toFixed(3)}px`);
+    };
+    measure();
+    addEventListener("resize", () => { measure(); write() }, { passive: true });
+    addEventListener(
+      "scroll",
+      () => {
+        /* card is past: stop paying for a parallax nobody can see */
+        if (card.getBoundingClientRect().bottom < 0) return;
+        sy = -window.scrollY;
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(write);
+      },
+      { passive: true }
+    );
+    write();
+  }
+</script>

@@ -1,0 +1,325 @@
+---
+import { SEC, SEC_2026 } from "../../data/security";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { S } from "../../lib/pages/platform-security";
+import CtaBand from "../../components/CtaBand.astro";
+import { secDocCards, secMatrix } from "../../lib/security-hub";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/security">
+  <PageIntro
+    route={"platform/security"}
+    tpl={"T5"}
+    open={"OPEN: NOTHING GATED"}
+    title={"The Trust Center"}
+    dek={"The ten-minute security read your IT team actually wants: architecture, certifications, update policy. All of it on the page, none of it behind a form."}
+  />
+
+    {/* Six sections and a fifteen-column matrix, and until now no map. */}
+    <nav class="tc-jump reveal" aria-label="On this page">
+      <a href="#architecture">Architecture</a>
+      <a href="#certifications">Certifications &amp; scope</a>
+      <a href="#testing">Independent testing</a>
+      <a href="#compare">Us against the market</a>
+      <a href="#documents">The evidence pack</a>
+    </nav>
+
+    {/* The four pillar cards are h3s, and until this heading existed they sat directly
+        under the h1 - so every machine reading this page's outline saw h1 followed by
+        h3 and a level missing. Crawlers and answer engines walk that outline to decide
+        what a page is about; a hole in it near the top is the worst place for one.
+        The heading is real and named, and sr-only because the four cards are visually
+        self-evident and a visible label above them would say what the h1 just said. */}
+    <h2 class="sr-only">Security at a glance</h2>
+    <div class="sec-pillars reveal">
+      <div class="sec-pill"><div class="ic"><Fragment set:html={S.boot} /></div><h3>Secure boot &amp; supply chain</h3><p>Verified boot chain on trusted supply-chain hardware: the device that powers on is the device we shipped, and it verifies Mersive-signed firmware before it runs. <span class="note">[verify: country-of-origin determination per SKU before this page says "TAA-compliant" - legal, product and engineering]</span></p></div>
+      <div class="sec-pill"><div class="ic"><Fragment set:html={S.os} /></div><h3>Linux-hardened OS</h3><p>Purpose-built, minimized Linux: no Windows attack surface, no general-purpose OS moonlighting as a meeting room.</p></div>
+      <div class="sec-pill"><div class="ic"><Fragment set:html={S.cert} /></div><h3>Audited, not asserted</h3><p>{SEC.iso.standard} certified — certificate {SEC.iso.cert}, {SEC.iso.body}, valid to {SEC.iso.expires} — and the June 2026 surveillance audit closed with <b>no nonconformities</b>. SOC 2 Type 2 and SOC 3 attested for the Polaris cloud. The room device is assessed by a third party in its own right &mdash; the hardware was in scope separately from the cloud, opened on a bench and attacked physically, not merely covered by a cloud audit. Every scope statement is below, in full.</p></div>
+      <div class="sec-pill"><div class="ic"><Fragment set:html={S.auth} /></div><h3>802.1x / EAP-TLS</h3><p>Certificate-based network authentication on the wire: the room device is a first-class citizen of your NAC, not an exception to it.</p></div>
+    </div>
+
+    <section class="sect reveal tight" id="architecture">
+      <div class="kicker">The ten-minute read</div>
+      <h2>Security architecture, in plain language.</h2>
+      <p class="sdek">Written to be read by a human and lifted straight into a partner proposal. Expand any layer. These controls are not described in isolation: everything below is governed by a certified management system, tested by outside firms every year, and evidenced by documents further down this page &mdash; architecture, governance, validation, evidence, in that order.</p>
+      {/* Four layers two-up, then the update policy across the foot: it is a policy
+          statement rather than an architecture layer, and the one panel deliberately
+          held back, so it reads as its own thing rather than a fifth of five. */}
+      <div class="sec-grid">
+      <details class="sec-acc"><summary><span class="sec-h"><h3 class="sec-t">Boot &amp; supply chain</h3><span class="sec-sum">The trust chain starts in hardware, before the OS: a key burned into the processor verifies every stage through to the signed kernel, and secure boot is mandatory rather than a setting. The device’s private keys are generated inside a secure element and never leave it.</span></span></summary><div class="bd"><p>The trust chain starts in hardware, before the OS. A key burned into the processor&rsquo;s fuses verifies the first-stage bootloader. That bootloader verifies the signed firmware package carrying ARM Trusted Firmware and the bootloader proper. The bootloader then verifies the signed kernel image before handing over control. The root of that chain is a key hash burned into one-time-programmable fuses and locked, so it is fixed for the life of the device. Every signing key after it &mdash; the one covering ARM Trusted Firmware and the bootloader, and the one the bootloader uses to verify the kernel &mdash; can be rotated in a firmware release.</p>
+        <p>Secure boot is designed to verify trusted firmware before the device starts, helping protect platform integrity from power-on through runtime. It is mandatory on production firmware, not a setting, and an image we did not sign does not run. The pod also checks itself: on every boot, before the product starts, it reads the processor&rsquo;s fuses and confirms the root-of-trust hash and the lock bits are burned. A device that was never fused, or whose model it does not recognise, refuses to start the product and comes up in a maintenance console instead. The same boot gate verifies that all five key objects provisioned into the onboard NXP SE050 secure element &mdash; which holds the device&rsquo;s own identity and update-verification keys in hardware &mdash; are present and readable. USB device access is restricted by allowlist rather than left open. All of it rides a controlled supply chain. The secure element is treated as part of the security architecture rather than as an ordinary component: over the 10-year platform lifecycle other parts move to in-family successors as they reach end of life, but a change to the secure element requires CISO sign-off and an update to this page rather than a routine substitution [Ruling A, Damian Blazy, 26 Aug 2026 &mdash; the hardware platform and its 10-year invariants are documented once, on <a href="/products/pro/spec#platform-lifecycle">the Pro spec sheet</a>]. <span class="note">[verify: TAA and NDAA 889 wording, per the flag above - legal, product and engineering]</span></p>
+        <p><b>Where the private keys actually live.</b> &ldquo;Stored in hardware&rdquo; is a phrase every vendor uses, so here is the specific arrangement. The device&rsquo;s private keys are generated and used <em>inside</em> the secure element and never cross its boundary &mdash; the application asks the element to perform an operation rather than ever holding the key itself. The channel between the application and the element is authenticated and encrypted in its own right, using GlobalPlatform SCP-03, and the keys for <em>that</em> channel sit in ARM TrustZone secure firmware, where neither the operating system nor anything running on top of it can read them. Pulling a Pod off the wall does not surrender the device&rsquo;s identity keys, and neither does compromising its operating system. That protection covers the device&rsquo;s own keys. Supplied 802.1X secrets are a different matter: the certificate is written to the device&rsquo;s persistent certificate store, and the private-key password is held as a system-stored NetworkManager secret. [verify: the verification document proposes stating that these secrets are &ldquo;held encrypted at rest under that same secure element rather than in cleartext&rdquo;, but its own evidence says they are written to the unencrypted store by explicit decision and held as NetworkManager system secrets. Those two statements cannot both be true. Engineering to establish the actual at-rest protection before this page says more than it does now - engineering and CISO]</p>
+        <p><b>Updates go forward only, and a failed one goes back.</b> An update package is checked for authenticity and integrity before it is applied, and the device refuses a <b>downgrade</b> to an earlier version. That second half is the part that matters and the part most vendors omit: it means a known-vulnerable firmware cannot be pushed back onto a Pod to re-open something we have already fixed.</p> <p><b>That is not the same as rollback, and the distinction is worth being precise about.</b> The pod holds two firmware partitions. A new image installs beside the running one instead of over it, and a pod that fails to come up on the new version comes back up on the last known-good one. So an <em>administrator</em> cannot move a pod to older firmware, while a <em>bad release</em> cannot strand a room. Refusing a chosen downgrade and recovering automatically from a failed load are different mechanisms, and a security questionnaire that asks about one is not asking about the other. [Rollback behaviour confirmed by Damian Blazy 14 Aug 2026; it lives below the cloud layer, which is why a review of the platform repository could not see it]</p>
+        <p><b>Content is composited, not kept.</b> What people share is assembled on the fly for the display rather than written to the device, and ephemeral session data &mdash; the content, the session keys, the random values generated to protect them &mdash; is overwritten at the end of every session, including sessions that are abandoned rather than closed cleanly.</p>
+        <p class="sec-aside">The three paragraphs above describe the Gen 4 security architecture as specified in the Gen 4 Pod security requirements document. They are design, not audit findings &mdash; the independent evidence that the design holds is the device assessment further down this page, where an outside firm had the hardware open on a bench. [verify: confirm each of these three behaviours against current shipping firmware before launch - engineering. The specification is a v0.1 draft and states requirements rather than verified behaviour, so nothing here claims a TLS version, a FIPS validation or a Common Criteria evaluation of the product.]</p>
+        <p>What this buys you: a tampered device does not boot, the device verifies Mersive-signed firmware before it runs, and the device&rsquo;s own keys never leave the chip that holds them.</p></div></details>
+      <details class="sec-acc"><summary><span class="sec-h"><h3 class="sec-t">In the cloud</h3><span class="sec-sum">The Polaris cloud brokers sessions and manages fleets; it does not store workspace content. Google Cloud underneath, administrative access behind IAM and multi-factor authentication, and fourteen named policies the Security Committee approves every year.</span></span></summary><div class="bd"><p>The Polaris cloud brokers sessions and manages fleets. <b>It does not store workspace content.</b> That is an architectural fact rather than a policy: the signalling service is a few dozen lines that forward session-setup messages between two endpoints, with no media handling in the path at all. Shared content travels directly between the devices in the meeting and never transits a Mersive server, so there is nothing in the cloud path that could retain it. What the cloud does hold is device and fleet data &mdash; configuration, firmware state, usage analytics and alert settings.</p>
+        <dl class="factgrid">
+          <dt>Hosting</dt><dd>{SEC.infra.host}</dd>
+          <dt>Network</dt><dd>{SEC.infra.net}</dd>
+          <dt>In transit</dt><dd>{SEC.infra.transit}</dd>
+          <dt>Admin access</dt><dd>{SEC.infra.admin}</dd>
+          <dt>Availability</dt><dd>{SEC.infra.ha}</dd>
+        </dl>
+        <p><b>What we classify as confidential.</b> {SEC.data.confidential} — under the data-management policy the auditors reviewed, on a {SEC.data.levels} scale. That is a specific answer to "what do you hold about my rooms", not a promise not to sell it.</p>
+        <p><b>Fourteen policies, approved annually.</b> The Security Committee reviews and approves the set every year, and that review is itself an audited control. A reviewer is normally looking for one of these by name, so they are listed rather than run together:</p>
+        <ul class="seclist">{SEC.policies.map((x) => (<li>{x}</li>))}</ul></div></details>
+      <details class="sec-acc"><summary><span class="sec-h"><h3 class="sec-t">On the network</h3><span class="sec-sum">802.1X certificate authentication on the wire and over Wi-Fi. The certificate material is held on the device under secure boot and the hardened OS; the secure element holds the device&rsquo;s own identity keys. The device holds a wired and a wireless address at the same time, kept isolated, so guests share without touching the corporate LAN.</span></span></summary><div class="bd"><p>802.1X network authentication with EAP-TLS, PEAP, TTLS or EAP-PWD, on the wire and over Wi-Fi (WPA2-Enterprise). TTLS inner authentication supports PAP, CHAP, MSCHAP and MSCHAPv2; PEAP supports MSCHAPv2, GTC and MD5. The 802.1X certificate and its private-key password are held on the device, protected by secure boot and the hardened OS rather than sealed inside the secure element &mdash; the element holds the device&rsquo;s own identity and update-verification keys. [verify: corrected 13 Aug 2026 from firmware source - customer 802.1X certificates are written to the device certificate store and the private-key password is held as a NetworkManager system secret, so they are NOT sealed in the secure element. Engineering to confirm the exact at-rest protection before this states more - engineering and CISO] The pod holds an address on a wired network and a wireless network at the same time and does not route between them: its firewall drops every forwarded packet, and the firmware never enables IP forwarding. Guests share over Wi-Fi without a path to the corporate LAN &mdash; not because the two are kept apart by policy, but because the device is not a router. [Port matrix and VLAN guidance — placeholder, ships with the deployment guide.]</p></div></details>
+      <details class="sec-acc"><summary><span class="sec-h"><h3 class="sec-t">In transit</h3><span class="sec-sum">Signalling and fleet management run outbound over HTTPS to Polaris Cloud. The pod itself exposes no TLS listener, so there is nothing on the device for a scanner to negotiate against. [verify: the verification document proposes publishing that the cloud &ldquo;negotiates TLS 1.3 or TLS 1.2 and refuses TLS 1.0 and 1.1&rdquo;. That is a minimum-version claim, which this site&rsquo;s hard rule forbids: the 7 July 2026 assessment found TLS 1.1 negotiable at the edge and no retest exists, and the document itself says to re-measure before publishing. Re-measure, then decide - engineering and CISO] Same-network sessions stay on your LAN and cross-network sessions are direct, encrypted WebRTC between device and display, so shared content does not transit Mersive.</span></span></summary><div class="bd"><p>Workspace streams and signalling are encrypted with TLS. [verify: minimum TLS version and cipher suite - engineering. See finding 2 of the 7 July 2026 assessment; it is unchanged from March 2025. No version claim publishes here until the edge is reconfigured and retested] Same-network sessions stay on your LAN; cross-network sessions are direct, encrypted WebRTC between device and display — content does not transit Mersive. The candid data-path inventory (what transits, what stays local, what never happens) lives on the <a href="/platform/cross-network">cross-network page</a>.</p></div></details>
+      <details class="sec-acc sec-wide"><summary><span class="sec-h"><h3 class="sec-t">Update policy <span class="tag t-blk">BLOCKED: Q9 LAPSE-POLICY SIGN-OFF</span></h3><span class="sec-sum">What the subscription funds, exactly what happens if it lapses — degrade, never brick — and how security updates are handled either way. Publication is blocked on sign-off: the honest sentence ships or the panel does not.</span></span></summary><div class="bd"><p>[This section is intentionally unpublished. It answers, in one page: what the subscription funds, exactly what happens if it lapses — degrade, never brick — and how security updates are handled either way. It is the page that neutralizes "Mersive charges for security updates." Publication blocked on Q9 sign-off; the honest sentence ships or the page doesn't.]</p><p>The receipts already exist: every release is publicly logged on the <a href="/resources/firmware">firmware &amp; release notes page</a>.</p></div></details>
+      </div>
+    </section>
+
+    <section class="sect reveal flush" id="certifications">
+      <div class="kicker">Certifications</div>
+      <h2>What is certified, and exactly what it covers.</h2>
+      <p class="sdek">Two frameworks, two scopes. Publishing the scope is the point: a security reviewer opens the PDF and reads the scope sentence first, so it should not be a surprise when they get there.</p>
+
+      <div class="two">
+        <div class="card">
+          <h3>{SEC.iso.standard}</h3>
+          <dl class="factgrid">
+            <dt>Certificate</dt><dd><b>{SEC.iso.cert}</b></dd>
+            <dt>Issued by</dt><dd>{SEC.iso.body}</dd>
+            <dt>Registered</dt><dd>{SEC.iso.registered}</dd>
+            <dt>Current issue</dt><dd>{SEC.iso.issued}</dd>
+            <dt>Valid to</dt><dd><b>{SEC.iso.expires}</b></dd>
+            <dt>Scope</dt><dd>{SEC.iso.scope}</dd>
+            <dt>Against</dt><dd>{SEC.iso.soa}</dd>
+          </dl>
+          <p><b>The June 2026 surveillance audit raised no nonconformities.</b> Seventeen clause areas and the Annex A control testing, every one of them assessed as design and operating effectiveness met, and no nonconformity carried over from the prior year either. A certificate proves an audit happened; that sentence is what the audit found.</p>
+          <p class="sec-aside"><b>Two exclusions, both re-validated in June 2026.</b> {SEC.iso.exclusions} &mdash; the second is worth stating plainly, because nobody outside Mersive writes this software.</p>
+          <p class="sec-aside">&ldquo;{SEC.iso.virtual}&rdquo; &mdash; which is also the answer to where the ISMS lives.</p>
+        </div>
+        <div class="card">
+          <h3>SOC 2 Type 2 &amp; SOC 3</h3>
+          {/* A SOC 2 covers a stated window rather than carrying an expiry date, and a
+              reviewer who meets a bare 2025 period with no framing reads it as lapsed.
+              The cadence sentence comes first for that reason: it is true, it is the
+              thing they want to know, and it costs nothing. */}
+          <p>Examined annually by an independent CPA firm, on the same yearly cycle.</p>
+          <dl class="factgrid">
+            <dt>Auditor</dt><dd>{SEC.soc.auditor}</dd>
+            <dt>Criteria</dt><dd>{SEC.soc.criteria}</dd>
+            <dt>Period</dt><dd>{SEC.soc.period}</dd>
+            <dt>Opinion dated</dt><dd>{SEC.soc.opinionDate}</dd>
+            <dt>System in scope</dt><dd><b>{SEC.soc.system}</b></dd>
+            <dt>Excluded</dt><dd>{SEC.soc.excluded}</dd>
+          </dl>
+          <p class="sec-aside"><b>That exclusion is deliberate and worth reading.</b> The entity-level controls behind those products are audited; the products themselves are not the attested system. Their proof is the independent testing below, which is the stronger evidence for hardware anyway.</p>
+          <p class="sec-aside">{SEC_2026}</p>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:14px">
+        <div class="card">
+          <h3>HIPAA, inside the opinion</h3>
+          <p>Not a separate letter and not a self-assessment: {SEC.soc.hipaa}. The report includes auditor-reviewed controls mapped to selected HIPAA Security Rule administrative safeguard requirements. <b>That is not a HIPAA certification &mdash; no such thing exists for a vendor &mdash;</b> and this page will not imply one. What it is: supporting evidence for a healthcare reviewer evaluating our controls, examined by the same auditor in the same engagement.</p>
+        </div>
+        <div class="card">
+          <h3>Mapped to the frameworks you already use</h3>
+          <p>{SEC.soc.dfars} — the requirement numbers your contracting officer already works from, which is usually the difference between a two-week questionnaire and an afternoon.</p>
+          <p>And {SEC.soc.hitrust}. A mapping is not a HITRUST certification and this page will not pretend otherwise; it is the translation work already done for you.</p>
+        </div>
+      </div>
+
+      <p class="note" style="margin:14px 4px 2px">Certification and attestation materials are part of the evidence pack below: public documents directly, controlled reports on request.</p>
+      <p class="sec-aside" style="margin-top:16px"><b>{SEC.soc.controls}</b> were examined, and the report records {SEC.soc.exception} — {SEC.soc.exceptionContext}. Management's response is published in the report alongside it. We say so rather than round it away: a Trust Center that reports nothing is a Trust Center nobody believes. {SEC.soc.soc3}.</p>
+    </section>
+
+    <section class="sect reveal flush" id="testing">
+      <div class="kicker">Independent testing</div>
+      <h2>Someone else attacks it, every year.</h2>
+      <p class="sdek">Independent testing is not a marketing habit here: {SEC.pen.cadence}. <b>Two consecutive annual application assessments have returned no critical and no high-severity findings</b> — and the bar went up between them, from OWASP ASVS 4.0.3 Level 1 to {SEC.pen.standard}, every Level 1 control plus a subset of Level 2. The room device was also handed to an outside firm and attacked physically, which is the kind of proof a certification scoped to the cloud can never give you.</p>
+      <p class="note" style="margin:2px 4px 12px">Independent evaluation is what connects the controls above to the evidence below: the boot chain, the device&rsquo;s own identity keys held in the secure element, signed updates and 802.1X are described as architecture at the top of this page, and tested as a physical device here. Trust is established across layers &mdash; organisational controls, product security, hardware assurance, independent validation &mdash; and Polaris arrives in your building as an appliance, not only as a cloud service.</p>
+      <div class="three">
+        <div class="card">
+          <h3>The application, July 2026</h3>
+          <dl class="factgrid">
+            <dt>Standard</dt><dd>{SEC.pen.standard}, all Level&nbsp;1 plus a Level&nbsp;2 subset</dd>
+            <dt>Assessed</dt><dd>July 2026</dd>
+            <dt>Result</dt><dd><b>No critical, no high-severity findings</b></dd>
+          </dl>
+          <p>Publicly reachable endpoints were probed for account information and found free of defects.</p>
+          <p>Held up under testing: {SEC.pen.confirmed}. On authentication specifically, {SEC.pen.tokens} — a token from a different Firebase project, validly signed by the same Google key, was refused.</p>
+          <p class="note">[verify: the tenant-selection endpoint noted at V2.3.1 must be closed before this site makes any tenant-isolation or cross-tenant claim - engineering. The boundary held end-to-end in testing, but on a downstream check rather than at the endpoint, so isolation is deliberately not claimed anywhere on this site today]</p>
+        </div>
+        <div class="card">
+          <h3>The room device, July 2026</h3>
+          <p>In the same engagement, {SEC.pen.pod}. {SEC.pen.media[0].toUpperCase() + SEC.pen.media.slice(1)}.</p>
+          <p>A port scan can establish that and an attestation cannot, which is why the hardware gets tested rather than described.</p>
+        </div>
+        <div class="card">
+          <h3>The device on the bench, May 2025</h3>
+          <p>A physical device assessment, not a scan. {SEC.pen.deviceModel.replace("the tester was modelled as", "The tester was modelled as")} &mdash; they had it open on the bench.</p>
+          <dl class="factgrid">
+            <dt>In scope</dt><dd><b>Gen&nbsp;4 Pod and Gen&nbsp;4 Pod Mini</b></dd>
+            <dt>Assessed</dt><dd>May 2025</dd>
+            <dt>Result</dt><dd><b>No findings at any severity</b> &mdash; critical, high, medium or low. One informational entry.</dd>
+          </dl>
+          <dl class="tryheld">
+            <dt>Root over the debug UART</dt><dd>Refused outright, with no password prompt even offered. No other working credentials found.</dd>
+            <dt>JTAG</dt><dd>Header too small for standard probes and hard to source; desoldering failed; even with a harness we supplied, the debugger would not negotiate.</dd>
+            <dt>Firmware extraction</dt><dd>The flash is a ball-grid-array package, impractical to reach without JTAG.</dd>
+            <dt>Man-in-the-middle</dt><dd>Presented with an invalid certificate, the Pod refused it, failed the handshake and stopped talking to Mersive rather than trusting the interceptor.</dd>
+            <dt>Data at rest</dt><dd>No personally identifiable information was found stored on either device.</dd>
+          </dl>
+          <p class="sec-aside"><b>The assessor's own caveat, kept rather than dropped.</b> This does not make compromise impossible; their report says it would take an adversary of significant skill and effort. [verify: confirm the Psicurity engagement letter permits naming the firm in public material - CISO. The severity result itself is published: that report carries no confidentiality marking, unlike the SOC 2 report, which is stamped confidential on every page.]</p>
+        </div>
+      </div>
+      {/*
+        WHAT USED TO BE HERE, AND WHY IT IS GONE
+        ────────────────────────────────────────
+        The previous revision published a paragraph on this page listing the two
+        medium and four low findings from the July 2026 report, including which two
+        were repeats from March 2025. That was a mistake and it is reversed here.
+
+        Publishing the fact that a full-severity finding list exists is honesty.
+        Publishing the list itself is doing a competitor's reading for them, and the
+        report is marked confidential in any case — the decision about what leaves
+        the building belongs to the CISO, not to a copy decision on a marketing page.
+        Every other vendor in the compare matrix publishes less than we do here; one
+        of them says outright that its vulnerability reports "cannot be shared."
+
+        Nothing true has been withdrawn. The page still states the severity result
+        that matters ("no critical and no high"), still names the standard, the year
+        and the firm's independence, and still refuses to claim a minimum TLS
+        version, session revocation at logout, upload scanning, a CSP on the browser
+        origin, or that any finding has been remediated. Those refusals are what
+        keeps the page honest; narrating them to the reader is not.
+
+        The constraints and the underlying findings live in src/data/security.ts,
+        which is where the next person writing this copy will look. The engineering
+        item is flagged below rather than described.
+      */}
+      <p class="sec-aside" style="margin-top:16px">Every assessment produces a finding list, and ours is no exception — the severity summary above is the part that decides whether a finding matters. The full reports go to customers under NDA on request. [verify: remediation plan and target dates for the two medium findings carried over from March 2025, and reconciliation of the internal validation checklist against the July 2026 results - engineering and CISO. Detail deliberately not restated on this page]</p>
+    </section>
+
+    {/* ── The security slice of the comparison matrix ────────────────────────
+        Damian's ask: everything about security on the security page, including the
+        matrices that carry security rows. Rendered from the same COMP data the
+        compare hub uses, so a grade cannot say one thing here and another there.
+        Static HTML, because a reviewer with script restricted should still see the
+        evidence; only the sourcing cards need script to position themselves. */}
+    <section class="sect reveal flush" id="compare">
+      <div class="kicker">Us against the market</div>
+      <h2>Not who has more certificates. Whose certificate covers the box in your room.</h2>
+      <p class="sdek">
+        A certificate belongs to a company. A room device is a product. Those are not the same
+        thing, and the gap between them is where most of this table lives. Three rows below ask
+        what the <b>company</b> has &mdash; its ISO certification, its SOC 2, whether the scope is
+        even legible. Seven ask what the <b>device</b> does: the operating system on it, whether its
+        firmware is signed, whether it can authenticate to your NAC, whether anyone independent has
+        ever assessed the appliance itself.
+      </p>
+      <p class="sdek">
+        Of the fourteen vendors here, <b>two publish a company certificate whose scope actually
+        names the product</b> &mdash; and in several cases the certificate provably covers something
+        else: a cloud service rather than the appliance, a scheduling panel rather than the sharing
+        device, a desktop client version from 2021. That is not a gotcha. It is the question a
+        security reviewer is really asking when someone hands them a badge, and it is worth asking
+        of us too.
+      </p>
+      <p class="sdek">
+        Graded from each vendor&rsquo;s own published documentation and from public certification
+        registries &mdash; ANSSI, BSI, the Common Criteria portal, NIST CMVP, FedRAMP, the DoDIN APL
+        and CSA STAR &mdash; in August 2026. <b>Click any graded cell</b> for the reasoning, the
+        document it came from and the date we read it; the source opens on the vendor&rsquo;s own
+        site. Read the assurance rows for what they measure: whether the evidence can be
+        <em>retrieved</em>, not whether testing happened. A vendor who tests thoroughly and
+        publishes nothing scores badly here and may still be perfectly secure. Several beat us
+        outright in places, and the cards say where.
+      </p>
+      <Fragment set:html={secMatrix()} />
+
+      {/* THE PUBLISH LIST. Yellow because it is a verify flag like every other one
+          on this site, and it renders as a real <mark class="vflag"> in the served
+          HTML rather than by client-side script, so it survives a print, a scrape
+          and JS being off.
+
+          Why it sits HERE, under this table, rather than in a workbook. Every one
+          of the 140 competitor cells above now carries a document and a date. The
+          Polaris column carries two notes and no source at all — because these
+          files do not exist at a public URL yet. That is not a copy problem, it is
+          a missing-artefact problem, and it is the one asymmetry a competitor
+          answering this page would lead with: we graded them on what they publish,
+          having published none of our own primary evidence.
+
+          Delete this block when the files are up, and source the Polaris column in
+          the same pass. */}
+      <div class="pubneed reveal">
+        <mark class="vflag">
+          <b>BEFORE THIS PAGE IS PUBLIC &mdash; what we still have to publish, so the Polaris
+          column can cite itself the way every other column now does.</b>
+          Each competitor cell above links to a primary document on the vendor&rsquo;s own site.
+          Ours cannot, yet. These are the artefacts that close it:
+          <ul>
+            <li><b>ISO/IEC 27001 certificate (PDF)</b> &mdash; certificate {SEC.iso.cert}, {SEC.iso.body},
+              valid to {SEC.iso.expires}. The scope sentence and the SoA version have to be legible on the
+              file itself, because that is exactly the test we apply to everyone else in the
+              &ldquo;certification scope&rdquo; row. <i>Owner: CISO.</i></li>
+            <li><b>SOC 3 report (PDF)</b> &mdash; the general-distribution attestation, no NDA and no form.
+              SOC 2 Type 2 stays controlled and on request; that is the right split and the evidence pack
+              already says so. <i>Owner: CISO.</i></li>
+            <li><b>Security architecture whitepaper (PDF)</b> &mdash; the narrative already on this page, in
+              a citable file. Without it the &ldquo;architecture documented in the open&rdquo; row has
+              nothing to point at but this page, and citing ourselves is not a citation.
+              <i>Owner: product and CISO.</i></li>
+            <li><b>Device assessment summary</b> &mdash; the May 2025 physical assessment of the Gen&nbsp;4
+              Pod and Pod Mini, cleared for public citation. This is our strongest row and the one almost
+              nobody else can answer; it currently rests on a sentence rather than a document.
+              <i>Owner: CISO to release.</i></li>
+            <li><b>TAA / country-of-origin attestation per SKU</b> &mdash; we grade fourteen vendors on
+              publishing one. <i>Owner: legal, product and supply chain.</i></li>
+            <li><b>VPAT / accessibility conformance reports</b> &mdash; MERSIVE_VPAT_Sept2025 and
+              MERSIVE_GEN4_VPAT_Sept2025, public versions confirmed. <i>Owner: product and legal.</i></li>
+            <li><b>Vulnerability disclosure policy</b> &mdash; still a placeholder in the evidence pack.
+              <i>Owner: CISO.</i></li>
+          </ul>
+          Until these are up, this page publishes a table that holds everyone else to a standard of
+          retrievable evidence and cannot yet meet it in its own column. That is the reason to finish
+          them, not a reason to soften the table.
+        </mark>
+      </div>
+      <p class="note">
+        The same rows, alongside every other capability and all fourteen competitors, are on the
+        <a href="/compare">full comparison matrix</a>.
+      </p>
+    </section>
+
+    {/* Same list as the documentation hub, from lib/security-hub.ts. Some people want
+        the security documents on the security page; others want every document in one
+        library. Both get them, from one array, so they cannot drift apart. */}
+    <section class="sect reveal flush" id="documents">
+      <div class="kicker">The evidence pack</div>
+      <h2>Every security document, in one place.</h2>
+      <p class="sdek">
+        Split by what you can take now and what needs a request. Everything in the first group is
+        public: no form, no NDA, no conversation first. The second group carries control-by-control
+        test detail that is not ours alone to publish. The same set is filed in the
+        <a href="/resources/docs">documentation hub</a> for anyone who would rather work from one
+        library.
+      </p>
+      <Fragment set:html={secDocCards("/platform/security")} />
+    </section>
+
+    <div class="kicker" style="margin-top:20px">Downloads: open, no forms</div>
+    <div class="prddocs reveal">
+      <a href="/resources/docs"><b>Security whitepaper (PDF)</b>The architecture narrative above, in citable form. [placeholder]</a>
+      <a href="/resources/docs"><b>SOC 3 report (PDF)</b>The public attestation: auditor's opinion and system description, no NDA. SOC 2 Type 2 on request under NDA. [file to be published: Mersive SOC 3 Report, and the 2026 edition when issued]</a>
+      <a href="/resources/docs"><b>ISO 27001 certificate (PDF)</b>Certificate {SEC.iso.cert}, {SEC.iso.body}, issued {SEC.iso.issued} and valid to {SEC.iso.expires}. [file to be published]</a>
+      <a href="/resources/docs"><b>Compliance matrix</b>Controls mapped to SOC 2 / ISO 27001 / your questionnaire. [placeholder]</a>
+      <a href="/resources/docs"><b>Vulnerability disclosure policy</b>How to report, how we respond, how we credit. [placeholder]</a>
+    </div>
+    <CtaBand variant="platform" />
+</BaseLayout>
+
+<script>
+  import { initPwCards } from "../../scripts/pwcard";
+  import { initSecPick } from "../../scripts/secpick";
+  import { initSecPanels } from "../../scripts/secpanels";
+  initPwCards();
+  initSecPick();
+  initSecPanels();
+</script>

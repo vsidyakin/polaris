@@ -1,0 +1,100 @@
+---
+/**
+ * The hardware platform block: the 10-year fungibility promise, then the parts.
+ *
+ * ONE component, rendered in full on /products/pro/spec. Every other surface that
+ * touches a hardware or lifecycle claim LINKS here rather than restating it —
+ * products/family, products/essentials, platform/security, platform/how,
+ * platform/tco and the compare pages all point at #platform-lifecycle. That is
+ * the whole point: the same fact stated twice is the same fact drifting.
+ *
+ * ORDER IS LOAD-BEARING. Invariants first, parts second, and never the other way
+ * round. The promise is that a unit bought in year 8 behaves identically to one
+ * bought in year 1 and drops into the same estate; the parts table is a courtesy
+ * to security reviewers and procurement, and the parts are the half that is
+ * DESIGNED to change. A page that opens with silicon has told the wrong story and
+ * invited the question "so what happens when that chip goes away?" — which the
+ * invariants answer, above, if they are read first.
+ *
+ * Every value comes from src/data/hardware.ts, which mirrors /HARDWARE.md. Nothing
+ * here is typed by hand, including the lifecycle sentence: LIFECYCLE.canonical is
+ * used verbatim so two phrasings cannot ship.
+ */
+import { INVARIANTS, LIFECYCLE, SILICON, SILICON_AS_OF, SILICON_EOL_NOTE } from "../data/hardware";
+
+interface Props {
+  /** Heading level for the block's title, so it can sit under an existing h2. */
+  as?: "h2" | "h3";
+}
+const { as: Heading = "h2" } = Astro.props;
+---
+
+<section class="sect reveal" id="platform-lifecycle">
+  <div class="kicker">The 10-year platform</div>
+  <Heading>Buy in year eight. Drop it in beside year one.</Heading>
+
+  <p class="sdek">{LIFECYCLE.canonical}</p>
+
+  <p class="sdek" style="margin-top:6px">
+    A customer does not care which memory part ships. They care that the unit they
+    buy in year eight behaves exactly like the one they bought in year one, and
+    goes into the same estate without a second thought. That is what the list
+    below guarantees, and it is the product promise rather than a caveat about
+    parts.
+  </p>
+
+  {/* THE PROMISE — first, always. */}
+  <div class="prdgrid">
+    {
+      INVARIANTS.map((inv) => (
+        <div class="prdcap">
+          <b>{inv.h}</b>
+          <p>{inv.p}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="g3band">
+    <div>
+      <b>Any change that would break one of those is a new product, not a refresh.</b>
+      <p style="margin:6px 0 0">{LIFECYCLE.mechanism}</p>
+    </div>
+  </div>
+
+  {/* SCOPE LIMITS — published, not buried. The claim over-reaches without them. */}
+  <h3>Where the promise stops</h3>
+  <ul class="cnv-list">
+    {LIFECYCLE.limits.map((l) => <li>{l}</li>)}
+  </ul>
+
+  {/* THE PARTS — second, and framed as the half that changes. */}
+  <h3>Current silicon, as of {SILICON_AS_OF}</h3>
+  <p class="sdek">
+    For security reviewers and for TAA and procurement questions. Every part here
+    is expected to be substituted at some point in the lifecycle — that is the
+    mechanism above working, not a departure from it. The invariants are the
+    commitment; this table is a snapshot.
+  </p>
+
+  <div class="famtbl">
+    <table>
+      <tr>
+        <th style="width:26%">Component</th>
+        <th style="width:42%">Part</th>
+        <th>Source</th>
+      </tr>
+      {
+        SILICON.map((row) => (
+          <tr>
+            <td>{row.label}</td>
+            <td>{row.part}</td>
+            <td>{row.src || "—"}</td>
+          </tr>
+        ))
+      }
+    </table>
+  </div>
+
+  <p class="note">{SILICON_EOL_NOTE}</p>
+</section>

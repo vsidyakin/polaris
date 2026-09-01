@@ -1,0 +1,11 @@
+/* Build-time markup helpers for /platform/security.
+   Extracted from the v1.95 POC page renderer. */
+/* eslint-disable */
+// @ts-nocheck
+
+export const S={
+    boot:`<svg viewBox="0 0 28 28" fill="none"><defs><linearGradient id="sg1" x1="0" y1="0" x2="28" y2="28"><stop offset="0" stop-color="#a58cff"/><stop offset="1" stop-color="#7ce3a8"/></linearGradient></defs><rect x="7" y="7" width="14" height="14" rx="3" stroke="url(#sg1)" stroke-width="1.7"/><path d="M11 2.5v3.5M17 2.5v3.5M11 22v3.5M17 22v3.5M2.5 11h3.5M2.5 17h3.5M22 11h3.5M22 17h3.5" stroke="#8f7ae0" stroke-width="1.5" stroke-linecap="round"/><path d="M10.8 14.4l2.2 2.2 4.2-4.8" stroke="#7ce3a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    os:`<svg viewBox="0 0 28 28" fill="none"><defs><linearGradient id="sg2" x1="0" y1="0" x2="28" y2="28"><stop offset="0" stop-color="#a58cff"/><stop offset="1" stop-color="#7ce3a8"/></linearGradient></defs><rect x="3.5" y="5" width="21" height="17" rx="3" stroke="url(#sg2)" stroke-width="1.7"/><path d="M8 11l3.2 2.7L8 16.4" stroke="#7ce3a8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 17h6" stroke="#8f7ae0" stroke-width="1.7" stroke-linecap="round"/><path d="M10 25.5h8" stroke="#8f7ae0" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    cert:`<svg viewBox="0 0 28 28" fill="none"><defs><linearGradient id="sg3" x1="0" y1="0" x2="28" y2="28"><stop offset="0" stop-color="#a58cff"/><stop offset="1" stop-color="#7ce3a8"/></linearGradient></defs><circle cx="14" cy="10.5" r="7" stroke="url(#sg3)" stroke-width="1.7"/><path d="M11 10.5l2.2 2.2 3.8-4.2" stroke="#7ce3a8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.8 16.5L7.5 25.5l6.5-3.6 6.5 3.6-2.3-9" stroke="#8f7ae0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    auth:`<svg viewBox="0 0 28 28" fill="none"><defs><linearGradient id="sg4" x1="0" y1="0" x2="28" y2="28"><stop offset="0" stop-color="#a58cff"/><stop offset="1" stop-color="#7ce3a8"/></linearGradient></defs><circle cx="9.5" cy="14" r="5.2" stroke="url(#sg4)" stroke-width="1.7"/><circle cx="9.5" cy="14" r="1.6" fill="#a58cff"/><path d="M14.7 14h10.5M20.5 14v4.2M24.5 14v3.2" stroke="#7ce3a8" stroke-width="1.8" stroke-linecap="round"/></svg>`
+  };

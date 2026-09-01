@@ -1,0 +1,248 @@
+---
+import { NAV, type NavItem } from "../data/nav";
+import { NAV_CARDS } from "../data/nav-cards";
+import { NIC } from "../data/icons";
+import { MLOGO } from "../data/logos";
+import NavNode, { type Node } from "./NavNode.astro";
+
+interface Props {
+  /** Current route, so the matching menu and link can be marked. */
+  route: string;
+}
+const { route } = Astro.props;
+
+/**
+ * Flatten one menu's items into render instructions. The source data is a flat
+ * list where structural markers (`_grp`, `_hr`, `_bkt`…) and a trailing indent
+ * flag imply nesting; this rebuilds that nesting once, at build time.
+ */
+function buildMenu(items: NavItem[], from = 0, until?: string): { nodes: Node[]; next: number } {
+  const out: Node[] = [];
+  let i = from;
+  while (i < items.length) {
+    const [p, l, ind] = items[i];
+    if (until && p === until) return { nodes: out, next: i + 1 };
+    if (p === "_bkt") {
+      const inner = buildMenu(items, i + 1, "_bktend");
+      out.push({ kind: "bracket", label: l, nodes: inner.nodes });
+      i = inner.next;
+      continue;
+    }
+    if (p.startsWith("_grpA:")) {
+      /* A linking group heading with indented rows beneath it is both a heading
+         and a parent: the heading is a real page, the rows are its submenu. */
+      const kids: NavItem[] = [];
+      let j = i + 1;
+      while (j < items.length && items[j][2]) {
+        kids.push(items[j]);
+        j++;
+      }
+      if (kids.length) {
+        out.push({ kind: "parent", label: l, route: p.slice(6), children: kids, heading: true });
+        i = j;
+      } else {
+        out.push({ kind: "groupLink", label: l, route: p.slice(6) });
+        i++;
+      }
+      continue;
+    }
+    if (p === "_grp") {
+      /* A plain group heading with indented rows beneath it is a heading that
+         expands, not a page: it collects products under a label the same way a
+         linking `_grpA:` heading collects them under a page. */
+      const kids: NavItem[] = [];
+      let j = i + 1;
+      while (j < items.length && items[j][2]) {
+        kids.push(items[j]);
+        j++;
+      }
+      if (kids.length && kids.every(([kp]) => kp in NAV_CARDS)) {
+        /* A group of nothing but hardware products becomes cards. Every child has
+           to qualify: a group half cards and half text rows reads as two lists,
+           and the mixed case has never been asked for. See `nav-cards.ts`. */
+        out.push({ kind: "cardGroup", label: l, children: kids });
+        i = j;
+      } else if (kids.length) {
+        out.push({ kind: "groupParent", label: l, children: kids });
+        i = j;
+      } else {
+        out.push({ kind: "group", label: l });
+        i++;
+      }
+      continue;
+    }
+    if (p === "_hr") {
+      out.push({ kind: "rule" });
+      i++;
+      continue;
+    }
+    // consecutive indented rows below a non-indented row become its submenu
+    const children: NavItem[] = [];
+    let k = i + 1;
+    while (k < items.length && items[k][2]) {
+      children.push(items[k]);
+      k++;
+    }
+    if (!ind && children.length) {
+      out.push({ kind: "parent", label: l, route: p, children });
+      i = k;
+    } else {
+      out.push({ kind: "link", label: l, route: p, indented: Boolean(ind) });
+      i++;
+    }
+  }
+  return { nodes: out, next: i };
+}
+
+const menus = NAV.map((m) => {
+  const nodes = buildMenu(m.items);
+  const owns = m.items.some(([p]) => p === route || p === `_grpA:${route}`);
+  /* A panel carrying cards needs more than the 270px the text rows are sized to,
+     and only that panel does — hence a class rather than widening `.drop`. */
+  const cards = nodes.nodes.some((n) => n.kind === "cardGroup");
+  /* A panel with marked rows nests deeper than one without — the glyph pushes a
+     parent's label right, so its children have to clear it. Panel-level rather
+     than row-level because it is the whole list's rhythm that moves, not one
+     row's; see `nav-icons.ts`. */
+  return { label: m.label, icon: NIC[m.icon], nodes: nodes.nodes, owns, cards };
+});
+---
+
+<header class="site-header">
+  <div class="navrow" id="nav">
+    <a class="logo" href="/" aria-label="Mersive Polaris home">
+      <Fragment set:html={MLOGO} />
+      {/* The `i` is wrapped so its tittle has something to hang a glint on: it is
+          a glyph feature, not an element, so there is nothing else to target.
+          The letter itself is untouched — the twinkle only ADDS light over the
+          dot — so the word still reads, selects and copies as "polaris". */}
+      <span class="logosub">polar<span class="lgi">i</span>s</span>
+    </a>
+
+    {
+      menus.map((m, i) => (
+        <div class:list={["topitem", m.owns && "curtop"]} id={`m${i}`}>
+          {/* The glyph is decoration, not information: the word beside it says
+              everything it says. `aria-hidden` keeps it out of the button's
+              accessible name, which stays "Platform", "Products" and so on. */}
+          <button type="button" aria-expanded="false">
+            <i class="navic" aria-hidden="true" set:html={m.icon} />
+            <span>{m.label}</span>
+          </button>
+          <div class:list={["drop", m.cards && "dropcards"]}>
+            {m.nodes.map((n) => (
+              <NavNode node={n} route={route} />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    <div class="ctas">
+      {/* The screen-key panel. Six one-character cells rather than one text
+          field, because the key IS six characters and a box per character says
+          so without a placeholder having to. `initConnect` in scripts/site.ts
+          makes the six behave as one field — typing carries forward, backspace
+          carries back, a pasted key spreads across them.
+          The cells are the source of truth; there is no hidden input mirroring
+          them, so nothing can get out of step with what is on screen. */}
+      <div class="topitem connectitem">
+        <button type="button" aria-expanded="false">
+          <i class="navic" aria-hidden="true" set:html={NIC.signal} />
+          <span>Connect</span>
+        </button>
+        <div class="drop connectdrop">
+          <div class="cd-in">
+            <div class="cd-head">
+              <span class="cd-tag">Room uplink</span>
+              {/* The lamp is a sibling of the text rather than part of it, so
+                  rewriting the readout on every keystroke cannot restart its
+                  pulse — which it did, visibly, when the two shared a node. */}
+              <span class="cd-stat" data-cd-status>
+                <i aria-hidden="true"></i><span data-cd-statustext>Awaiting key</span>
+              </span>
+            </div>
+            <b>In a room right now?</b>
+            <p>Enter the screen key on the display and you're in. No install.</p>
+
+            <div class="cd-keys" data-cd-keys role="group" aria-label="Six-character screen key">
+              {
+                [0, 1, 2, 3, 4, 5].map((i) => (
+                  <input
+                    class="cd-key"
+                    type="text"
+                    maxlength="1"
+                    inputmode="text"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    aria-label={`Screen key character ${i + 1} of 6`}
+                  />
+                ))
+              }
+              <i class="cd-beam" aria-hidden="true"></i>
+            </div>
+
+            {/* The cells announce nothing useful one at a time — a screen reader
+                hears six unlabelled boxes filling up. This says the state once,
+                politely, when it changes. */}
+            <p class="sr-only" role="status" data-cd-live></p>
+
+            {/* Three elements, not two, and the middle one is load-bearing: the
+                collapsing row is `.cd-go-in`, and the button's top margin has to
+                live INSIDE it. With the margin on a direct grid child it is not
+                clipped by the 0fr track and the "hidden" row still stands 26px
+                tall — measured, not theorised. */}
+            <div class="cd-go" data-cd-go>
+              <div class="cd-go-in">
+                <button class="btn accent cd-gobtn" type="button" data-connect-go>
+                  Join now <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="ssbtn" type="button" data-search-open aria-label="Search the site" title="Search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="8.5" cy="8.5" r="5.5"></circle>
+          <path d="M13 13l5 5"></path>
+        </svg>
+      </button>
+      {/* The secondary of the two header buttons: same shape, metrics and glyph
+          treatment as Try Polaris beside it, in the site's existing `.secondary`
+          skin rather than a new one. Bordered and translucent against Try
+          Polaris's solid white, so the pair reads as a hierarchy and not as two
+          equal calls to action. */}
+      <a class="btn secondary hasic" href="/contact">
+        <i class="navic" aria-hidden="true" set:html={NIC.mail} />
+        <span>Contact</span>
+      </a>
+      <a class="btn primary hasic" href="/how-to-buy">
+        <i class="navic navic-solid" aria-hidden="true" set:html={NIC.star} />
+        <span>Try Polaris</span>
+      </a>
+    </div>
+
+    {/* Three bars that become the X, rather than two icons swapped for one
+        another. It was a `.nb-open` hamburger and a `.nb-close` cross toggled by
+        `display`, and they were not the same drawing: the bars spanned x 3–19 of
+        a 22 box and the cross 5–17, so the icon jumped and shrank at the moment
+        of the tap instead of turning into anything.
+
+        The bars are the icon now. `.nb-box` is their coordinate space — 18×14,
+        independent of the 40px hit area around it, so the button can be resized
+        without moving the bars relative to each other. Presentational, hence
+        `aria-hidden`; the button keeps its label and `aria-expanded` says which
+        way it is pointing. */}
+    <button class="navburger" type="button" data-nav-toggle aria-label="Menu" aria-expanded="false">
+      <span class="nb-box" aria-hidden="true">
+        <i class="nb-bar"></i>
+        <i class="nb-bar"></i>
+        <i class="nb-bar"></i>
+      </span>
+    </button>
+  </div>
+</header>

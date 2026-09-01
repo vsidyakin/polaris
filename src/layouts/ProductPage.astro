@@ -1,0 +1,59 @@
+---
+/**
+ * The plain product page: standard head, a body of whatever the page needs,
+ * and the closing CTA band.
+ *
+ * Deliberately a thin frame rather than a template. The six pages on it —
+ * family, hybrid, transition, solstice, selector, route — diverge
+ * sharply in the middle: the .famlad ladder, the .wml market grid, the
+ * .cnv-flow timeline, the .fx-status strip and the selector form have nothing
+ * in common with each other. What they DID have in common was six copies of the
+ * page head and an inconsistent closing CTA, and that is what this owns.
+ *
+ * The CTA is a variant, not a boolean, because two of the six deliberately end
+ * without one: /products/solstice closes on its .clmband and /products/selector
+ * on the result panel. Passing `cta={false}` makes that a decision in the page
+ * rather than an omission nobody notices.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import PageIntro from "../components/PageIntro.astro";
+import CtaBand from "../components/CtaBand.astro";
+import type { Route } from "../data/routes";
+
+interface Props {
+  route: Route;
+  /** <h1>. HTML — /products/route carries a ship chip inside its. */
+  title: string;
+  /** Deck paragraph. HTML. */
+  dek?: string;
+  /** Trailing breadcrumb, where it differs from the PAGE_TITLES entry. */
+  crumb?: string;
+  /** IA template code, e.g. "T4". */
+  tpl?: string;
+  /** Raw HTML for extra chips — see PageIntro. */
+  chipsExtra?: string;
+  /**
+   * Closing CTA band. `false` for the two pages that end on their own note;
+   * otherwise the CtaBand variant.
+   */
+  cta?: false | "default" | "platform" | "story";
+}
+const { route, title, dek, crumb, tpl, chipsExtra, cta = "default" } = Astro.props;
+---
+
+<BaseLayout route={route}>
+  <PageIntro
+    route={route}
+    title={title}
+    dek={dek}
+    crumb={crumb}
+    tpl={tpl}
+    chipsExtra={chipsExtra}
+  >
+    <Fragment slot="banner"><slot name="head-banner" /></Fragment>
+  </PageIntro>
+
+  <slot />
+
+  {cta && <CtaBand variant={cta} />}
+</BaseLayout>

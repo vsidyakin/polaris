@@ -1,0 +1,102 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { crumbs } from "../../lib/blocks";
+import { faqPageSchema } from "../../data/schema";
+
+/* ── The Polaris FAQ, once ────────────────────────────────────────────────────
+   Built for answer engines as much as for readers. BrightEdge, 27 Aug 2026:
+   mersive.com carries ZERO AI citations while Barco ClickShare's wireless-
+   presentation page carries ten, and "AI Overview" is present on nearly every
+   SERP the domain ranks on. Barco earned those citations from ordinary HTML that
+   states capabilities plainly, which is what this page is.
+
+   THE ONE ARRAY RULE, as on /trial: the accordion below renders this array and
+   faqPageSchema() describes the same array, so the visible FAQ and the FAQPage
+   node cannot drift apart. An answer carrying a [bracketed] flag is dropped from
+   the schema node automatically and rejoins it the day the brackets come off.
+
+   Every answer restates something already verified elsewhere on this site rather
+   than introducing a new claim — rulings.ts for the share ceilings and the BYOM+
+   naming, the A0.3 advantage ledger for security and cross-network,
+   /platform/cloud for fleet management. What is new is the QUESTION WORDING: the
+   query shape a buyer actually types, which is the half the rest of the site was
+   missing. That is also where "conference room", "meeting room display" and
+   "huddle room" enter the site properly, none of which appeared anywhere on the
+   home page or any product page before this. */
+const FAQ = [
+  {
+    q: "How do you share a screen in a conference room without cables?",
+    a: "Open a browser, go to <b>app.mersive.com</b>, and enter the key shown on the room display. Nothing to install, no admin rights, and no dongle to hand round. Devices already on the room network can also cast natively with AirPlay, Miracast or Google Cast, and there is a Polaris app for iOS and Android for sharing a phone or tablet.",
+  },
+  {
+    q: "Can a guest share to a meeting room display without joining our network?",
+    a: "Yes, and this is the part most systems cannot do. Mersive does the <b>signalling only</b>: the cloud introduces the two ends, then steps out of the way and the media flows peer-to-peer over a direct, encrypted WebRTC connection. Your content never crosses our cloud. A guest sitting in the room, a colleague on another VLAN and someone on the other side of the world all reach the same room with no VPN to stand up, no network to join and nothing inbound to open.",
+  },
+  {
+    q: "What is BYOD, BYOM and BYOM+ in a meeting room?",
+    a: "Three rungs. <b>BYOD</b>: your laptop puts its screen on the room display. <b>BYOM</b>: your laptop still hosts the call, but borrows the room&rsquo;s camera and microphone instead of using the laptop&rsquo;s own. <b>BYOM+</b>, or hosted by the room: the room runs and controls the hybrid meeting itself, without requiring a user&rsquo;s device. Polaris covers all three rungs rather than picking one.",
+  },
+  {
+    q: "Does Polaris work with the room camera and video bar we already own?",
+    a: "Polaris Pro carries two USB host ports for room peripherals: camera, microphone, speaker and touch. Those ports are what make wireless BYOM possible: the room&rsquo;s own AV is bridged into the call running on someone&rsquo;s laptop. Polaris Essentials has no USB input, which is why wireless BYOM is a Pro capability rather than a licence away. [verify: named-model compatibility with specific USB video bars is not published anywhere; confirm the tested list before this is stated as a compatibility matrix - hardware team]",
+  },
+  {
+    q: "How many people can share to the display at once?",
+    a: "Several, side by side, laid out automatically as sources join and leave, not one source replacing the last. The practical ceiling is around 5 on Polaris Essentials and around 10 on Polaris Pro. That difference is memory on the smaller chassis, not a licence tier or a reduced build: nothing in the software counts sources or refuses one.",
+  },
+  {
+    q: "Do people need to install an app to present?",
+    a: "No. The browser path needs nothing installed and works on whatever someone walked in with, Chromebooks included. Native AirPlay, Miracast and Google Cast are built in for devices on the room network, and the Polaris app for iOS and Android adds phone and tablet sharing, a live whiteboard, and workspace control from your seat.",
+  },
+  {
+    q: "What size rooms does Polaris fit, from a huddle room to a boardroom?",
+    a: "One platform in three chassis, all running the same software. <b>Polaris Essentials</b> suits a huddle room or a standard meeting room: one display, gigabit Ethernet, around 5 shares at once. <b>Polaris Pro</b> suits larger and hybrid rooms: dual 4K60 out, HDMI in, USB peripherals for the room camera and microphone, around 10 shares. Every capability difference between them traces to the chassis rather than to a licence.",
+  },
+  {
+    q: "Can the same display do digital signage as well as meetings?",
+    a: "Yes, and it is included rather than sold separately. A meeting room display reverts to signage the moment nobody is sharing, and dedicated signage screens across lobbies, hallways and cafeterias publish from the same Polaris Cloud login that manages the meeting rooms.",
+  },
+  {
+    q: "How do you manage wireless presentation across hundreds of conference rooms?",
+    a: "Polaris Cloud. One login deploys, monitors and updates every room on every site: room profiles applied by template, bulk onboarding, health alerts, and firmware updates scheduled per device or fleet-wide. It is the same pane whether the estate is one room or several thousand.",
+  },
+  {
+    q: "Will Polaris pass an enterprise security review?",
+    a: "It is built to. ISO/IEC 27001:2022 certified, with no nonconformities at the June 2026 surveillance audit. SOC 2 Type 2 attested for the Polaris cloud, and the room device assessed by a third party. The July 2026 application assessment returned no critical and no high-severity findings. Secure boot is mandatory on production firmware, device keys live inside an NXP SE050 secure element, and 802.1X with EAP-TLS authenticates the pod to your network.",
+  },
+];
+
+const faq = faqPageSchema(FAQ, "/resources/faq");
+---
+
+<BaseLayout route="resources/faq" schema={faq ? [faq] : []}>
+  <Fragment set:html={crumbs("resources/faq", "FAQ")} />
+  <div class="pageinfo"><span class="tag t-tpl">REFERENCE</span><span class="tag t-open">OPEN</span></div>
+  <h1 class="pg">Wireless presentation, <span class="warm">answered plainly</span>.</h1>
+  <p class="dek">
+    The questions buyers, IT teams and AV managers actually ask about wireless screen sharing in
+    conference rooms: guests, networks, hybrid meetings, signage and fleet management, answered
+    without a sales call.
+  </p>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Common questions</div>
+    <h2>Ten answers, no sales call.</h2>
+    {
+      FAQ.map((f, i) => (
+        <details class="sec-acc" open={i === 0}>
+          <summary>{f.q}</summary>
+          <div class="bd"><p set:html={f.a} /></div>
+        </details>
+      ))
+    }
+    <p class="note" style="margin-top:14px">
+      Comparing against another system? The <a href="/compare/hub">compare matrix</a> answers the
+      same questions for every competitor, each cell against a cited public source.
+    </p>
+    <p>
+      <a class="btn accent" href="/trial">Try it in your own rooms &rarr;</a>
+      <a class="btn ghost" href="/platform/how">How Polaris works &rarr;</a>
+    </p>
+  </section>
+</BaseLayout>

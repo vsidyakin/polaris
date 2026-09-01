@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="solutions/collab">
+  <PageIntro
+    route={"solutions/collab"}
+    tpl={"T7"}
+    section={"Use cases"}
+    title={"Wireless screen sharing, multiplied: multi-user sharing on one workspace."}
+    dek={"Everyone can mirror one screen to a display. That war ended years ago. Polaris is what comes after: live sources side by side, from any device on any network, with nobody waiting for the presenter to unplug."}
+  />
+
+    <section class="sect reveal flush">
+      <div class="kicker">The core idea</div>
+      <h2>The workspace is the product.</h2>
+      <p class="sdek">A mirrored screen shows one person's work. A workspace holds the meeting's work: a deck, a guest's browser tab, photos from a phone, a dashboard from another building, composited live by the room's own silicon and rearranged from any seat.</p>
+      <div class="prdgrid">
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.workspace} /></div><h3>Side by side, not one at a time</h3><p>Compare the design against the spec. Put the budget next to the forecast. The meetings that matter are comparisons. A single mirrored screen can't hold both halves.</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.oneplat} /></div><h3>Composited by room silicon</h3><p>Rendering many simultaneous streams into one live layout, then encoding that whole canvas back out to remote participants, takes purpose-built hardware. Panels composite on their own glass and the canvas never leaves the room. That's the line the panel vendors haven't crossed.</p><a href="/platform/how">Why the silicon matters →</a></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.devicefree} /></div><h3>Controlled from any seat</h3><p>Annotate, rearrange, feature one source, clear the display, from the browser tab or phone you joined with. The room has no single owner.</p></div>
+        <div class="prdcap"><div class="ic"><Fragment set:html={XIC.crossnet} /></div><h3>Fed from any network</h3><p>A guest on LTE and a dashboard on another VLAN land on the same workspace as the laptop on corp Wi-Fi: no VPN, no cables.</p><a href="/platform/cross-network">The architecture →</a></div>
+      </div>
+    </section>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Every way in</div>
+      <h2>One workspace, five doors.</h2>
+      <p class="sdek">Web-join is the front door: no app, no download. It isn't the only door, and every door lands on the same workspace, simultaneously.</p>
+      <div class="proto-grid">
+        <div class="proto hot"><b>Web-join</b><span class="pb any">any network</span><p>Share from the browser: nothing to install, guest-proof, Chromebook-native.</p></div>
+        <div class="proto hot"><b>Polaris mobile app</b><span class="pb any">any network</span><p>Share and control from the phone in your pocket. iOS &amp; Android.</p></div>
+        <div class="proto"><b>AirPlay</b><span class="pb lan">LAN only</span><p>Native Apple sharing: no Mersive software on the device.</p></div>
+        <div class="proto"><b>Miracast</b><span class="pb lan">LAN only</span><p>Native Windows sharing, straight from the OS.</p></div>
+        <div class="proto"><b>Google Cast</b><span class="pb lan">LAN only</span><p>Chromecast from Chrome and Android: the Chromebook classroom's native path.</p></div>
+      </div>
+      <div class="proto-band">All five: <b>at the same time, on the same workspace.</b> Native casting reaches the room over the local link only &mdash; the room's network, Wi-Fi Direct, or the receiver's own access point &mdash; and its discovery breaks at a VLAN boundary; its shares reach remote participants once they land in the workspace; web-join and the Mersive apps join from anywhere. That's the honest line, drawn on the <a href="/platform/cross-network">cross-network page</a>.</div>
+    </section>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">Every seat sees it</div>
+      <h2>Meeting parity: every seat sees the same screen.</h2>
+      <p>The workspace on the room's display is mirrored live to app.mersive.com: everyone who joins, in the room or remote, sees the same workspace on their own screen, live. No craning at a far display, no "can you re-share that," no second-class seats.</p>
+      <div class="chips"><span>✓ In-room seats</span><span>✓ Remote seats</span><span>✓ Same workspace, same moment</span></div>
+    </div>
+
+    <div class="two">
+      <div class="card"><h3>How the whole platform works</h3><p>Glass. Workspace. Cloud. The full architecture in plain language, including web-join step by step.</p><a href="/platform/how">Meet Polaris →</a></div>
+      <div class="card"><h3>Pick the tier</h3><p>Essentials carries the full workspace and cross-network sharing; Pro adds wireless BYOM, HDMI input and dual 4K60 output.</p><a href="/products/family">The Polaris family →</a></div>
+    </div>
+    <CtaBand />
+</BaseLayout>

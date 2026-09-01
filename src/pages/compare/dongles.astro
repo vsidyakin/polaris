@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="compare/dongles">
+  <PageIntro
+    route={"compare/dongles"}
+    tpl={"T6"}
+    crumb={"vs Dongles"}
+    title={"Why not a dongle?"}
+    dek={"Buttons, pucks, and HDMI sticks replace one thing: the cable. That was worth replacing in 2015. The meeting has moved on."}
+  />
+    <div class="taxq"><b>What a dongle actually is.</b> A hardware transmitter that carries one person's pixels to one display. On the ladder it starts on the bottom rung (BYOD wireless share), and climbing costs another product: Barco sells ClickShare Conference for room AV, and BenQ's VS25 Host Button hosts Zoom, Teams and Meet from the button itself. Every capability above the connection has to come from somewhere else.</div>
+    <div class="cardrow reveal">
+      <h2 class="sr-only">What a dongle actually costs</h2>
+      <div class="card"><h3>Hardware you buy per seat, then buy again</h3><p>A button is a separate hardware purchase, per seat, and Barco publishes no price for one. Barco&rsquo;s current-generation Buttons are USB-C only &mdash; there is no current-generation USB-A Button for an older laptop estate &mdash; and the Gen 5 Button works only with Hub, not with any CX, C or Bar unit. Each one is a per-seat cost the web browser already made unnecessary. Polaris web-join needs nothing handed out, nothing charged, nothing lost.</p></div>
+      <div class="card"><h3>One presenter, pixels only</h3><p>A button carries one person's pixels. That is the ceiling of the form factor, and the vendors know it: Barco's whole shipping line stops at two sources on screen, achieved only by consuming two physical displays with one source each, so a third presenter takes both screens away from the first two. BenQ's entry model, WDC15, has no split screen at all. And Barco's Teams-certified flagship, ClickShare Hub, shows one source even on the dual-display Pro.</p></div>
+      <div class="card"><h3>A connection, not a platform</h3><p>Barco runs XMS Cloud with usage analytics, alerts and audit logs; Kramer runs VSM on Cloud with comprehensive usage reports; BenQ runs DMS on WDC25 and VS25. Each is a separate console, a separate purchase and, at Kramer, a separate signage subscription. When the meeting needs more than a cable ever did, the button's answer is another line on the quote.</p></div>
+    </div>
+    <table class="reveal">
+      <tr><th style="width:44%">Capability</th><th>Dongle / button class</th><th>Polaris</th></tr>
+      <tr><td>Share to the display</td><td class="y">✓ one presenter</td><td class="y">✓ multi-source workspace</td></tr>
+      <tr><td>Guest shares with nothing installed</td><td class="p">only if the dongle is in hand</td><td class="y">✓ browser web-join</td></tr>
+      <tr><td>Room AV into your meeting (BYOM)</td><td class="p">a second product: ClickShare Conference, BenQ Host Button</td><td class="y">✓ Pro, wireless</td></tr>
+      <tr><td>Room-hosted meetings</td><td class="p">BenQ VS25 Host Button hosts Zoom, Teams and Meet</td><td class="y">✓ with Polaris Host (pre-launch)</td></tr>
+      <tr><td>Cross-network / VLAN sharing</td><td class="n">— LAN-local in every vendor document we checked</td><td class="y">✓</td></tr>
+      <tr><td>Cloud management, analytics, signage</td><td class="p">separate platform, separate SKU: Barco XMS, Kramer VSM on Cloud, BenQ DMS</td><td class="y">✓ Polaris Cloud, included</td></tr>
+      <tr><td>Cost model</td><td class="p">per-dongle hardware + attrition + refresh</td><td class="y">subscription incl. warranty &amp; updates</td></tr>
+    </table>
+    <p class="note">[Rows illustrative — canonical matrix (Q6 committee) supplies final claims. Workspace/silicon rows describe Essentials & Pro; Launch derates (published caps). "Dongle class" = ClickShare Buttons, InstaShow, VIA buttons, HDMI transmitter kits.]</p>
+    <div class="mdna reveal"><h3>Our take: the dongle era</h3>
+      <p>Dongles won a real war: they killed the cable at the moment when nothing else could. But every dongle sold today is a bet that the meeting still lives on one laptop and the room still needs hardware handed around to see it. Neither is true anymore. The browser ended the hand-out; the workspace ended the single mirror; hybrid ended the idea that pixels-to-display is the whole job.</p>
+      <div class="concede">Honest concession: a point-to-point dongle kit works with zero network involvement. For an air-gapped boardroom or a rental space with no IT, a button is the right answer. Everywhere else you are buying a second hardware fleet to hand around.</div>
+    </div>
+    <div class="two reveal">
+      <div class="card"><h3>Compare by name instead</h3><p>Pick a specific vendor (Barco, Airtame, ScreenBeam, and the rest) in the compare hub.</p><a href="/compare/hub">Open the compare hub →</a></div>
+      <div class="card"><h3>The other category question</h3><p>Locked VTC room systems: a per-room platform license, one vendor by default, and a design where the default motion is start-a-call &mdash; which is why Barco now sells ClickShare Hub to bolt wireless presenting onto a Teams Room, at a second hardware purchase and a second licence.</p><a href="/compare/mtr">Why not a VTC room system? →</a></div>
+    </div>
+    <p class="note">Every Polaris hardware value in the matrix &mdash; ports, silicon, the 10-year platform lifecycle and the invariants it holds constant &mdash; is documented once, on <a href="/products/pro/spec#platform-lifecycle">the Pro spec sheet</a>, and is not restated here. Competitor cells keep their own published sources.</p>
+    <CtaBand />
+</BaseLayout>

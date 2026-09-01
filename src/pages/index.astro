@@ -1,0 +1,963 @@
+---
+// Home (page A0). Converted from the v2.00 single-file POC's pageHome();
+// markup extracted verbatim, hash links rewritten to real routes, and
+// template interpolations expressed as Fragment set:html.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+/* roomScene/rsLegend dropped with the deep hybrid section below. Those three
+   rung diagrams also render on /platform/taxonomy, /products/hybrid and
+   /solutions/hybrid, so home was the fourth copy of them; the pillar band now
+   carries hybrid at a glance and those pages carry the argument. */
+import { collabScene, pillarScene } from "../lib/blocks";
+/* IC dropped with the hero's floating chips — the animated stage replaced them
+   and XIC covers everything still on the page. */
+import { AWARDS } from "../data/awards";
+import { DEV, XIC } from "../data/icons";
+import { CASES } from "../data/cases";
+import { lockup } from "../lib/logo-lockup";
+
+/* Recognition order for the published case-study marks, strongest first, and the
+   one place that decides which customers appear on this page at all. It began as
+   the order of the standalone customer band that used to sit above the award
+   strip; that band is gone — the industry cards in A0.3 carry the marks now, each
+   on the card for its own sector — but the ordering judgement outlived it and the
+   cards read from it.
+
+   The Marq is deliberately absent: a regional developer whose mark carries no
+   recognition next to WHO or BNP Paribas. */
+const CASE_MARK_ORDER = ["wework", "marriott", "who", "bnl", "tamu", "gmu", "rit", "convene", "warwick", "stevens", "broward", "brent", "lfc"];
+
+/* The industry cards carry the real customer marks for their sector.
+ *
+ * Not a generated image and not a diagram. A diagram works on the pillar cards
+ * because each one draws a mechanism; "Education" has no mechanism to draw, so a
+ * figure there would be a generic classroom -- decoration impersonating
+ * information. A synthetic photograph is worse on this site specifically: the
+ * visual language is diagrams and real logos, and we sell to the people whose job
+ * is noticing things that look fake. A mark is evidence instead of decoration, it
+ * costs no new asset, and every one of them has a published story behind it.
+ *
+ * Sector comes from CaseStory.topic, which already carries exactly the taxonomy
+ * the three cards use. Order comes from CASE_MARK_ORDER above rather than from
+ * CASES, for two reasons: it is recognition order, so the strongest mark in each
+ * family leads; and it excludes The Marq, which that list deliberately holds back.
+ * Corporate therefore shows two marks where the others show three. Two real
+ * customers reads better than three where the third was included to square a
+ * layout.
+ *
+ * Equal-area lockup() at a card-sized constant: a square crest and an 11:1
+ * wordmark carry the same visual weight rather than the same width. The constant
+ * went up twice on 24 Aug 2026, both Damian's call. First 25% linear, then again
+ * so the marks hold the card rather than sitting in it as a footnote: at the old
+ * constants three marks laid about 231px of ink across a card whose inner width
+ * is 436px at a 1500 window, so roughly half the row was empty and the logos read
+ * as a caption. 3400/140/52 puts that at 337px.
+ *
+ * REMEMBER WHICH TERM IS WHICH WHEN CHANGING THIS. Width goes as the square root
+ * of `area`, so a linear increase of N% means multiplying area by N squared —
+ * and both caps have to move with it or they clamp the growth away and only the
+ * squarest marks grow. That is the whole reason all three numbers change
+ * together. */
+const IND_FAMILY: Record<string, "corporate" | "education" | "regulated"> = {
+  enterprise: "corporate",
+  highered: "education",
+  k12: "education",
+  finance: "regulated",
+  global: "regulated",
+};
+const indMarks = (family: "corporate" | "education" | "regulated") =>
+  CASE_MARK_ORDER.map((slug) => CASES.find((c) => c.slug === slug))
+    .filter((c): c is (typeof CASES)[number] => !!c && !!c.logo)
+    .filter((c) => IND_FAMILY[c.topic] === family)
+    .slice(0, 3)
+    .map((c) => ({
+      org: c.org,
+      logo: c.logo,
+      ...lockup(c.logoAspect || 3.5, { maxW: 140, maxH: 52, area: 3400 }),
+    }));
+/* THE AWARD STRIP IS ONE ROW THAT NEVER STOPS (Damian, 28 Aug 2026), ported
+   from the matt branch. It was two width-balanced static rows, and the
+   arithmetic that balanced them is gone with them — a marquee has no rows to
+   balance, so nothing here decides where the roster breaks any more.
+
+   TWO PASSES OF THE SAME LIST, AND THAT IS WHAT MAKES IT SEAMLESS. The track
+   holds AWARDS twice and translates by exactly -50%, so the moment the first
+   pass has left the window the second is sitting where it started and the loop
+   restarts on an identical frame. Duplicating in the MARKUP rather than cloning
+   in script keeps it working with JavaScript off: a CSS animation is the whole
+   mechanism, and there is no JS in this band at all.
+
+   The second pass is decoration — aria-hidden, empty alts, and the images are
+   already in the browser's cache from the first pass, so it costs no bytes and
+   says nothing twice to a screen reader. */
+const AW_PASSES = [AWARDS, AWARDS];
+
+/* THE FOUR WORKLOADS, AS DATA — because the showcase renders each one twice: as
+   a label in the rail and as a panel in the stage, and the two have to agree
+   about which is which or the bar points at the wrong slide. One array, indexed
+   twice, is what makes that impossible to get wrong by hand.
+
+   `scene` is the pillarScene() number, and the numbering there is historical
+   (1 collaboration, 2 hybrid, 3 signage, 4 fleet) rather than positional, so it
+   is carried explicitly instead of derived from the array index.
+
+   The copy is unchanged from the four cards this replaced. A panel may compress
+   a fact; it may not introduce one — every claim here is made in full further
+   down this page or on the page the panel links to. */
+const WORKLOADS = [
+  {
+    scene: 1,
+    href: "/solutions/collab",
+    tab: "Wireless collaboration",
+    tabSub: "Any device, nothing installed",
+    h3: "Wireless collaboration & screen mirroring",
+    body:
+      "Any laptop, phone or tablet puts its screen on the room display — from a browser with nothing installed, or by native AirPlay, Miracast and Google Cast.",
+    link: "How the workspace works",
+  },
+  {
+    scene: 2,
+    href: "/solutions/hybrid",
+    tab: "Hybrid meetings",
+    tabSub: "BYOD, BYOM, BYOM+",
+    h3: "Hybrid meetings: BYOD, BYOM, BYOM+",
+    body:
+      "The meeting can stay on the laptop, bridge the room’s camera and mic into the call, or run on the room itself with the vendors’ own native clients.",
+    link: "The three kinds of hybrid room",
+  },
+  {
+    scene: 3,
+    href: "/solutions/signage",
+    tab: "Digital signage",
+    tabSub: "Every display, included",
+    h3: "Digital signage",
+    body:
+      "Every meeting display doubles as a signage screen the moment nobody is sharing, and dedicated signage runs from the same Polaris Cloud login.",
+    link: "Signage on Polaris",
+  },
+  {
+    scene: 4,
+    href: "/platform/cloud",
+    tab: "Fleet management",
+    tabSub: "One login, every room",
+    h3: "Fleet management",
+    body:
+      "One login deploys, monitors and updates every room on every site — templates by room type, staged firmware, health alerts.",
+    link: "Manage the room, not just the box",
+  },
+];
+
+const IND_MARKS = {
+  corporate: indMarks("corporate"),
+  education: indMarks("education"),
+  regulated: indMarks("regulated"),
+};
+---
+
+<BaseLayout route="home">
+  {/* ── The hero ─────────────────────────────────────────────────────────
+      The film from the top of products/pro, running as this page's first screen.
+      What it replaced: a hand-built night sky (.skyzone wrapping .xhero's
+      gradient and .milkyway, constStars()'s constellation box, a .skytail spacer
+      and a 94-star .skyfield), plus A0.1.f1 — the 620x452 hm-stage SVG and the
+      hand-rolled GSAP-equivalent timeline in scripts/pages/home.ts that drove
+      it. The film says what that figure was drawing.
+
+      IT KEEPS THE CLASS .xhero, DELIBERATELY. Every typographic rule for this
+      hero's copy — .xhero h1's clamp and line-height, .xchip, .xdek, .xtrust —
+      is written against that selector, and all of it is home-only. Renaming the
+      section would mean copying that block to a new name for no gain. .vhx is
+      the modifier that turns the sky hero into a film hero.
+
+      WHY THE COPY IS NOT IN .vh-copy. That is the products' title-card block and
+      it is pointer-events:none, because a title card spanning most of the frame
+      should not swallow clicks. This hero has two buttons in it. So the copy
+      keeps its own .xwrap and .vhx re-lays it as one column now that the device
+      scene is gone.
+
+      TWO ENCODES, SMALL ONE IN src. <source media> is not an option — dropped
+      from <video>, ignored by Chrome and Safari — so the pick is
+      initVideoHero()'s, and whatever sits in `src` is what the browser starts
+      fetching before any script runs. The 700 KB file is the markup src so a
+      phone never begins the 3.4 MB one; above 900px the script swaps in the wide
+      encode through withBase(), because rebase-html.mjs rewrites `src` in dist/
+      but has never heard of data-src-wide.
+
+      preload="auto" and no poster, matching products/pro. There is no poster
+      frame for this film in the repo, and with autoplay on a 700 KB encode
+      "metadata" would hold a black rectangle where the first frame should be.
+      A real poster is worth adding later — on the highest-traffic page the film
+      is the LCP element, and a still is a much cheaper LCP than a video.
+
+      Reduced motion is handled in initVideoHero(): autoplay is stripped, the
+      attribute removed and the element paused, so that visitor gets a still
+      first frame and nothing moving. */}
+  <section class="xhero vhx">
+    <video
+      class="vhero-vid"
+      src="/video/mersive-pro-optimized-700kb.mp4"
+      data-src-wide="/video/mersive-pro-optimized-3mb.mp4"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      aria-label="Mersive Polaris in a meeting room"></video>
+    <div class="vhero-shade"></div>
+    <div class="vh-scroll" aria-hidden="true">Scroll<i></i></div>
+    <div class="xwrap">
+      {/* Two rows in the sky-hero era because row two shared its width with the
+          device scene. The scene is gone, so .vhx collapses both rows into one
+          column over the film and .xtop/.xbody are now only a copy grouping. */}
+      <div class="xtop">
+        <div class="xchip"><span class="dot"></span> Share from any browser. Nothing to install.</div>
+        <h1>Any meeting.<br>Every display.<br><span class="grad warm">One wireless collaboration platform.</span></h1>
+      </div>
+      <div class="xbody">
+        <p class="xdek">Mersive Polaris turns any display into a shared workspace. Laptops share from a browser tab, phones from the Mersive app. Side by side, several at once, across any network.</p>
+        <a class="btn primary big" href="/trial">Start a free trial</a>
+        <a class="btn ghost big" href="/platform/how">See how it works</a>
+        {/* Three, not six. Six ticks read as a feature list and wrapped to two rows
+            over the film, which is the one place on the page that should feel like
+            a promise rather than a spec. These three are the differentiators a
+            first-time reader can act on; warranty and secure boot are commercial
+            and architectural detail that the Advantages grid and the Trust Center
+            make properly, and "one cloud for every room" is now the fourth card
+            of the band immediately below this hero. */}
+        <div class="xtrust"><span>No client install</span><span>Any meeting platform</span><span>ISO 27001 certified, SOC 2 attested</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tmpbox">TEMPORARY &middot; review only &middot; <a href="/404">open the 404 page</a> &middot; remove before launch</div>
+
+  {/* The proof bar, directly under the hero (Damian, 26 Aug 2026). It had been
+      sitting below the Advantages grid, which put four screens of argument
+      between the promise and any evidence for it. A reader who has just been
+      told what Polaris does asks who else is running it, and the answer is now
+      the next thing on the page.
+
+      Below .tmpbox rather than above it, and that is only true until launch:
+      the review banner is deleted with the rest of the review chrome, at which
+      point this is the first thing under the film. */}
+  <div class="statband reveal">
+    <div class="stat"><b>9K+</b><span>organizations worldwide</span></div>
+    <div class="stat"><b>200K+</b><span>rooms under management (cloud &amp; on-prem)</span></div>
+    <div class="stat"><b>15 yrs</b><span>Mersive Solstice → Polaris lineage</span></div>
+    <div class="stat"><b>10 yrs</b><span>committed platform lifecycle</span></div>
+    <div class="stat"><b>2×</b><span>AVTechnology Best in Show &amp; SCN Installation Product Award, InfoComm 2025 (Polaris · Host, shown at InfoComm as the Mersive Tablet)</span></div>
+  </div>
+  {/* Audited against Website/Awards/ on 27 Aug 2026 -- both zips, the original
+      and the later Re_ one: every badge in that folder is on the page, and
+      nothing is on the page that is not in the folder. All fifteen now come from
+      public/awards/. src/data/awards.ts is the roster and records which three
+      needed a second source before they could ship.
+
+      Rendered from data rather than written out, because the previous strip
+      inlined three of its four badges as base64 data URIs. That put roughly 90 KB
+      of image bytes inside index.html, uncacheable and re-downloaded on every
+      page view, and made "is this the same file as the one in the folder"
+      impossible to answer without decoding the page. */}
+  <div class="mq reveal" role="group" aria-label="Awards and recognition">
+    <div class="mq-track">
+      {AW_PASSES.map((pass, p) => (
+        <div class="mq-run" aria-hidden={p ? "true" : undefined}>
+          {pass.map((a) => (
+            <img
+              src={a.src}
+              alt={p ? "" : a.alt}
+              width={a.w}
+              height={a.h}
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+
+
+  {/* ── The taxonomy band ─────────────────────────────────────────────
+      WHY THIS IS THE FIRST THING AFTER THE HERO
+      The four product areas used to be stated four different ways, at four
+      different depths, and the first of them arrived after seven bands of proof
+      — so "what does this company actually do" landed around 60% of the way down
+      the page, and fleet management was never a section at all, just one
+      <details> inside the Advantages grid. A reader could not count the pillars
+      and neither could a machine reading the heading outline.
+
+      FOUR CARDS, BUT THE DECK SAYS THREE-PLUS-ONE
+      nav.ts files collab, hybrid and signage under Solutions → By use case and
+      Polaris Cloud under Platform, because the first three are what the glass
+      does and the fourth is how you run the estate. The cards are peers because
+      that is the ruling; the deck carries the relationship instead of the
+      layout. Do not "fix" this by demoting the Cloud card to a sub-item.
+
+      ONE PANEL AT A TIME, AS OF 27 AUG 2026 (Damian). It was a static 2x2 grid
+      of four cards. The four workloads are peers and a grid says so, but it also
+      spent most of a screen restating that fact and gave each of the four
+      diagrams a quarter of the row. The showcase gives one workload the whole
+      stage and lets the rail carry the peerage: four labels, one bar travelling
+      between them, and the reader can jump to any of them at any time.
+
+      THE SCROLL DEALS THE SLIDES NOW (27 Aug 2026, Matt). The showcase ran on a
+      6.2-second clock; it is the fourth pinned track on the site instead —
+      .pswstg, built on the same mechanism as .advstg two sections below and the
+      .stg it descends from. The <section> is a TRACK taller than the window, one
+      100svh child sticks to the top of it, and scrolling the track advances
+      --psw-p from 0 to 1: the header recedes, each slide owns a quarter of the
+      track and takes the stage as the reader crosses its threshold, a ghost
+      numeral drifts continuously behind the deck as the fast plane, and the
+      bar's fill is the slide's own share of the scroll rather than a timer. The
+      slide swap itself — the directional psIn entrance, the diagrams acting out
+      their sentences — is exactly the transition the clocked version played;
+      what changed is who calls it. See the .pswstg block in pages.css and
+      initShowcase() in home-motion.ts, which owns this track rather than
+      initScrollScene() because the measured bar and the travel direction are
+      state the generic scrub loop has no business carrying.
+
+      A TAB IS A SCROLL DESTINATION NOW. Clicking a label (or arrowing through
+      the tablist) scrolls the page to that slide's slice of the track, so the
+      reader's position and the deck can never disagree — the scroll is the only
+      source of truth. Smooth scrolling deals through the slides in between,
+      which is the same thing the reader's own flick does.
+
+      FOUR THINGS HERE ARE LOAD-BEARING, NOT STYLE
+        1. Each pillar name is an <h3> INSIDE its card. check-outline.py walks
+           the heading tree, and the <h2> above is what makes the level legal. A
+           pillar name that lived only in the rail's label would delete four
+           headings from the outline a crawler reads. THE RAIL LABELS ARE NOT
+           HEADINGS for the same reason in reverse: they are a second, shorter
+           name for the same four things, and promoting them would put eight
+           headings under this <h2> for four subjects.
+        2. Each card is a real <a href> present in the served HTML, and the <h3>
+           sits INSIDE it. That is not incidental: the heading is therefore part
+           of the link's own text, so the anchor reads "Wireless collaboration &
+           screen mirroring / How the workspace works" -- keyword first, from the
+           strongest page on the site to the four pillar pages. It is also why
+           the heading must not get an anchor of its own: <a> inside <a> is
+           invalid, and a browser will unnest it and break the card's hit target.
+           The tabpanel role sits on the WRAPPER, never on the anchor: a role on
+           an <a> replaces its link role, and the link is the point.
+        3. No JavaScript builds any of it. All four panels are in the served
+           HTML with the first one on; the script only moves which. This is the
+           whole reason the showcase is safe on this page —
+           platform/taxonomy.astro is the counter-example already on this site,
+           writing #taxdetail.innerHTML from a JS record, so a crawler that
+           executes no JavaScript (which is most of the AI crawlers named in
+           robots.txt.ts) sees an empty div. If this section ever starts
+           rendering its panels from WORKLOADS at runtime, that is the defect.
+        4. The inactive panels are hidden with opacity plus `visibility`, NOT
+           with `hidden` or `display:none`. The content stays in the layout —
+           the stacked grid cell needs every panel's height — and visibility is
+           what takes the three unseen cards out of the tab order and the
+           accessibility tree, in one CSS property the flatten block undoes in
+           one property. It replaced a baked aria-hidden/tabindex pair that the
+           script had to keep in step: for a no-script reader the flatten block
+           now stands all four panels up, so an aria-hidden baked into the
+           markup would have hidden three of them from exactly the reader it
+           was meant to serve. A crawler reads four workloads either way, which
+           is the outcome that matters.
+
+      NOTHING IN THIS SECTION MAY CARRY data-i — the tabs and slides used to,
+      as an unread label, and it is a footgun: initPriceMode() in
+      scripts/site.ts runs on every page and does an unscoped `$$("[data-i]")`,
+      toggling `on` against the current pricing industry. The showcase's state
+      class is `is-on` precisely so that sweep cannot touch it, but the
+      attribute invites a rename that would break this quietly. The driver
+      walks tabs and slides by array position and needs no index in the markup.
+
+      The copy restates claims made in full further down the page or on the
+      pillar page each panel links to. A panel may compress a fact; it may not
+      introduce one. */}
+  <section class="pswstg" aria-labelledby="pswstg-h" data-hbg="platform">
+    <div class="pswstg-pin">
+      <div class="pswstg-inner">
+        {/* The header recedes against --psw-p rather than arriving, for the
+            reason .advstg-head gives: 0 is the moment the pin catches, which is
+            also the moment the reader has just scrolled up to the heading, so
+            anything written as "0 means not yet here" would blink it out
+            exactly when they arrive at it. */}
+        <div class="pswstg-head">
+          <div class="kicker">The platform</div>
+          <h2 id="pswstg-h">Four workloads, one Polaris platform.</h2>
+          <p class="sdek">Wireless collaboration, hybrid meetings and digital signage are what every Polaris display does. Polaris Cloud is the single pane that deploys, monitors and updates all three &mdash; every room, every site, one login.</p>
+        </div>
+
+        <div class="pshow" data-showcase data-dir="fwd">
+          <div class="pshow-rail">
+            {/* The bar is one element that moves, not four that light up: a
+                single travelling mark is what makes the four labels read as one
+                sequence being played rather than as four independent toggles.
+                Its offset and length are measured from the active label by
+                initShowcase(); the fill inside it is the slide's own share of
+                the track, scrubbed by the scroll, so it also answers "how much
+                of this slide is left". Decorative throughout — aria-selected on
+                the buttons is what actually carries the state. */}
+            <div class="pshow-bar" aria-hidden="true"><span class="pshow-fill"></span></div>
+            <div class="pshow-tabs" role="tablist" aria-label="Polaris workloads">
+              {WORKLOADS.map((w, i) => (
+                <button
+                  type="button"
+                  class={i === 0 ? "pshow-tab is-on" : "pshow-tab"}
+                  role="tab"
+                  id={`pst-${i}`}
+                  aria-controls={`psp-${i}`}
+                  aria-selected={i === 0 ? "true" : "false"}
+                  tabindex={i === 0 ? 0 : -1}
+                >
+                  <span class="pshow-n">{String(i + 1).padStart(2, "0")}</span>
+                  <span class="pshow-l">
+                    <span class="pshow-lt">{w.tab}</span>
+                    <span class="pshow-ls">{w.tabSub}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* All four panels share one grid cell, so the stage is as tall as
+              the tallest of them and never changes height between slides.
+              Absolute positioning would collapse it to nothing and need a
+              hand-kept min-height that the copy outgrows the first time
+              somebody edits a blurb.
+
+              The .psw-num numeral is the track's fast parallax plane — an
+              outlined ghost drifting continuously against --psw-p while the
+              slides step against the same number. The advantages stage below
+              carried the same device and no longer does (Matt, 27 Aug 2026);
+              this one is smaller, sits beside the card rather than under the
+              copy, and stays.
+              Behind the card by stacking order, aria-hidden because the tab
+              already numbers the slide for a reader. */}
+          <div class="pshow-stage">
+            {WORKLOADS.map((w, i) => (
+              <div
+                class={i === 0 ? "pshow-slide is-on" : "pshow-slide"}
+                id={`psp-${i}`}
+                role="tabpanel"
+                aria-labelledby={`pst-${i}`}
+              >
+                <span class="psw-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <a class="pshow-card" href={w.href}>
+                  <h3>{w.h3}</h3>
+                  <figure><Fragment set:html={pillarScene(w.scene)} /></figure>
+                  <p>{w.body}</p>
+                  <span class="plk">{w.link} &rarr;</span>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Straight after the taxonomy band (Damian, 27 Aug 2026). The band says
+      what Polaris does; this says why it is different at doing it, so the two
+      belong together. It used to sit below the industry cards, which put the
+      question "who is this for" between the claim and its defence. */}
+  <section class="sect reveal">
+    <div class="kicker">Platform · what sets Polaris apart</div>
+    <h2>The Mersive <span class="grad" style="background:linear-gradient(90deg,#a58cff,#7ce3a8);-webkit-background-clip:text;background-clip:text;color:transparent">Polaris</span> Advantages</h2>
+    {/* A LEDGER, NOT A CARD GRID -- and the reason is measured, not stylistic.
+
+        As <details class="diff"> cards these showed 7-9 words each and hid 12-77
+        behind "+ more", so the section read as an index of topics rather than the
+        argument it is. It was also one of several consecutive card grids down this
+        page, which is what made the run read as a wall.
+
+        Rows fix both at once: every word visible, density roughly quintupled, and a
+        texture change partway down the page.
+
+        <dl> rather than divs, because the relationship here IS term-to-definition --
+        claim on the left, mechanism on the right -- and the element says so to a
+        parser that would otherwise see a row of anonymous boxes. The <h3>s stay
+        inside the <dt>s, so the outline check-outline.py walks is unchanged.
+
+        Dropping <details> costs nothing machine-side: its content was always in the
+        DOM and always retrievable. What it cost was a click per card from a human.
+
+        The leads are self-contained on purpose. "The platform is chosen per meeting"
+        has no subject, so an answer engine quoting it cannot say what "the platform"
+        is; each lead now names Polaris. No claim is added -- only the subject. */}
+    <dl class="advl">
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.oneplat} /></div>
+          <h3>Native Teams, Zoom, Webex, Meet</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">A Polaris room runs the meeting platform chosen for that meeting, not one fixed to the room.</p>
+          <p>Polaris rooms run the vendors&rsquo; own native clients, so the chat, the layouts and Copilot are the ones Microsoft and Zoom shipped, not a re-rendering of them inside another vendor&rsquo;s canvas. Which platform a room runs is chosen per meeting rather than fixed at install: move from Teams to Zoom between one meeting and the next, with no reboot and no swap. And with Polaris Host, BYOM+ lets the room run and control the hybrid meeting itself, without requiring a user&rsquo;s device. Which vendors re-render and which do not, in their own wording, on the <a href="/compare/hub">compare matrix</a>.</p>
+          <a class="advl-cta" href="/solutions/hybrid">Platform-agnostic hybrid →</a>
+        </dd>
+      </div>
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.shieldx} /></div>
+          <h3>Enterprise security, documented</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">Polaris ships with secure boot on a TAA-compliant supply chain.</p>
+          <p>ISO/IEC 27001:2022 certified, with no nonconformities at the June 2026 surveillance audit. SOC 2 Type 2 attested for the Polaris cloud, and the room device assessed by a third party. The July 2026 application assessment returned no critical and no high-severity findings. 802.1x/EAP-TLS on the wire, all of it written down where your security team can read it.</p>
+          <a class="advl-cta" href="/platform/security">The trust center →</a>
+        </dd>
+      </div>
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.cloudx} /></div>
+          <h3>Polaris Cloud</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">Polaris Cloud carries analytics, activation and fleet management for the whole estate.</p>
+          <p>Mersive Solstice Cloud keeps managing your Gen 3 estate, linked straight from Polaris Cloud: one starting point while you migrate.</p>
+          <a class="advl-cta" href="/platform/cloud">Explore the cloud →</a>
+        </dd>
+      </div>
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.workspace} /></div>
+          <h3>The multi-share workspace</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">The Polaris workspace holds every share side by side, controlled from any seat.</p>
+          <p>A true composited workspace: compared, annotated, rearranged live. A panel composites on its own glass. Polaris composites and then encodes the whole canvas back out, both to remote participants who never joined a call and to a browser on any device. That is meeting parity: everyone in the room and everyone remote is looking at the same content at the same time, with no second-class view. That is the line the panel vendors have not crossed.</p>
+          <a class="advl-cta" href="/platform/workspace">Why the workspace wins →</a>
+        </dd>
+      </div>
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.webjoin} /></div>
+          <h3>Share from the browser</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">Polaris shares from the browser: no client, no admin rights, no dongles.</p>
+          <p>Guests share in seconds on whatever they walked in with, Chromebooks included.</p>
+          <a class="advl-cta" href="/platform/how">How web-join works →</a>
+        </dd>
+      </div>
+      <div class="advl-row">
+        <dt>
+          <div class="ic"><Fragment set:html={XIC.crossnet} /></div>
+          <h3>Cross-network sharing</h3>
+        </dt>
+        <dd>
+          <p class="advl-lead">Polaris shares across VLANs, subnets, buildings and the internet without a VPN.</p>
+          <p>Mersive does the signalling only: the cloud introduces the two ends, then steps out of the way and the media flows peer-to-peer over a direct, encrypted WebRTC connection. Your content never crosses our cloud. Signalling is outbound-only TLS on port 443, so guests, other VLANs and remote devices reach the room with no VPN and nothing inbound to open.</p>
+          <a class="advl-cta" href="/platform/cross-network">See the architecture →</a>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  {/* ── Industries ──────────────────────────────────────────────────────
+      Verticals had no presence on the home page at all — eleven solutions pages
+      existed and not one of them was reachable from here. The nav was the only
+      way in.
+
+      WHY IT SITS DIRECTLY UNDER THE PRODUCT TAXONOMY (Damian, 24 Aug 2026)
+      A0.2 is the same map by a different axis: four things Polaris does, then
+      three kinds of buyer it does them for. Kept apart, the two read as
+      unrelated bands with a page of argument wedged between them; together
+      they read as one taxonomy offered two ways, and a reader who knows their
+      vertical can leave for it immediately instead of scrolling the whole
+      page to find the door.
+
+      THREE FAMILIES, MATCHING nav.ts
+      Corporate, Education and Regulated Industries, in that order, with the
+      same children under each. Home agreeing with the nav is the point: a
+      reader who scans this band and then opens the Solutions menu sees the same
+      shape twice, and a crawler gets home → family hub → child as a clean
+      two-level path.
+
+      "Corporate", not "Enterprise". Enterprise is a CHILD of Corporate in
+      nav.ts, and SiteFooter.astro derives its columns from the same NAV array,
+      so renaming the family here to match a request for "Enterprise" would put
+      the home page, the nav and the footer into three-way disagreement.
+
+      GOVERNMENT IS DELIBERATELY ABSENT.
+      src/data/held.ts holds solutions/government on Damian's 13–14 Aug 2026
+      ruling: noindexed, out of the sitemap and out of llms.txt. A link from the
+      home page is exactly the inbound discovery a hold exists to prevent, so
+      the Regulated card names Healthcare and Financial Services only. Do not
+      "complete the set" here — releasing that page is deleting its held.ts
+      entry, and this card can gain the link on the same day.
+
+      Both levels are linked on purpose: the heading carries the hub and the row
+      beneath carries the children, so the descriptive anchor text goes to all
+      of them rather than being spent on one. */}
+  <section class="sect reveal">
+    <div class="kicker">By industry</div>
+    <h2>Rooms that answer to somebody.</h2>
+    <p class="sdek">The room is the same platform everywhere. What changes is who signs off on it: procurement, a semester timetable, or an auditor.</p>
+    <div class="three">
+      <div class="card indcard">
+        <h3><a href="/solutions/corporate">Corporate</a></h3>
+        <p>Estates measured in hundreds of rooms, standardised and rolled out once. One cloud pane for all of them, whatever the building.</p>
+        <div class="indmarks">
+          {IND_MARKS.corporate.map((m) => (
+            <img src={m.logo} alt={m.org} width={m.w} height={m.h}
+              style={`width:${m.w}px;height:${m.h}px`} loading="lazy" decoding="async" />
+          ))}
+        </div>
+        <p class="indkids"><a href="/solutions/enterprise">Enterprise</a><span class="indsep">&middot;</span><a href="/solutions/smb">SMB &amp; Mid-market</a><span class="indsep">&middot;</span><a href="/solutions/creative">Creative</a></p>
+      </div>
+      <div class="card indcard">
+        <h3><a href="/solutions/education">Education</a></h3>
+        <p>Lecture halls, flat classrooms and shared teaching space, where a guest lecturer&rsquo;s laptop has to work in the first minute of the hour.</p>
+        <div class="indmarks">
+          {IND_MARKS.education.map((m) => (
+            <img src={m.logo} alt={m.org} width={m.w} height={m.h}
+              style={`width:${m.w}px;height:${m.h}px`} loading="lazy" decoding="async" />
+          ))}
+        </div>
+        <p class="indkids"><a href="/solutions/k12">K-12</a><span class="indsep">&middot;</span><a href="/solutions/highered">Higher Education</a></p>
+      </div>
+      <div class="card indcard">
+        <h3><a href="/solutions/regulated">Regulated Industries</a></h3>
+        <p>Where the architecture has to be written down before the room is approved: boot chain, network posture, data paths, update policy.</p>
+        <div class="indmarks">
+          {IND_MARKS.regulated.map((m) => (
+            <img src={m.logo} alt={m.org} width={m.w} height={m.h}
+              style={`width:${m.w}px;height:${m.h}px`} loading="lazy" decoding="async" />
+          ))}
+        </div>
+        <p class="indkids"><a href="/solutions/healthcare">Healthcare</a><span class="indsep">&middot;</span><a href="/solutions/finance">Financial Services</a></p>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <section class="sect reveal pa-set">
+    {/* Problems and audiences are one section again (Damian, 27 Aug 2026), under
+        one title that names both halves. "Why rooms change" and "Day one, and
+        every day after" are gone with the split -- two kickers over what is now a
+        single band would announce two subjects.
+
+        The kicker is "Problem and answer" because that is the section's shape:
+        three complaints, then the three people each one stops being a complaint
+        for. It has to be short. The <h2> beneath it is long by design, and a
+        second long line above it would bury the heading rather than introduce it.
+
+        All six card labels are <h3> under this one <h2>, which is what the
+        outline wants -- and the reason the two halves needed separate <h2>s while
+        they were separate sections no longer applies now that one title covers
+        them both.
+
+        THE COLUMNS PAIR, AND THE ORDER IS LOAD-BEARING (Damian, 27 Aug 2026).
+        Each problem sits directly above the person it stops being a problem for:
+
+          dongles lost and re-bought   -> the AV manager, who owns the inventory
+          a guest cannot share         -> the user, who is the guest
+          locked to one platform/OEM   -> the integrator, who racks and quotes it
+
+        That is what makes "Problem and answer" true of the LAYOUT and not only of
+        the section, and it is why the audiences row runs AV manager, user,
+        integrator rather than the user-first order it had. Reorder either row on
+        its own and the pairing breaks silently while the page still looks correct
+        -- the two rows have to move together. */}
+    <div class="kicker">Problem and answer</div>
+    <h2>The problems that bring people here, and why Polaris is easy for everyone who has to live with it.</h2>
+
+    <div class="painrow reveal">
+        <div class="pain">
+          <span class="px" aria-hidden="true">&#10005;</span>
+          <h3>Dongles are lost, creating an ongoing expense.</h3>
+          <p>A dongle is a separate hardware purchase, per seat, and when one goes missing another unit has to be bought. It is also one more piece of inventory to stock, maintain and keep connected to your network.</p>
+          <div class="fix">Polaris shares from the browser, on the device the person already carries. Nothing to buy per seat, nothing to lose, nothing to keep in a drawer.</div>
+          <a href="/compare/dongles">Polaris vs dongles &rarr;</a>
+        </div>
+        <div class="pain">
+          <span class="px" aria-hidden="true">&#10005;</span>
+          <h3>A guest can&rsquo;t put a slide on the screen.</h3>
+          <p>Sharing usually means getting the visitor onto the corporate network first: an app to install, an account to create, or a firewall exception to file with IT. The deck stays on their laptop while the room waits.</p>
+          <div class="fix">A guest shares from the browser without joining the corporate network: no app, no account, and no firewall exception to file.</div>
+          <a href="/platform/cross-network">How guest sharing works &rarr;</a>
+        </div>
+        <div class="pain">
+          <span class="px" aria-hidden="true">&#10005;</span>
+          <h3>The room is locked to one meeting platform and OEM.</h3>
+          <p>A certified room system hosts one platform&rsquo;s meetings by design, with one vendor bolted to the room, a commitment to that ecosystem for the life of the hardware.</p>
+          <div class="fix">Polaris is agnostic about which meeting system users want to deploy and switches from one to another in seconds. No reboot, no swap. Link ships on Polaris Pro only, while Polaris Host can be added to any Polaris Pro or Essentials room.</div>
+          <a href="/compare/mtr">Polaris vs room systems &rarr;</a>
+        </div>
+    </div>
+
+    <div class="easy3">
+      <div class="e3"><div class="ic"><Fragment set:html={XIC.cloudx} /></div><h3>Easy for the AV manager</h3><p>Every room on one cloud pane: deploy, monitor, and update the whole estate from your desk. Fewer tickets, fewer truck rolls, a smaller support burden.</p></div>
+      <div class="e3"><div class="ic"><Fragment set:html={XIC.webjoin} /></div><h3>Easy for the user</h3><p>Walk in, open a browser, share. No app, no download, no training, guests included.</p></div>
+      <div class="e3"><div class="ic"><Fragment set:html={XIC.oneplat} /></div><h3>Easy for the integrator</h3><p>One cable to the display, PoE+ power on Pro (Essentials uses the 12V adapter), cloud activation: racked to running fast, quotable from an open spec sheet.</p></div>
+    </div>
+  </section>
+
+<section class="sect reveal tight">
+    <div class="kicker">The 10-year platform</div>
+    <h2>Cheaper than the box you replace every five years.</h2>
+  <div class="darkband reveal">
+    <div>
+      <div class="kicker" style="color:#7ce3a8">Lifecycle</div>
+      <h2>Software based &mdash; hardware enabled. Installed once, better every quarter.</h2>
+      <p>Hardware based products don't age out; they stop improving. A Polaris subscription keeps advancing: updates, security and new capabilities, with warranty for as long as you subscribe. No forklift upgrades, no care contracts.</p>
+      <p style="margin-top:8px;font-size:13px;color:#a9d8bc">If a subscription lapses, the room doesn't brick: local wireless sharing keeps working.</p>
+      <a class="btn primary" href="/platform/tco">The 10-year math →</a>
+    </div>
+    <div class="n8">10+<small>YEARS · ONE INSTALL</small></div>
+  </div>
+
+    {/* A0.5 and A0.6 are one section as of 27 Aug 2026. They were always one
+        argument in two halves -- what the platform costs to own over ten years,
+        then which of the three chassis you buy -- and the section break made the
+        second half look like a new subject. The "Compare the tiers" button went
+        with the merge: it pointed at /products/family from directly above the
+        tiers themselves, which is a link asking the reader to leave for
+        something already on screen. /products/family is still reached three
+        times from this page. */}
+    <div class="kicker" style="margin-top:80px">Wireless collaboration and screen mirroring</div>
+    <h2>Choose your Polaris hardware</h2>
+    <p class="sdek" style="margin:2px 0 4px">Polaris is one platform, offered in three chassis. All three run the same software and open the same Mersive workspace. What grows with the hardware is how many sources can share at once and what the room can drive.</p>
+    <div class="tgroup">One software platform · three versions of hardware sized to fit every room</div>
+    {/* The three hardware options presented the way C1 presents them at the top
+        of /products/family, on Damian's ask, 27 Aug 2026 -- the same .cbk strip
+        of three sheared panels, each its own link, with the product film inside
+        it. It replaces the three .tiercard blocks that were here; the kicker, the
+        heading, the deck, the group label and the transition note above and below
+        it are all untouched, so the two treatments can be judged against the same
+        frame.
+
+        THE 80px ON THE KICKER ABOVE HAS TO EXCEED 40px TO DO ANYTHING. .darkband
+        carries my-10, so its bottom margin is 40px, and it and this kicker are
+        adjacent siblings in a plain block .sect -- their margins collapse to the
+        larger of the two rather than adding up. The 34px this started as was
+        therefore invisible: the gap on the page was the darkband's own 40. 80px
+        wins the collapse and is double the space that was actually rendering
+        (Damian, 27 Aug 2026). Anything at or under 40 here is a no-op.
+
+        FOUR THINGS DIFFER FROM C1, AND EACH HAS TO
+        1. No .cbk-lede. That block is an <h1> and a deck, and this page already
+           has its <h1> in the film hero. check-outline.py allows exactly one, and
+           requires it to be the first heading -- a second one here would fail the
+           build. The section's own kicker and <h2> above do that job instead.
+        2. No sr-only <h2> either, for the same reason in reverse: the panels'
+           <h3>s already sit under this section's <h2>, so the outline walks
+           without inventing another level.
+        3. --cbk-h is overridden below. C1 sizes the strip as
+           clamp(480px, 100svh - 190px, 1000px) -- deliberately a full first
+           screen, measured against the chrome above it. Mid-page that would eat
+           a whole viewport between the cost argument and the transition note, so
+           it is capped to a band here.
+        4. Panel order is C1's -- Launch, Essentials, Pro, the entry -> workspace
+           -> enterprise ladder the .famlad figure on that page also uses, and the
+           order .cbk-el/.cbk-es/.cbk-pr are positioned for. The cards it replaces
+           ran Pro first with .hot on it, so Pro is no longer the emphasised tier.
+           Worth a look before this ships.
+
+        The films carry data-src rather than src and preload="none": nothing
+        downloads until the strip is on screen, and both pause when it leaves.
+        initComicHero() does that, and is imported at the foot of this page.
+        Launch has no film -- the DEV.stick silhouette stands in, as it does on
+        C1, rather than borrowing a photograph of a different product. */}
+    <section class="cbk cbk-home">
+      <a class="cbk-p cbk-el" href="/products/launch">
+        <div class="cbk-cut">
+          <span class="cbk-art"><Fragment set:html={DEV.stick} /></span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <span class="tag t-ship">Shipping Q1 2027</span>
+            <h3 class="cbk-h">Launch</h3>
+            <span class="cbk-d">Share-first &middot; one-time purchase</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+
+      <a class="cbk-p cbk-es" href="/products/essentials">
+        <div class="cbk-cut">
+          <span class="cbk-art">
+            <video
+              class="cbk-vid"
+              data-src="/video/mersive-mini-2-optimized-5mb.mp4"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"></video>
+          </span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <h3 class="cbk-h">Essentials</h3>
+            <span class="cbk-d">The workspace for every room</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+
+      <a class="cbk-p cbk-pr" href="/products/pro">
+        <div class="cbk-cut">
+          <span class="cbk-art">
+            <video
+              class="cbk-vid"
+              data-src="/video/mersive-pro-optimized-2mb.mp4"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"></video>
+          </span>
+          <span class="cbk-scrim" aria-hidden="true"></span>
+          <span class="cbk-tone" aria-hidden="true"></span>
+          <div class="cbk-copy">
+            <h3 class="cbk-h">Pro</h3>
+            <span class="cbk-d">BYOM + enterprise networks</span>
+          </div>
+        </div>
+        <span class="cbk-hit" aria-hidden="true"></span>
+      </a>
+    </section>
+    <p style="margin-top:16px" class="note">Coming from Mersive Solstice Gen 3? <a href="/products/transition">Pro continues your line →</a> &nbsp;·&nbsp; Not sure? <a href="/products/selector">Four questions →</a></p>
+  </section>
+
+  <section class="sect reveal">
+    <div class="kicker">Collaboration and screen mirroring</div>
+    <h2>Glass. Workspace. Cloud.</h2>
+    <p class="lead">Polaris begins where native screen mirroring ends. AirPlay, Miracast and Google Cast each hand the display to one device at a time. Polaris puts the <em style="color:#7ce3a8;font-style:normal">Mersive Workspace</em> behind them: a shared canvas where several sources sit side by side at once, arriving by native cast or straight from a browser. The workspace is not bound to the LAN. A guest sitting in the room, a colleague on another VLAN and someone on the other side of the world all reach the same room over the internet, with no VPN to stand up, no network to join and nothing inbound to open.</p>
+    <p class="sdek">The canvas isn&rsquo;t only on the wall. app.mersive.com renders the same workspace for every seat, in the room or remote, so the people who aren&rsquo;t standing in front of the glass aren&rsquo;t watching a lesser view of it. And every display runs from one cloud, whether that is a single room or an estate of thousands. Three layers make it work:</p>
+    <div class="clb-caps">
+      <div class="clb-cap"><h3>The glass</h3><p>Any display you already own becomes a Polaris endpoint: a meeting room display, a classroom screen, a lobby wall.</p></div>
+      <div class="clb-cap"><h3>The workspace</h3><p>Every share lands side by side on the display, from a laptop, a phone, or a browser with nothing installed, and from any network, not just the room&rsquo;s.</p></div>
+      <div class="clb-cap"><h3>The cloud</h3><p>The broker and the fleet console: it introduces every session, runs every room, and stays out of the media path.</p></div>
+    </div>
+
+    {/* The diagram is evidence for the three layers above, so it needs a line
+        of its own saying what it shows. It was previously unlabelled and sat
+        between the deck and the caps, which is what broke the section: the deck
+        ends "Three layers make it work:" and the next thing a reader met was an
+        11KB two-phase schematic, with the three layers only arriving after it. */}
+    <h3 class="clb-how">How a share reaches the room</h3>
+    <Fragment set:html={collabScene()} />
+    <p><a class="btn accent" href="/platform/how">How it works →</a> <a class="btn ghost" href="/resources/faq">Wireless presentation questions, answered →</a></p>
+  </section>
+
+  
+
+  <section class="sect reveal">
+    <div class="kicker">Hybrid meetings</div>
+    {/* The three rung diagrams that used to open this section are gone, and
+        this section's job changed with them. The band at the top of the page
+        now answers "where does your meeting live" at a glance, and the rungs
+        themselves are drawn in full on /platform/taxonomy, /products/hybrid
+        and /solutions/hybrid — home was the fourth copy of the same figures.
+        What is left here is the part home is the right place for: the two
+        products you actually add to a room, both with ship dates.
+
+        "off the laptop" rather than "any Polaris room": Link adds to Pro only
+        and Host adds to Pro or Essentials, so neither is available on every
+        Polaris room, and Launch has no hybrid at all. */}
+    <h2>Two ways to move the meeting off the laptop.</h2>
+    <p class="sdek">Most rooms manage BYOD and stop there: your laptop hosts, and the room is a screen. The ones that go further usually ask you to give something up: locked to a single meeting platform, or bridging the room&rsquo;s camera and mic in a way that costs you the native client, so chat, recording and Copilot are no longer the ones Teams or Zoom shipped.</p>
+    <p class="sdek" style="margin-top:10px">Polaris adds hybrid to a room you already own, two ways. <b style="color:#e2d9ff">Link</b> is software on Polaris Pro: the meeting runs on the pod, so you can start it from your device and then close the lid. <b style="color:#e2d9ff">Host</b> pairs with Pro or Essentials and lets the room itself host, from a touch panel. That is BYOM+, where the room runs the meeting rather than bridging someone else&rsquo;s. Neither locks the room down: the platform is chosen per meeting, every client is the vendor&rsquo;s own, and changing from one to another takes seconds and no reboot.</p>
+    <p style="margin-top:12px"><a class="btn accent" href="/products/hybrid">The hybrid family →</a> <a class="btn ghost" href="/compare/hub">Compare the alternatives →</a></p>
+    <div class="tgroup" style="margin-top:26px">Hybrid meeting solutions</div>
+    <div class="tiercards duo">
+      <div class="tiercard"><div class="tname">Host (BYOM+) <span class="tag t-ship">SHIPS Q4 2026</span></div><div class="tfor">Adds to Pro or Essentials · the room hosts</div>
+        <ul><li>Walk in with just a phone, or nothing at all</li><li>Native Teams/Zoom/Webex/Meet clients</li><li>Starts, controls, and shares the meeting</li></ul>
+        <a class="btn accent" href="/products/host">Explore Host</a></div>
+      <div class="tiercard"><div class="tname">Link (BYOM) <span class="tag t-ship">SHIPS Q3 2026</span></div><div class="tfor">Adds software to Pro · the pod hosts the meeting</div>
+        <ul><li>The meeting runs on the pod, not the laptop</li><li>Start it from your device, then close the lid</li><li>Any platform, no lock</li></ul>
+        <a class="btn accent" href="/products/link">Explore Link</a></div>
+    </div>
+    
+  </section>
+
+  <section class="sect reveal">
+    <div class="kicker" style="color:#7ce3a8">Digital signage · included</div>
+    <h2>Signage on every display you run.</h2>
+    {/* Two deks became one. They were saying the same thing twice — the second
+        was a bolded restatement of "one portal" that the first had already
+        made — and the pillar band above now carries the one-line version. */}
+    <p class="sdek">Polaris drives dedicated signage screens across lobbies, hallways, cafeterias and whole floors, and the meeting displays you already own double as signage the moment nobody is sharing. Dynamic and event-driven content, cached locally. Signage is included, not licensed separately: no second network of players, no second licence, no second vendor. <b style="color:#7ce3a8">The same Polaris Cloud login runs both.</b></p>
+    <div class="three">
+      <div class="card"><h3>Dedicated signage screens</h3><p>Lobbies, hallways, cafeterias, whole floors: Polaris drives signage-only displays as a deployment, dynamic and event-driven, cached locally.</p></div>
+      <div class="card"><h3>And the rooms you already own</h3><p>Meeting displays double as signage the moment nobody is sharing. Launch puts signage on any other screen for a one-time cost, all in the same Polaris Cloud pane.</p></div>
+      <div class="card"><h3>Publishes on locked-down hardware</h3><p>Secure boot: the lobby screen only runs firmware we signed and content you published. [Secure-boot wording: claims committee, D-02]</p></div>
+    </div>
+    <p class="note">Proof in the field: one hospitality customer's headquarters deployment took 330 units, most of them driving signage. [Customer is Marriott per CEO 8/2026: verify unit count and clear name use before this publishes with the name attached.]</p>
+    <p><a class="btn accent" href="/solutions/signage">Digital signage on Polaris →</a> <a class="btn ghost" href="/platform/cloud">Polaris Cloud →</a></p>
+  </section>
+
+
+  <CtaBand />
+</BaseLayout>
+
+<script>
+  /* initVideoHero measures the sticky header and republishes --hdr-h, which is
+     what the hero's pull-up is written against, and picks the wide encode above
+     900px. initScrollScene writes --vh-p, the hero's exit progress, which is
+     what drifts and fades the film out as the page arrives; it guards .stg and
+     .vhero independently, so running it here without a pinned stage is fine.
+
+     home.ts stays: buildStage() returns early now that [data-stage] is gone,
+     and the module is where any future home-page behaviour belongs. */
+  import { initVideoHero } from "../scripts/pages/video-hero";
+  import { initScrollScene } from "../scripts/pages/scroll-scene";
+  /* The .cbk strip's two films carry data-src, not src, so without this they
+     never load. It guards on .cbk being absent, so it is safe here regardless. */
+  import { initComicHero } from "../scripts/pages/comic-hero";
+  /* A0.2's pinned workload showcase. Only initShowcase() came across from the
+     matt branch — initCounters() and initHomeBackdrop() belong to sections that
+     have not been ported. */
+  import { initShowcase } from "../scripts/pages/home-motion";
+  import "../scripts/pages/home";
+  initVideoHero();
+  initScrollScene();
+  initComicHero();
+  initShowcase();
+</script>
+
+<style>
+  /* TEMPORARY review chrome: a way into the 404 page, which has no inbound
+     links by design. Delete with the other review chrome at launch. */
+  .tmpbox {
+    margin: 8px 0 0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #ffe600;
+    color: #241c05;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .tmpbox a {
+    color: #241c05;
+    text-decoration: underline;
+  }
+
+  /* C1 sizes .cbk as a full first screen -- clamp(480px, 100svh - 190px, 1000px),
+     measured against the banner, header, crumbs and chip row above it there. This
+     copy sits mid-page with none of that above it and a transition note directly
+     below, so a full viewport would read as a second hero rather than as the
+     answer to the heading it sits under. Capped to a band, and the shear comes
+     down with it: --cbk-x is derived from the height, so leaving --cbk-xmax at
+     22vw over a shorter panel would make the diagonals far steeper than C1's. */
+  .cbk-home {
+    --cbk-h: clamp(340px, 44vh, 520px);
+    --cbk-xmax: 13vw;
+  }
+
+  /* Home only: breathing room between sections (desktop/tablet;
+     the phone layer in mobile.css owns spacing below 640px) */
+  @media (min-width: 641px) {
+    .sect:not(.tight) {
+      padding-top: 92px;
+    }
+    .painband,
+    .statband {
+      margin-top: 36px;
+    }
+  }
+</style>

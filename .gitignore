@@ -1,0 +1,129 @@
+# build output
+dist/
+# scratch checkout of the pages-content branch, made by scripts/publish-pages.sh
+.pages-content/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# Dropbox sync artifacts
+*conflicted copy*
+.dropbox
+.dropbox.attr
+
+# jetbrains setting folder
+.idea/
+
+# generator scratch: rebuilt by scripts/skymap-gen/gen.py on demand
+scripts/skymap-gen/out.json
+
+# python bytecode from scripts/pixel-qa
+__pycache__/
+*.pyc
+
+# stray scratch files from the sandbox mount
+_tmp_*
+
+# Archived POC snapshots belong in archive/, never in public/.
+# Anything in public/ is copied verbatim into dist/ and served raw: no password
+# gate, no noindex, no review. public/mersive-website-poc.html was a v0.39
+# snapshot doing exactly that, describing the SOC 2 attestation as "in progress
+# per internal gap analysis" — an older claim than anything on the live pages.
+public/*website-poc*.html
+public/*-poc-*.html
+
+# Insights imagery, re-hosted from other people's CDNs by
+# scripts/fetch-blog-images.mjs — which the `build` script runs before astro,
+# working from the INSIGHT_IMAGES manifest in src/data/insights.ts. That is 151
+# files and ~22MB of pexels/WordPress stock nobody reviews or edits, and the
+# fetch is idempotent, so a build produces them and a second build costs no
+# requests. Nothing is lost by leaving them out: the pages fall back to the
+# remote URL when the local copy is missing.
+#
+# Ignore the contents rather than the directory, so the re-includes below are
+# reachable — git will not descend into an excluded directory.
+public/blog/*
+# Authored art, as opposed to fetched stock: keep it tracked. A new hand-made
+# blog image must match one of these, or be added with `git add -f`.
+!public/blog/embedded-*.webp
+!public/blog/poc-*.png
+
+# Polaris-Man audio working area.
+#
+# "Game audio files/" is a working folder, not a deliverable. It holds ~244MB
+# that must not enter git: 175MB of Stability reference WAVs (two passes of 15,
+# the raw material for the NES arrangements) and 68MB of archival NES masters
+# rendered out of FamiStudio. Both are reproducible or already backed up
+# elsewhere, and neither is served to anyone — the web build reads the OGGs in
+# public/eggs/polaris-man/audio/, which ARE tracked.
+#
+# Ignore the contents rather than the directory so the re-includes below stay
+# reachable: git will not descend into an excluded directory.
+Game audio files/**
+# The editable FamiStudio projects are the source of the soundtrack and are a
+# few KB each. Losing them would mean the music could never be revised, only
+# re-composed, so these are the one thing in here worth keeping.
+!Game audio files/
+!Game audio files/Polaris Man/
+!Game audio files/Polaris Man/nes/
+!Game audio files/Polaris Man/nes/famistudio/
+!Game audio files/Polaris Man/nes/famistudio/*.txt
+# The generation manifest records prompts, seeds and generation IDs for the
+# reference batch — provenance, and small.
+!Game audio files/Polaris Man/Polaris-Man-Audio-Generation-Manifest.md
+!Game audio files/Polaris Man/audio_prompt.txt
+
+# Mars: Signal Siege working folders.
+#
+# Same reasoning as the Polaris-Man block above, applied to the second Phaser
+# egg. What the site actually serves lives in public/eggs/mars-signal-siege/ and
+# IS tracked; these are the working materials behind it.
+#
+# "Game art files/Mars Signal Siege/source-local" is 45MB of painterly Mersive
+# masters, copied in from the Mars deliverables folder rather than authored
+# here. "source-cdn" is 4.6MB re-fetched from the Phaser Game Agent's asset
+# host. Both are reproducible — source-cdn from the tracked manifest below,
+# source-local from Dropbox — and neither is served to anyone.
+Game art files/**
+# The Aseprite masters ARE authored here and are a few KB each. Losing them
+# would mean the three enemy types could never be revised, only redrawn.
+!Game art files/
+!Game art files/Mars Signal Siege/
+!Game art files/Mars Signal Siege/aseprite/
+!Game art files/Mars Signal Siege/aseprite/*.aseprite
+!Game art files/Mars Signal Siege/aseprite/*.json
+!Game art files/Mars Signal Siege/exports/
+!Game art files/Mars Signal Siege/exports/*
+# Provenance: records the source URL for every CDN-recovered asset, so the
+# 4.6MB can be re-fetched exactly rather than guessed at.
+!Game art files/Mars Signal Siege/source-cdn/
+!Game art files/Mars Signal Siege/source-cdn/_cdn_manifest.json
+
+# Mars audio: the 93MB of WAV masters and the FamiStudio renders are already
+# excluded by the "Game audio files/**" rule above. Re-include the editable
+# chip project and the loop-point record, for the same reason Polaris-Man keeps
+# its FamiStudio text projects.
+!Game audio files/Mars Signal Siege/
+!Game audio files/Mars Signal Siege/famistudio/
+!Game audio files/Mars Signal Siege/famistudio/*.txt
+!Game audio files/Mars Signal Siege/loop-points.json
+
+# Mars QA scratch: regenerable audit renders from the art build and the
+# runtime harness. The few sheets worth keeping are exported to docs/mars-shots.
+docs/mars-qa/

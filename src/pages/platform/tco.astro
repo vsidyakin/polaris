@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { oem0 } from "../../lib/pages/platform-tco";
+import { CALCDATA } from "../../data/tco";
+import CtaBand from "../../components/CtaBand.astro";
+import { ph, phBlock, opts } from "../../lib/blocks";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/tco">
+  <PageIntro
+    route={"platform/tco"}
+    tpl={"T5"}
+    title={"The 10-year platform"}
+    dek={"Hardware-only products don't age out; they stop improving. Crestron's AirMedia platform has had no successor generation since 2021. Barco's CX line dates to 2019 and is still on Wi-Fi 5. Kramer's newest model, Connect 3, ships on Wi-Fi 5, without PoE, capped at 4K30. Polaris is installed once and keeps advancing with every software release: designed for a 10-year life, and Gen 3 is the receipt (released 2019, supported through 2029). Here's why the subscription is the better deal. Then run your own numbers."}
+  />
+    <p class="note">Polaris figures are current MSRP (effective 2026). [Competitor prices are illustrative estimates until the canonical matrix + legal review land.]</p>
+    <div class="why8 reveal">
+      <div class="w8"><div class="n">1</div><b>Better every quarter</b><p>The subscription funds new features, security updates, and OTA firmware. Receipts on the <a href="/resources/firmware">release notes</a>.</p></div>
+      <div class="w8"><div class="n">2</div><b>Full warranty while on active subscription</b><p>Subscribed means under warranty: no care contract to buy, track, or renew.</p></div>
+      <div class="w8"><div class="n">3</div><b>No forklift at year five</b><p>Mersive commits to a 10-year manufacturing lifecycle for Polaris hardware, held constant by the platform invariants rather than by a fixed parts list. [10-year basis pending definition &mdash; manufacture-from-launch or support-from-purchase: Damian Blazy] The ten years this model runs over are that commitment, not a modelling convenience [Ruling A, Damian Blazy, 26 Aug 2026 &mdash; see <a href="/products/pro/spec#platform-lifecycle">the platform invariants</a>]. Gen 3 is the receipt: released 2019, supported through 2029.</p></div>
+      <div class="w8"><div class="n">4</div><b>Things a box never gains</b><p>Cross-network sharing, web-join, the multi-share workspace, one portal for rooms and signage.</p></div>
+      <div class="w8"><div class="n">5</div><b>Remote sees the room</b><p>Crestron documents no remote-participant path at all: no relay, no reverse proxy, no share-by-link, and the login code appears only on the room display. WolfVision&rsquo;s Live Viewer is same-network only, and Cisco&rsquo;s browser guest share still has to reach the registered device. Here they open app.mersive.com and join the live workspace from the browser: see every share, share back. <a href="/compare/hub">Vendor-by-vendor &rarr;</a></p></div>
+    </div>
+    <div class="calc reveal">
+      <div class="kicker">Lifecycle calculator</div>
+      <div class="calc-grid">
+      <div class="calc-l">
+      <div class="in">
+        <div><label>Number of rooms</label><input type="number" id="c_rooms" value="50" min="1" oninput="calcTCO()"></div>
+        <div><label>Horizon (years)</label><input type="number" id="c_years" value="10" min="3" max="15" oninput="calcTCO()"></div>
+        <div><label>Seats / room, for per-seat add-ons [assumption]</label><input type="number" id="c_seats" value="4" min="0" oninput="calcTCO()"></div>
+      </div>
+      <div class="in" style="border-top:1px dashed var(--line);padding-top:14px">
+        <div><label>Competitor A: OEM</label><select id="c_oem" onchange="fillComp(true)"><Fragment set:html={opts(CALCDATA.comp,oem0)} /></select></div>
+        <div><label>Competitor A: product</label><select id="c_prod" onchange="fillComp(false)"></select></div>
+        <div><label>A: device cost / room ($)</label><input type="number" id="c_hw" min="0" oninput="calcTCO()"></div>
+        <div><label>A: care contract / room / yr ($)</label><input type="number" id="c_care" min="0" oninput="calcTCO()"></div>
+        <div><label>A: license / room / yr ($)</label><input type="number" id="c_csub" min="0" oninput="calcTCO()"></div>
+        <div><label>A: refresh cycle (yrs)</label><input type="number" id="c_ref" min="2" max="10" oninput="calcTCO()"></div>
+      </div>
+      <div id="c_addons" style="margin:0 0 12px"></div>
+      <div class="in" style="border-top:1px dashed var(--line);padding-top:14px">
+        <div><label>Competitor B: OEM (optional)</label><select id="c_oem2" onchange="fillComp2(true)"><option selected>None</option><Fragment set:html={opts(CALCDATA.comp,null)} /></select></div>
+        <div><label>Competitor B: product</label><select id="c_prod2" onchange="fillComp2(false)"></select></div>
+        <div><label>B: device cost / room ($)</label><input type="number" id="c_hw2" min="0" oninput="calcTCO()"></div>
+        <div><label>B: care contract / room / yr ($)</label><input type="number" id="c_care2" min="0" oninput="calcTCO()"></div>
+        <div><label>B: license / room / yr ($)</label><input type="number" id="c_csub2" min="0" oninput="calcTCO()"></div>
+        <div><label>B: refresh cycle (yrs)</label><input type="number" id="c_ref2" min="2" max="10" oninput="calcTCO()"></div>
+      </div>
+      <div id="c_addons2" style="margin:0 0 12px"></div>
+      <div class="in" style="border-top:1px dashed var(--line);padding-top:14px">
+        <div><label>Mersive, always in the comparison: product</label><select id="e_prod" onchange="calcTCO()"><Fragment set:html={opts(CALCDATA.eq,"Polaris Pro")} /></select></div>
+        <div><label>Polaris: hybrid addition</label><select id="e_hyb" onchange="calcTCO()"><Fragment set:html={opts(CALCDATA.hyb,"None")} /></select></div>
+      </div>
+      </div>
+      <div class="calc-r">
+      <div class="out">
+        <div class="res"><span id="c_themlbl">Competitor</span><b id="c_them">—</b><span class="note" id="c_themd"></span><div class="bar"><i id="c_themb" style="background:linear-gradient(90deg,#b04a2e,#d98a6a)"></i></div></div>
+        <div class="res" id="c_res2" style="display:none"><span id="c_them2lbl">Competitor B</span><b id="c_them2">&#8212;</b><span class="note" id="c_them2d"></span><div class="bar"><i id="c_them2b" style="background:linear-gradient(90deg,#9a7226,#e0b06a)"></i></div></div>
+        <div class="res win"><span id="c_uslbl">Polaris</span><b id="c_us">—</b><span class="note" id="c_usd"></span><div class="bar"><i id="c_usb"></i></div></div>
+      </div>
+      <div class="save" id="c_save"></div>
+      </div>
+      </div>
+      <div id="c_delta" style="margin-top:20px"></div>
+      <p class="note">Polaris figures are current MSRP (effective 2026): the 3-year term billed upfront, spread across the term, which is also the annual renewal rate. [Competitor prices remain illustrative estimates pending the canonical matrix + legal review. Missing: re-install labor line, Host pricing (Q13).] Competitor-to-competitor comparisons draw on public list prices and the same capability grid as the compare matrix.</p>
+      <p class="note"><b>Which of these prices are real.</b> Six vendors here publish no list price for anything: Barco, Crestron, Kramer, Cisco, Extron and Yealink. Every figure in their rows is a street estimate from the channel or from our own research, not a published price, and it is marked as one. WolfVision's are its own 2022 MSRP list, four years old and hosted by a reseller. DisplayNote's is Dell's reseller listing; DisplayNote publishes nothing. Vivi publishes no US price at all. The vendors who do publish are ScreenBeam, BenQ, Airtame (renewals) and Barco on one item only, SmartCare, which is free. Add-ons with no published price are named and left out of the total rather than guessed at: obtain them in writing before you compare.</p>
+    </div>
+    <Fragment set:html={phBlock(ph("Warranty","Covered as long as you subscribe","Warranty rides the subscription: no separate care contract to buy. Barco's SmartCare is free on registration and runs five years, except on Hub, which gets three years flat. Crestron, Extron, Kramer, ScreenBeam and Airtame all warrant hardware for three years. WolfVision's extension must be bought at time of purchase and excludes the CPU and SSD, which carry one year. Ours runs as long as the subscription runs, with no year-four cliff."))} />
+    <Fragment set:html={phBlock(ph("Value narrative","Your rooms get better every quarter","What the subscription funds: OTA, security updates, new features, AirPlay/Miracast/Chromecast licensing, cloud services. Receipts on the public release-notes page. And where those features come from: a standing customer council steers the roadmap with the owner-operators directly.","resources/firmware"))} />
+    <Fragment set:html={phBlock(ph("Policy","And if you let it lapse?","One honest sentence + link to the update policy (publication blocked on Q9 sign-off). Degrade, never brick."))} />
+    <CtaBand variant="platform" />
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/tco";
+</script>

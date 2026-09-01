@@ -1,0 +1,205 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+
+/** Partner pages that exist on mersive.com today. */
+const ECO = "https://www.mersive.com/ecosystem";
+---
+
+<BaseLayout route="resources/ecosystem">
+  <PageIntro
+    route={"resources/ecosystem"}
+    tpl={"T8"}
+    title={"The Mersive ecosystem."}
+  />
+  <p class="dek">
+    A Mersive room is rarely only Mersive. It sits between the display, the camera and microphones,
+    the mount behind the panel, the signage system that owns the idle screen, and the calendar that
+    owns the room. These are the technology partners in each of those five places, and what each
+    integration actually does once it is installed.
+  </p>
+  <p class="note">
+    [partner set to be reconciled against mersive.com/ecosystem before publish - product marketing]
+  </p>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Class one</div>
+    <h2>AV peripherals.</h2>
+    <p class="sdek">
+      The cameras, microphones, speakerphones and soundbars a pod bridges into whatever meeting the
+      room is running. Mersive publishes a certified-peripheral list; it is the list this section
+      renders, one card per device family.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <div class="kicker">AV peripherals</div>
+        <h3>The certified list</h3>
+        <p>
+          No partner is named here yet, deliberately. [AV peripheral partner names: pull from the
+          certified-peripheral list on mersive.com/ecosystem - product marketing]
+        </p>
+        <a href={`${ECO}/`} target="_blank" rel="noopener">mersive.com/ecosystem ↗</a>
+      </div>
+    </div>
+    <p class="note">
+      A peripheral vendor named on this page is a statement about that company, so this card stays
+      empty until the certified list is in hand. Which peripherals a room can use is a support
+      question with a documented answer: see <a href="/resources/docs">the documentation hub</a>.
+    </p>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Class two</div>
+    <h2>Digital signage.</h2>
+    <p class="sdek">
+      Signage partners own the content; Polaris owns the screen. The display a room already has
+      publishes the signage system's content while the room is idle, and yields to the meeting the
+      moment one starts. Our own signage capability is on
+      <a href="/solutions/signage">the digital signage page</a>.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <div class="kicker">Digital signage</div>
+        <h3>Appspace</h3>
+        <p>
+          Appspace content plays on the Mersive display between meetings, managed in Appspace rather
+          than in a second signage tool. [Integration mechanism and setup steps: confirm against the
+          partner page - product marketing]
+        </p>
+        <a href={`${ECO}/appspace/`} target="_blank" rel="noopener">Appspace partner page ↗</a>
+      </div>
+      <div class="card">
+        <div class="kicker">Digital signage</div>
+        <h3>Tripleplay</h3>
+        <p>
+          Tripleplay signage and IPTV content plays on the Mersive display between meetings, driven
+          from Tripleplay. [Integration mechanism and setup steps: confirm against the partner page -
+          product marketing]
+        </p>
+        <a href={`${ECO}/tripleplay/`} target="_blank" rel="noopener">Tripleplay partner page ↗</a>
+      </div>
+      <div class="card">
+        <div class="kicker">Digital signage</div>
+        <h3>22Miles</h3>
+        <p>
+          Named as a Mersive signage partner. [22Miles: no partner page found on mersive.com;
+          integration detail and link owed - product marketing]
+        </p>
+      </div>
+      <div class="card">
+        <div class="kicker">Digital signage</div>
+        <h3>Carousel</h3>
+        <p>
+          Named as a Mersive signage partner. [Carousel: no partner page found on mersive.com;
+          integration detail and link owed - product marketing]
+        </p>
+      </div>
+      <div class="card">
+        <div class="kicker">Digital signage</div>
+        <h3>Signagelive</h3>
+        <p>
+          Named as a Mersive signage partner. [Signagelive: no partner page found on mersive.com;
+          integration detail and link owed - product marketing]
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Class three</div>
+    <h2>Mounts.</h2>
+    <p class="sdek">
+      Where the pod physically goes. It matters more than it sounds: an unmounted pod behind a panel
+      is the thing that goes missing, and a mount that does not take a lock is a pod that walks.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <div class="kicker">Mounts</div>
+        <h3>Peerless-AV</h3>
+        <p>
+          The ACC-MSP mounts the pod to a wall or to a Peerless-AV display mount, and is
+          Kensington-lock compatible, so the pod is fixed and secured behind the panel rather than
+          resting on top of it.
+        </p>
+        <a href={`${ECO}/`} target="_blank" rel="noopener">mersive.com/ecosystem ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Class four</div>
+    <h2>Calendaring.</h2>
+    <p class="sdek">
+      The room's calendar is what turns a display into a room. Sync it and the idle screen stops
+      being decoration: it says what this room is doing next, and starts the meeting in one step.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <div class="kicker">Calendaring</div>
+        <h3>Microsoft Exchange / Microsoft 365</h3>
+        <p>
+          The room resource's calendar syncs to the pod: the display shows the room's status and its
+          next meeting, and the meeting on the calendar starts in one step rather than being dialled
+          by hand.
+        </p>
+        <a href="/solutions/signage">Room status on the display →</a>
+      </div>
+    </div>
+    <p class="note">
+      [Google Workspace calendaring: mersive.com/ecosystem lists Microsoft only - confirm whether
+      Google is supported before this section publishes - product marketing]
+    </p>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Class five</div>
+    <h2>Conferencing.</h2>
+    <p class="sdek">
+      The room audio and the call. Polaris bridges the room's own microphones and speakers into
+      whatever platform the meeting is running on, chosen per meeting rather than per room: see
+      <a href="/products/hybrid">Link &amp; Host</a>.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <div class="kicker">Conferencing</div>
+        <h3>Yamaha</h3>
+        <p>
+          Yamaha room audio: the room's Yamaha microphones and speakers are carried into the call the
+          pod is bridging, so the meeting uses the room's audio rather than a laptop's. [Supported
+          Yamaha models and any certification claim - product marketing]
+        </p>
+        <a href={`${ECO}/`} target="_blank" rel="noopener">mersive.com/ecosystem ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="cnv-band green reveal">
+    <div class="kicker" style="color:#7ce3a8">Why the list is short</div>
+    <h2>Every name on this page is a claim about another company.</h2>
+    <p>
+      This page lists only partners published on mersive.com. Where a partner page exists, the card
+      links to it; where one does not, the card says so instead of describing an integration nobody
+      has confirmed. A plausible-looking partner logo is the easiest thing on a website to add and
+      the most expensive thing to be wrong about.
+    </p>
+    <p style="margin:0">
+      <a href={`${ECO}/`} target="_blank" rel="noopener">The current ecosystem page ↗</a>
+    </p>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Selling or installing Polaris?</h3>
+      <p>Integrators and resellers work through the partner program, not this page.</p>
+      <a href="/partners/program">Partner program →</a>
+    </div>
+    <div class="card">
+      <h3>Building on the platform?</h3>
+      <p>The cloud API is enabled per organisation: device power, display info, signage URL, room calendars.</p>
+      <a href="/platform/cloud">Polaris Cloud →</a>
+    </div>
+  </div>
+
+  <CtaBand />
+</BaseLayout>

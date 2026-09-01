@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="partners/portal">
+  <PageIntro
+    route={"partners/portal"}
+    tpl={"T10"}
+    open={false}
+    gate={"GATED"}
+    crumb={"Portal"}
+    title={"<span class=\"warm\">Partner portal</span>"}
+    dek={"Domain-based access: if your company is an authorized partner, your work email is your key."}
+  />
+    <div class="login" id="loginbox">
+      <b>Sign in or create your account</b>
+      <input type="email" id="pemail" placeholder="you@yourcompany.com">
+      <button class="btn accent" style="width:100%" onclick="portalIn()">Continue</button>
+      <p class="note">POC mock: any well-formed email 'authenticates.' Production: allowlist of approved partner domains + approval queue for unknown domains (ops owner req'd).</p>
+    </div>
+    <div id="portalshell" style="display:none">
+      <div class="cardrow">
+        <h2 class="sr-only">What the partner portal holds</h2>
+        <div class="card"><h3>Pricing & quoting</h3><p>Partner price lists by region; quote builder.</p><span class="tag t-gated">GATED</span></div>
+        <div class="card"><h3>Deal registration</h3><p>Register, track, protect. [deal-registration prominence pattern]</p><span class="tag t-gated">GATED</span></div>
+        <div class="card"><h3>Collateral library</h3><p>Co-brandable one-pagers, battlecards, proposal-ready architecture content.</p><span class="tag t-gated">GATED</span></div>
+        <div class="card"><h3>Training & certification</h3><p>Curriculum + certs. [vendor training-academy pattern]</p><span class="tag t-gated">GATED</span></div>
+        <div class="card"><h3>Trials & demo gear</h3><p>Request customer trial kits; track conversions.</p><span class="tag t-gated">GATED</span></div>
+        <div class="card"><h3>Promos & programs</h3><p>Current promotions, rebates, trade-in mechanics.</p><span class="tag t-gated">GATED</span></div>
+      </div>
+      <div class="kicker" style="margin-top:26px">Current promotions <span class="tag t-gated">GATED</span></div>
+      <div class="cardrow">
+        <div class="card"><h3>Mersive Solstice Gen 3 → Polaris swap multiplier</h3><p>[Placeholder] Enhanced trade-in credit per Mersive Solstice Gen 3 Pod returned on Polaris orders registered this quarter. <span class="note">Ends [date]</span></p></div>
+        <div class="card"><h3>Deal-reg bonus: hybrid attach</h3><p>[Placeholder] Extra margin points when a registered deal includes Pro + hybrid add-ons. <span class="note">Ends [date]</span></p></div>
+        <div class="card"><h3>Education bundle <span class="tag t-ship al-flag">SHIPS Q1 2027</span></h3><p>[Placeholder] District pricing on Essentials + Route multi-classroom orders. Route and Engage are not orderable until Q1 2027. <span class="note">Ends [date]</span></p></div>
+      </div>
+      <p class="note">Promotions publish here and nowhere public. Partner economics stay gated (D6). Promo mechanics feed from the same system as deal registration. [Ops owner placeholder.]</p>
+      <p class="note">Directory listing management: partners edit profiles here; sales approves (Q11).</p>
+    </div>
+</BaseLayout>
+
+<script>
+  import "../../scripts/pages/portal";
+</script>

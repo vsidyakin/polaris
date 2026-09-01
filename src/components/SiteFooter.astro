@@ -1,0 +1,102 @@
+---
+import { NAV, isExternalRoute } from "../data/nav";
+import { href } from "../data/routes";
+import { NIC } from "../data/icons";
+
+/** One footer column per top-level menu; structural nav markers are dropped.
+    Off-site rows keep their absolute URL: `href()` would prefix the base path.
+
+    `_grpA:<route>` is the exception among the `_` markers, and missing it is a
+    real omission rather than a tidier footer: it is a group heading that *is* a
+    page, so dropping it took Support & Documents, Work at Mersive, Meet the
+    Polaris family and Mersive Solstice out of the footer entirely. Only the
+    headings that link to nothing (`_grp`, `_hr`, `_bkt`) belong in the filter. */
+const columns = NAV.map((m) => ({
+  label: m.label,
+  /* The column head takes its menu's own glyph, resolved through `NIC` the same
+     way `SiteHeader` resolves it. Not a second lookup table and not a copy of the
+     drawings: a column here IS a menu up there, so it reads `m.icon` off the same
+     `NavMenu` the header does and the two cannot drift. Add a menu to `NAV` and
+     its footer column arrives with the right mark already on it. */
+  icon: NIC[m.icon],
+  links: m.items
+    .map(([p, l]) => [p.startsWith("_grpA:") ? p.slice(6) : p, l] as const)
+    .filter(([p]) => !p.startsWith("_"))
+    .map(([p, l]) => ({
+      href: isExternalRoute(p) ? p : href(p),
+      label: l.replace("· ", ""),
+      external: isExternalRoute(p),
+    })),
+}));
+---
+
+<footer class="site-footer">
+  <div class="ftgrid" id="ftr">
+    {
+      columns.map((c) => (
+        <div>
+          {/* `aria-hidden`, like every other glyph in the navigation: the word
+              beside it says everything it says. */}
+          <b>
+            <i class="ftic" aria-hidden="true" set:html={c.icon} />
+            {c.label}
+          </b>
+          {c.links.map((l) =>
+            l.external ? (
+              <a href={l.href} target="_blank" rel="noopener">
+                {l.label} ↗
+              </a>
+            ) : (
+              <a href={l.href}>{l.label}</a>
+            )
+          )}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="ftsocial">
+    <a
+      href="https://www.linkedin.com/company/mersive/"
+      target="_blank"
+      rel="noopener"
+      aria-label="LinkedIn"
+      title="Mersive on LinkedIn"
+    >
+      <svg viewBox="0 0 24 24"
+        ><path
+          d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.31h4.52V23H.24V8.31zM8.34 8.31h4.33v2h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.01 5.42 6.92V23h-4.51v-7.12c0-1.7-.03-3.88-2.37-3.88-2.37 0-2.73 1.85-2.73 3.76V23H8.34V8.31z"
+        ></path></svg
+      >
+    </a>
+    <a
+      href="https://www.youtube.com/@mersive"
+      target="_blank"
+      rel="noopener"
+      aria-label="YouTube"
+      title="Mersive on YouTube"
+    >
+      <svg viewBox="0 0 24 24"
+        ><path
+          d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.51 3.55 12 3.55 12 3.55s-7.51 0-9.38.5A3.02 3.02 0 00.5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 002.12 2.14c1.87.5 9.38.5 9.38.5s7.51 0 9.38-.5a3.02 3.02 0 002.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"
+        ></path></svg
+      >
+    </a>
+  </div>
+
+  <div class="ftlegal">
+    <span>© 2026 Mersive Technologies</span>
+    <a href="/legal">Privacy</a>
+    <a href="/legal">Terms of use</a>
+    <a href="/legal">EULA</a>
+    <a href="/legal">Cookie policy</a>
+    <a href="/legal">Accessibility</a>
+    <a href={href("resources/opensource")}>Open source</a>
+    <span class="tag t-gated" style="font-size:10px">ALL PENDING COUNSEL — D-15</span>
+  </div>
+
+  <div class="ftbase">
+    Mersive Website POC — version and change log in the top bar · built from IA v0.3 · placeholder
+    content throughout · © 2026 Mersive Technologies
+  </div>
+</footer>

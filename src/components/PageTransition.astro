@@ -1,0 +1,65 @@
+---
+/**
+ * Page-to-page transition.
+ *
+ * This is a static multi-page site — every link is a real navigation — so the
+ * transition is two halves that meet across the document boundary: the outgoing
+ * page fades out while the browser is still on it, and the incoming page fades
+ * in as it paints.
+ *
+ *   out — `scripts/page-transition.ts` intercepts same-origin link clicks, sets
+ *         `data-leaving` on <html>, and navigates when the fade has run.
+ *   in  — the CSS animation below, which needs no script at all.
+ *
+ * It wraps <main> rather than sitting inside it: `.site-main > p`, `> section`
+ * and `> table` rules in global.css and mobile.css are direct-child selectors,
+ * so an extra element *inside* main would silently unstyle a lot of pages.
+ * Header, footer and the overlays stay put and only the page body crosses over.
+ *
+ * Nothing here is load-bearing. With JS off, or under prefers-reduced-motion,
+ * links navigate natively and the content renders at full opacity.
+ */
+---
+
+<div class="pgx"><slot /></div>
+
+<style>
+  /* `both` so the first painted frame is already at opacity 0 — without a fill
+     the element can flash in at full opacity for a frame before the animation
+     takes over. It ends at 1, so no stacking context lingers. */
+  .pgx {
+    animation: pgx-in 160ms ease-out both;
+  }
+
+  /* Set by the script on the way out. Wins over the entry animation because the
+     animation is cancelled first, otherwise the filled `opacity: 1` would beat
+     any transition we start here. */
+  html[data-leaving] .pgx {
+    animation: none;
+    opacity: 0;
+    transition: opacity 120ms ease-in;
+  }
+
+  @keyframes pgx-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* The script also opts out, so this only has to keep the content visible. */
+  @media (prefers-reduced-motion: reduce) {
+    .pgx,
+    html[data-leaving] .pgx {
+      animation: none;
+      transition: none;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import "../scripts/page-transition";
+</script>

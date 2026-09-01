@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+---
+
+<BaseLayout route="platform/workspace">
+  <PageIntro
+    route="platform/workspace"
+    tpl="T5"
+    title="The workspace: where every share lands."
+    dek="Not one mirrored screen but a live composite of every share in the meeting, side by side on the room display and in every participant&rsquo;s browser. This is the multi-user screen sharing layer the rest of the platform exists to feed."
+  />
+    <section class="sect reveal tight">
+      <div class="kicker">Who feeds it</div>
+      <h2>Every door leads here.</h2>
+      <p class="sdek">Web-join from any browser (no app, no download), AirPlay, Miracast, and Google Cast on the room network, the Mersive app on mobile; plus sources from other networks entirely via <a href="/platform/cross-network">cross-network sharing</a>. All at the same time, on the same workspace.</p>
+      <p><a class="btn accent" href="/platform/how">How the doors work →</a> <a class="btn ghost" href="/solutions/collab">The collaboration use case →</a></p>
+    </section>
+
+  <section class="sect reveal tight">
+    {/* The mock is evidence for this section's claim, so it sits beside the
+        claim rather than centred below it. */}
+    <div class="wsp-split">
+      <div>
+        <div class="kicker">How it looks</div>
+        <h2>In the room — and in your browser.</h2>
+        <p class="sdek">The same workspace, two places at once: the room display renders it on the wall; app.mersive.com renders it for every seat, in the room or remote. No second-class views.</p>
+        <p><a class="btn ghost" href="https://www.youtube.com/@mersive" target="_blank" rel="noopener">Watch the platform in action ↗</a></p>
+      </div>
+      <div class="wsp-aside">
+        <div class="wsb">
+          <div class="wsb-bar"><i></i><i></i><i></i><span class="wsb-url">app.mersive.com/K7RM2X</span></div>
+          <div class="wsb-shot"><video src="/video/polaris-workspace-animation.mp4" autoplay muted loop playsinline preload="auto" aria-label="The workspace at app.mersive.com: live shares side by side with the dock controls"></video></div>
+        </div>
+        <p class="wsb-cap">[Production replaces with a live capture; asset C1.]</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal tight">
+    <div class="kicker">Anatomy</div>
+    <h2>Four things a mirrored screen leaves on the table.</h2>
+    <div class="prdcaps">
+      <div class="prdcap"><div class="ic"><Fragment set:html={XIC.workspace} /></div><h3>Composite, not mirror</h3><p>Simultaneous live sources side by side (a deck, a browser tab, a camera feed, a dashboard). (Essentials and Pro; Launch carries a published share cap of [N].)</p></div>
+      <div class="prdcap"><div class="ic"><Fragment set:html={XIC.oneplat} /></div><h3>The Dock</h3><p>Layout, annotation, source handoff, and participant control, from any seat, on any device, not just the presenter&rsquo;s.</p></div>
+      <div class="prdcap"><div class="ic"><Fragment set:html={XIC.persist} /></div><h3>Meeting parity</h3><p>The display mirrors live to app.mersive.com, so remote participants see exactly what the room sees: their own screen, their own zoom, same content. We call it meeting parity, and we build it in.</p></div>
+      <div class="prdcap"><div class="ic"><Fragment set:html={XIC.devicefree} /></div><h3>It belongs to the room</h3><p>The workspace is the room&rsquo;s and the meeting&rsquo;s, not whichever laptop happens to be open. Close a lid and the meeting keeps its content.</p></div>
+    </div>
+  </section>
+
+  <CtaBand variant="platform" />
+</BaseLayout>

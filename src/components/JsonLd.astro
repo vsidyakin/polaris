@@ -1,0 +1,24 @@
+---
+/**
+ * Emits one schema.org @graph as JSON-LD.
+ *
+ * Runs at build time like the rest of the head — nothing here reaches the
+ * browser as JavaScript.
+ */
+interface Props {
+  /** Graph nodes; each needs at least an @type. */
+  data: object[];
+}
+const { data } = Astro.props;
+
+const graph = { "@context": "https://schema.org", "@graph": data };
+
+/* `set:html` does not escape, and the HTML parser ends a <script> block at the
+   first literal closing script tag regardless of the JSON around it. Rewriting
+   every "<" as a Unicode escape closes that hole for good: copy that ever
+   carries inline markup can no longer terminate the block early. JSON readers
+   decode the escape back to "<", so the data itself is unchanged. */
+const json = JSON.stringify(graph).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={json} is:inline />

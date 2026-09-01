@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageIntro from "./../components/PageIntro.astro";
+---
+
+<BaseLayout route="demo">
+  <PageIntro
+    route={"demo"}
+    tpl={"CTA"}
+    crumb={"Get a demo"}
+    title={"Thirty minutes. Your use case. <span class=\"warm\">A live workspace.</span>"}
+    dek={"A Mersive demo is a working Polaris room driven by an engineer over a live call, not a slide deck with product screenshots. You bring the questions; the room does the answering."}
+  />
+
+    <section class="sect reveal flush">
+      <div class="kicker">What you&rsquo;ll see: live, not recorded</div>
+      <h2>Five things in thirty minutes.</h2>
+      <ul class="cnv-list">
+        <li><b>The multi-share workspace.</b> Live sources composited side by side on the display, compared, annotated, rearranged while you watch.</li>
+        <li><b>Web-join, from your own laptop.</b> Mid-call, you type the screen key into your browser and share: no install, no admin rights. This is the part people don&rsquo;t believe until they do it themselves.</li>
+        <li><b>Cross-network sharing.</b> A source on another VLAN (or the open internet) lands on the workspace with no VPN and no UC call. Of the twelve competitors we checked in August 2026, exactly one documents a comparable off-LAN path at all, and it needs two ephemeral port ranges and a cloud relay to do it.</li>
+        <li><b>Meeting parity.</b> The workspace on the display, mirrored live to app.mersive.com: what remote seats actually see, shown remotely. Which is exactly what a demo call is.</li>
+        <li><b>The Polaris Cloud console.</b> Fleet health, analytics, and management for every room (and the idle-screen signage) from one pane.</li>
+      </ul>
+      <p class="note" style="margin-top:4px"><b style="color:#e2d9ff;font-style:normal">Bring your integrator.</b> Demos are better with the people who will design and deploy the rooms on the call. Invite yours, or ask us to bring a regional partner.</p>
+    </section>
+
+    <div class="cta2col reveal"><div class="cnv-form">
+      <h3>Request a demo</h3><div id="hs-demo"></div>
+      <p>Form mock: production routes to a sales engineer, partner-attached when your account has one. Nothing is sent in this POC.</p>
+      <div class="cnv-fgrid">
+        <div class="cnv-field"><label>Name</label><input type="text" placeholder="Sam Okafor"></div>
+        <div class="cnv-field"><label>Company</label><input type="text" placeholder="Ridgeline Health"></div>
+        <div class="cnv-field"><label>Work email</label><input type="email" placeholder="sam@ridgeline.org"></div>
+        <div class="cnv-field"><label>I am…</label><select><option>AV / IT manager</option><option>Integrator / reseller</option><option>Consultant</option><option>Distributor</option><option>Other</option></select></div>
+        <div class="cnv-field"><label>Rooms in scope</label><select><option>1–10</option><option>10–50</option><option>50–250</option><option>250+</option></select></div>
+        <div class="cnv-field full"><label>What are you trying to solve?</label><textarea placeholder="e.g. guest sharing for a 40-room estate; cross-network for segmented labs; the MTR comparison"></textarea></div>
+      </div>
+      <button class="btn accent big" onclick="cnvSubmit('demo request')">Book my 30 minutes</button>
+    </div>
+    <aside class="expect"><div class="kicker">What to expect</div><h3>Thirty minutes, no pressure.</h3>
+      <ul>
+        <li>A live multi-share workspace on a real Polaris room, driven by an engineer, not a slide deck</li>
+        <li>Tailored to your room types, networks, and meeting platforms</li>
+        <li>Security and data-path questions answered on the spot</li>
+        <li>Pricing and rollout guidance, in plain numbers</li>
+        <li>Your integrator is welcome on the call, and there&rsquo;s no obligation after it</li>
+      </ul>
+    </aside></div>
+
+    <div class="ind-router reveal">
+      <a class="ind-route" href="/trial"><div class="rk">The other path</div><h3>Prefer hardware in hand?</h3><p>Skip the call and put a pod on your own displays: real hardware, your network, fulfilled with your regional partner. Most evaluations end up there anyway; you&rsquo;re allowed to start there.</p><span class="go">Start a free trial →</span></a>
+      <a class="ind-route" href="/platform/how"><div class="rk">Do the homework first</div><h3>Read how it works</h3><p>The architecture: Glass. Workspace. Cloud. Plus web-join and cross-network sharing, documented in the open. Ten minutes of reading makes a sharper thirty-minute demo.</p><span class="go">Meet Polaris →</span></a>
+    </div>
+</BaseLayout>
+
+<script>
+  import "../scripts/pages/forms";
+</script>

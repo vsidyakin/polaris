@@ -1,0 +1,179 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import PageIntro from "../../components/PageIntro.astro";
+
+/** The Salesforce support site. Same URL as the nav row. */
+const TICKET = "https://mersive.my.site.com/support/s/login/?ec=302&startURL=%2Fsupport%2Fs%2F";
+---
+
+<BaseLayout route="resources/support">
+  <PageIntro
+    route={"resources/support"}
+    tpl={"T8"}
+    open={"OPEN: NOTHING GATED"}
+    title={"Support, and the documents that make it unnecessary."}
+  />
+  <p class="dek">
+    Two paths from here. If a room is down or something is behaving wrongly, file a ticket: it goes
+    to Mersive support, and the four pages below are the reference you will be asked about anyway.
+    If you are deploying, configuring, or checking whether a thing is supported, the documentation is
+    public and searchable and will be faster than waiting for a reply.
+  </p>
+
+  <div class="cnv-band reveal">
+    <div class="kicker">Start here</div>
+    <h2>Open a ticket.</h2>
+    <p>
+      Tickets are filed in the Mersive support portal. Sign in with your support account; the portal
+      carries your open cases, their history, and the knowledge base.
+    </p>
+    <p style="margin:0">
+      <a class="btn accent big" href={TICKET} target="_blank" rel="noopener">Submit a ticket ↗</a>
+      &nbsp;
+      <a class="btn secondary big" href="mailto:support@mersive.com">support@mersive.com</a>
+    </p>
+    <p class="note" style="margin:14px 0 0">
+      [support hours and first-response targets - support ops] [phone support: confirm whether
+      published - support ops]
+    </p>
+  </div>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Before you file</div>
+    <h2>Four things, and the ticket answers itself faster.</h2>
+    <p class="sdek">
+      Every one of these is the first question back. Collecting them takes two minutes at the pod and
+      saves a round trip that costs a day.
+    </p>
+    <div class="cardrow">
+      <div class="card">
+        <h3>Serial number</h3>
+        <p>
+          Identifies the exact unit and its warranty and subscription state. On the device label, and
+          on the device record in the cloud admin portal.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Firmware version</h3>
+        <p>
+          Which release the room is running. Half of what looks like a fault is a known issue with a
+          fix already shipped, and the release notes say which.
+        </p>
+        <a href="/resources/firmware">Release notes &amp; firmware →</a>
+      </div>
+      <div class="card">
+        <h3>Room name</h3>
+        <p>
+          The name the room carries in the cloud portal, not the name on the door, so support is
+          looking at the same device you are.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Network topology</h3>
+        <p>
+          Which VLAN the pod is on, which network the user was on, whether a proxy or 802.1X is in
+          the path, and whether it has ever worked. Most sharing faults are network faults.
+        </p>
+        <a href="/resources/network">Network requirements →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">Which path</div>
+    <h2>Self-serve, or a person.</h2>
+    <p class="sdek">
+      Said plainly so nobody waits in the wrong queue. Neither list is a policy on what support will
+      look at; it is what each path is actually good at.
+    </p>
+    <div class="two">
+      <div class="card" style="border-color:rgba(124,227,168,.4)">
+        <div class="kicker" style="color:#7ce3a8">Faster on your own</div>
+        <h3>Documented, so you do not have to ask</h3>
+        <p>
+          Ports, endpoints and firewall rules. Whether a peripheral, browser, or conferencing
+          platform is supported. Install and quick-start steps. What a release changed. Getting the
+          app onto phones or a Gen 3 desktop. Reading an idle screen or a screen key.
+        </p>
+        <a href="/resources/docs">Documentation hub →</a>
+      </div>
+      <div class="card" style="border-color:rgba(165,140,255,.4)">
+        <div class="kicker">Needs a person</div>
+        <h3>File it</h3>
+        <p>
+          Hardware that will not boot, RMA and warranty claims, a room that fails after following the
+          documented steps, subscription and licence state that looks wrong, an account or portal
+          access problem, and anything you suspect is a defect rather than a configuration.
+        </p>
+        <a href={TICKET} target="_blank" rel="noopener">Submit a ticket ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect reveal flush">
+    <div class="kicker">The four reference pages</div>
+    <h2>Everything a ticket will ask you about.</h2>
+    <div class="cardrow">
+      <div class="card">
+        <h3>Documentation hub</h3>
+        <p>
+          Deployment, admin, security and API documentation for Polaris and Mersive Solstice Gen 3.
+          Public, no login, and it is where support will point you.
+        </p>
+        <a href="/resources/docs">Documentation hub →</a>
+      </div>
+      <div class="card">
+        <h3>Apps and downloads</h3>
+        <p>
+          Mobile apps per platform generation, and the Mersive Solstice desktop client for the Gen 3
+          estate. Polaris shares from the browser, so most people need nothing.
+        </p>
+        <a href="/resources/downloads">Apps and downloads →</a>
+      </div>
+      <div class="card">
+        <h3>Firmware and release notes</h3>
+        <p>
+          Every release logged in public, dated: features, security patches and fixes. Check your
+          version here before you file.
+        </p>
+        <a href="/resources/firmware">Firmware and release notes →</a>
+      </div>
+      <div class="card">
+        <h3>Network requirements</h3>
+        <p>
+          Ports, cloud endpoints, the VLAN reference design, NAT guidance, and the diagnostic that
+          validates a deployment. The page your network team asks for.
+        </p>
+        <a href="/resources/network">Network requirements →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="cnv-band green reveal">
+    <div class="kicker" style="color:#7ce3a8">The principle</div>
+    <h2>The documentation is not the deflection queue.</h2>
+    <p>
+      Everything technical is public: no forms, no login, no talking to sales to see the specs. That
+      is why this page can send you to a document first without it being a brush-off — if you cannot
+      reach something an evaluation or a deployment needs, that is a bug in the website, not a
+      support policy.
+    </p>
+    <p style="margin:0"><a href="/platform/security">The Trust Center →</a></p>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h3>Everything you log into</h3>
+      <p>Support, downloads, training, documentation, the partner portal: one bookmarkable page.</p>
+      <a href="/hub">Customer &amp; Partner Hub →</a>
+    </div>
+    <div class="card">
+      <h3>Not a support question?</h3>
+      <p>Sales, demos and partner enquiries are routed separately, to people who can act on them.</p>
+      <a href="/contact">Contact us →</a>
+    </div>
+  </div>
+
+  <CtaBand />
+</BaseLayout>

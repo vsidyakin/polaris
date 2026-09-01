@@ -1,0 +1,1716 @@
+{
+ "sheets": [
+  {
+   "file": "rook/rook.png",
+   "cols": 8,
+   "rows": 3,
+   "cellW": 96,
+   "cellH": 96,
+   "baseline": 92,
+   "pivotX": 48,
+   "tags": {
+    "runfire": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "run": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "idle": [
+     8
+    ],
+    "idlefire": [
+     9
+    ],
+    "clear": [
+     9
+    ],
+    "aimup": [
+     10
+    ],
+    "aimup_air": [
+     11
+    ],
+    "aimdiagup_air": [
+     12
+    ],
+    "aimdiagdown_air": [
+     13
+    ],
+    "aimdiagup_run": [
+     14,
+     15
+    ],
+    "jump": [
+     12
+    ],
+    "fall": [
+     13
+    ],
+    "prone": [
+     16
+    ],
+    "pronefire": [
+     17
+    ]
+   },
+   "live_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "facesRight": true,
+   "drawHeight": 70,
+   "sockets": {
+    "0": [
+     78.0,
+     43.0
+    ],
+    "1": [
+     69.0,
+     53.0
+    ],
+    "2": [
+     75.0,
+     42.0
+    ],
+    "3": [
+     76.0,
+     46.0
+    ],
+    "4": [
+     78.0,
+     44.0
+    ],
+    "5": [
+     73.0,
+     47.0
+    ],
+    "6": [
+     75.0,
+     42.0
+    ],
+    "7": [
+     76.0,
+     46.0
+    ],
+    "8": [
+     69.0,
+     42.0
+    ],
+    "9": [
+     77.0,
+     45.0
+    ],
+    "10": [
+     49.5,
+     6.0
+    ],
+    "11": [
+     51.5,
+     4.0
+    ],
+    "12": [
+     74.0,
+     17.0
+    ],
+    "13": [
+     77.0,
+     63.0
+    ],
+    "14": [
+     77.0,
+     17.0
+    ],
+    "15": [
+     76.0,
+     15.0
+    ],
+    "16": [
+     90.0,
+     78.0
+    ],
+    "17": [
+     90.0,
+     78.0
+    ]
+   },
+   "actorOf": {
+    "runfire": "rook",
+    "run": "rook",
+    "idle": "rook",
+    "idlefire": "rook",
+    "clear": "rook",
+    "aimup": "rook",
+    "aimup_air": "rook",
+    "aimdiagup_air": "rook",
+    "aimdiagdown_air": "rook",
+    "aimdiagup_run": "rook",
+    "jump": "rook",
+    "fall": "rook",
+    "prone": "rook",
+    "pronefire": "rook"
+   },
+   "frameScale": {
+    "0": 0.47945,
+    "1": 0.47945,
+    "2": 0.47945,
+    "3": 0.47945,
+    "4": 0.47945,
+    "5": 0.47945,
+    "6": 0.47945,
+    "7": 0.47945,
+    "8": 0.54688,
+    "9": 0.54688,
+    "10": 0.20594,
+    "11": 0.20594,
+    "12": 0.20594,
+    "13": 0.20594,
+    "14": 0.20594,
+    "15": 0.20594,
+    "16": 0.67188,
+    "17": 0.67188
+   },
+   "frameSize": {
+    "0": 70,
+    "1": 70,
+    "2": 70,
+    "3": 70,
+    "4": 70,
+    "5": 70,
+    "6": 70,
+    "7": 70,
+    "8": 70,
+    "9": 70,
+    "10": 70,
+    "11": 70,
+    "12": 70,
+    "13": 70,
+    "14": 70,
+    "15": 70,
+    "16": 86,
+    "17": 86
+   },
+   "sizeGroupOf": {
+    "runfire": "rook",
+    "run": "rook",
+    "idle": "rook",
+    "idlefire": "rook",
+    "clear": "rook",
+    "aimup": "rook",
+    "aimup_air": "rook",
+    "aimdiagup_air": "rook",
+    "aimdiagdown_air": "rook",
+    "aimdiagup_run": "rook",
+    "jump": "rook",
+    "fall": "rook",
+    "prone": "rook_prone",
+    "pronefire": "rook_prone"
+   },
+   "declaredHeights": {
+    "rook": {
+     "frame": 0,
+     "height": 70,
+     "intent": 70
+    }
+   },
+   "cycles": [
+    "run",
+    "runfire"
+   ]
+  },
+  {
+   "file": "enemies/enemies.png",
+   "cols": 9,
+   "rows": 4,
+   "cellW": 112,
+   "cellH": 88,
+   "baseline": 84,
+   "pivotX": 56,
+   "tags": {
+    "b_trooper_idle": [
+     0
+    ],
+    "b_trooper_move": [
+     1
+    ],
+    "b_trooper_attack": [
+     2
+    ],
+    "b_trooper_walk": [
+     0,
+     1
+    ],
+    "b_hound_idle": [
+     3
+    ],
+    "b_hound_move": [
+     4
+    ],
+    "b_hound_attack": [
+     5
+    ],
+    "b_hound_walk": [
+     3,
+     4
+    ],
+    "b_turret_idle": [
+     6
+    ],
+    "b_turret_move": [
+     7
+    ],
+    "b_turret_attack": [
+     8
+    ],
+    "b_turret_walk": [
+     6,
+     7
+    ],
+    "c_flier_idle": [
+     9
+    ],
+    "c_flier_move": [
+     10
+    ],
+    "c_flier_attack": [
+     11
+    ],
+    "c_flier_walk": [
+     9,
+     10
+    ],
+    "c_trooper_idle": [
+     12
+    ],
+    "c_trooper_move": [
+     13
+    ],
+    "c_trooper_attack": [
+     14
+    ],
+    "c_trooper_walk": [
+     12,
+     13
+    ],
+    "c_turret_idle": [
+     15
+    ],
+    "c_turret_move": [
+     16
+    ],
+    "c_turret_attack": [
+     17
+    ],
+    "c_turret_walk": [
+     15,
+     16
+    ],
+    "d_hound_idle": [
+     18
+    ],
+    "d_hound_move": [
+     19
+    ],
+    "d_hound_attack": [
+     20
+    ],
+    "d_hound_walk": [
+     18,
+     19
+    ],
+    "d_trooper_idle": [
+     21
+    ],
+    "d_trooper_move": [
+     22
+    ],
+    "d_trooper_attack": [
+     23
+    ],
+    "d_trooper_walk": [
+     21,
+     22
+    ],
+    "d_turret_idle": [
+     24
+    ],
+    "d_turret_move": [
+     25
+    ],
+    "d_turret_attack": [
+     26
+    ],
+    "d_turret_walk": [
+     24,
+     25
+    ],
+    "e_flier_idle": [
+     27
+    ],
+    "e_flier_move": [
+     28
+    ],
+    "e_flier_attack": [
+     29
+    ],
+    "e_flier_walk": [
+     27,
+     28
+    ],
+    "e_drone_idle": [
+     30
+    ],
+    "e_drone_move": [
+     31
+    ],
+    "e_drone_attack": [
+     32
+    ],
+    "e_drone_walk": [
+     30,
+     31
+    ],
+    "e_trooper_idle": [
+     33
+    ],
+    "e_trooper_move": [
+     34
+    ],
+    "e_trooper_attack": [
+     35
+    ],
+    "e_trooper_walk": [
+     33,
+     34
+    ]
+   },
+   "live_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+   ],
+   "facesRight": false,
+   "roles": {
+    "b": [
+     "trooper",
+     "hound",
+     "turret"
+    ],
+    "c": [
+     "flier",
+     "trooper",
+     "turret"
+    ],
+    "d": [
+     "hound",
+     "trooper",
+     "turret"
+    ],
+    "e": [
+     "flier",
+     "drone",
+     "trooper"
+    ]
+   },
+   "masters": [
+    {
+     "file": "Mars_Enemy_Group_B_v0.7.png",
+     "cols": 3,
+     "rows": 3
+    },
+    {
+     "file": "Mars_Enemy_Group_C_v0.7.png",
+     "cols": 3,
+     "rows": 3
+    },
+    {
+     "file": "Mars_Enemy_Group_D_v0.7.png",
+     "cols": 3,
+     "rows": 3
+    },
+    {
+     "file": "Mars_Enemy_Group_E_v0.7.png",
+     "cols": 3,
+     "rows": 3
+    }
+   ],
+   "actorOf": {
+    "b_trooper_idle": "b_trooper",
+    "b_trooper_move": "b_trooper",
+    "b_trooper_attack": "b_trooper",
+    "b_trooper_walk": "b_trooper",
+    "b_hound_idle": "b_hound",
+    "b_hound_move": "b_hound",
+    "b_hound_attack": "b_hound",
+    "b_hound_walk": "b_hound",
+    "b_turret_idle": "b_turret",
+    "b_turret_move": "b_turret",
+    "b_turret_attack": "b_turret",
+    "b_turret_walk": "b_turret",
+    "c_flier_idle": "c_flier",
+    "c_flier_move": "c_flier",
+    "c_flier_attack": "c_flier",
+    "c_flier_walk": "c_flier",
+    "c_trooper_idle": "c_trooper",
+    "c_trooper_move": "c_trooper",
+    "c_trooper_attack": "c_trooper",
+    "c_trooper_walk": "c_trooper",
+    "c_turret_idle": "c_turret",
+    "c_turret_move": "c_turret",
+    "c_turret_attack": "c_turret",
+    "c_turret_walk": "c_turret",
+    "d_hound_idle": "d_hound",
+    "d_hound_move": "d_hound",
+    "d_hound_attack": "d_hound",
+    "d_hound_walk": "d_hound",
+    "d_trooper_idle": "d_trooper",
+    "d_trooper_move": "d_trooper",
+    "d_trooper_attack": "d_trooper",
+    "d_trooper_walk": "d_trooper",
+    "d_turret_idle": "d_turret",
+    "d_turret_move": "d_turret",
+    "d_turret_attack": "d_turret",
+    "d_turret_walk": "d_turret",
+    "e_flier_idle": "e_flier",
+    "e_flier_move": "e_flier",
+    "e_flier_attack": "e_flier",
+    "e_flier_walk": "e_flier",
+    "e_drone_idle": "e_drone",
+    "e_drone_move": "e_drone",
+    "e_drone_attack": "e_drone",
+    "e_drone_walk": "e_drone",
+    "e_trooper_idle": "e_trooper",
+    "e_trooper_move": "e_trooper",
+    "e_trooper_attack": "e_trooper",
+    "e_trooper_walk": "e_trooper"
+   },
+   "frameScale": {
+    "0": 0.22378,
+    "1": 0.22378,
+    "2": 0.22378,
+    "3": 0.13077,
+    "4": 0.13077,
+    "5": 0.13077,
+    "6": 0.1853,
+    "7": 0.1853,
+    "8": 0.1853,
+    "9": 0.1746,
+    "10": 0.1746,
+    "11": 0.1746,
+    "12": 0.223,
+    "13": 0.223,
+    "14": 0.223,
+    "15": 0.1686,
+    "16": 0.1686,
+    "17": 0.1686,
+    "18": 0.21795,
+    "19": 0.21795,
+    "20": 0.21795,
+    "21": 0.16931,
+    "22": 0.16931,
+    "23": 0.16931,
+    "24": 0.19016,
+    "25": 0.19016,
+    "26": 0.19016,
+    "27": 0.14815,
+    "28": 0.14815,
+    "29": 0.14815,
+    "30": 0.1083,
+    "31": 0.1083,
+    "32": 0.1083,
+    "33": 0.18659,
+    "34": 0.18659,
+    "35": 0.18659
+   },
+   "frameSize": {
+    "0": 64,
+    "1": 64,
+    "2": 64,
+    "3": 34,
+    "4": 34,
+    "5": 34,
+    "6": 58,
+    "7": 58,
+    "8": 58,
+    "9": 44,
+    "10": 44,
+    "11": 44,
+    "12": 64,
+    "13": 64,
+    "14": 64,
+    "15": 58,
+    "16": 58,
+    "17": 58,
+    "18": 34,
+    "19": 34,
+    "20": 34,
+    "21": 64,
+    "22": 64,
+    "23": 64,
+    "24": 58,
+    "25": 58,
+    "26": 58,
+    "27": 44,
+    "28": 44,
+    "29": 44,
+    "30": 30,
+    "31": 30,
+    "32": 30,
+    "33": 64,
+    "34": 64,
+    "35": 64
+   },
+   "declaredHeights": {
+    "b_trooper": {
+     "frame": 0,
+     "height": 64,
+     "intent": 64
+    },
+    "b_hound": {
+     "frame": 3,
+     "height": 34,
+     "intent": 34
+    },
+    "b_turret": {
+     "frame": 6,
+     "height": 58,
+     "intent": 58
+    },
+    "c_flier": {
+     "frame": 9,
+     "height": 44,
+     "intent": 44
+    },
+    "c_trooper": {
+     "frame": 12,
+     "height": 64,
+     "intent": 64
+    },
+    "c_turret": {
+     "frame": 15,
+     "height": 58,
+     "intent": 58
+    },
+    "d_hound": {
+     "frame": 18,
+     "height": 34,
+     "intent": 34
+    },
+    "d_trooper": {
+     "frame": 21,
+     "height": 64,
+     "intent": 64
+    },
+    "d_turret": {
+     "frame": 24,
+     "height": 58,
+     "intent": 58
+    },
+    "e_flier": {
+     "frame": 27,
+     "height": 44,
+     "intent": 44
+    },
+    "e_drone": {
+     "frame": 30,
+     "height": 30,
+     "intent": 30
+    },
+    "e_trooper": {
+     "frame": 33,
+     "height": 64,
+     "intent": 64
+    }
+   }
+  },
+  {
+   "file": "enemies/new-enemies.png",
+   "cols": 4,
+   "rows": 4,
+   "cellW": 56,
+   "cellH": 40,
+   "baseline": 36,
+   "pivotX": 28,
+   "tags": {
+    "wasp_hover": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "crawler_crawl": [
+     4,
+     5,
+     6,
+     7
+    ],
+    "sentinel_charge": [
+     8,
+     9,
+     10,
+     11
+    ],
+    "canopy_drift": [
+     12,
+     13
+    ]
+   },
+   "live_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ],
+   "facesRight": true,
+   "allowDetached": true,
+   "cycles": [
+    "wasp_hover",
+    "crawler_crawl"
+   ]
+  },
+  {
+   "file": "bosses/bosses.png",
+   "cols": 7,
+   "rows": 12,
+   "cellW": 192,
+   "cellH": 192,
+   "baseline": 188,
+   "pivotX": 96,
+   "tags": {
+    "boss0_idle": [
+     0,
+     5
+    ],
+    "boss0_walk": [
+     1,
+     2,
+     1,
+     0
+    ],
+    "boss0_air": [
+     2
+    ],
+    "boss0_wind": [
+     3
+    ],
+    "boss0_fire": [
+     4
+    ],
+    "boss0_recover": [
+     6,
+     3
+    ],
+    "boss1_idle": [
+     7,
+     12
+    ],
+    "boss1_walk": [
+     8,
+     9,
+     8,
+     7
+    ],
+    "boss1_air": [
+     9
+    ],
+    "boss1_wind": [
+     10
+    ],
+    "boss1_fire": [
+     11
+    ],
+    "boss1_recover": [
+     13,
+     10
+    ],
+    "boss2_idle": [
+     14,
+     19
+    ],
+    "boss2_walk": [
+     15,
+     16,
+     15,
+     14
+    ],
+    "boss2_air": [
+     16
+    ],
+    "boss2_wind": [
+     17
+    ],
+    "boss2_fire": [
+     18
+    ],
+    "boss2_recover": [
+     20,
+     17
+    ],
+    "boss3_idle": [
+     21,
+     26
+    ],
+    "boss3_walk": [
+     22,
+     23,
+     22,
+     21
+    ],
+    "boss3_air": [
+     23
+    ],
+    "boss3_wind": [
+     24
+    ],
+    "boss3_fire": [
+     25
+    ],
+    "boss3_recover": [
+     27,
+     24
+    ],
+    "boss4_idle": [
+     28,
+     33
+    ],
+    "boss4_walk": [
+     29,
+     30,
+     29,
+     28
+    ],
+    "boss4_air": [
+     30
+    ],
+    "boss4_wind": [
+     31
+    ],
+    "boss4_fire": [
+     32
+    ],
+    "boss4_recover": [
+     34,
+     31
+    ],
+    "boss5_idle": [
+     35,
+     40
+    ],
+    "boss5_walk": [
+     36,
+     37,
+     36,
+     35
+    ],
+    "boss5_air": [
+     37
+    ],
+    "boss5_wind": [
+     38
+    ],
+    "boss5_fire": [
+     39
+    ],
+    "boss5_recover": [
+     41,
+     38
+    ],
+    "boss6_idle": [
+     42,
+     47
+    ],
+    "boss6_walk": [
+     43,
+     44,
+     43,
+     42
+    ],
+    "boss6_air": [
+     44
+    ],
+    "boss6_wind": [
+     45
+    ],
+    "boss6_fire": [
+     46
+    ],
+    "boss6_recover": [
+     48,
+     45
+    ],
+    "boss7_idle": [
+     49,
+     54
+    ],
+    "boss7_walk": [
+     50,
+     51,
+     50,
+     49
+    ],
+    "boss7_air": [
+     51
+    ],
+    "boss7_wind": [
+     52
+    ],
+    "boss7_fire": [
+     53
+    ],
+    "boss7_recover": [
+     55,
+     52
+    ],
+    "boss8_idle": [
+     56,
+     61
+    ],
+    "boss8_walk": [
+     57,
+     58,
+     57,
+     56
+    ],
+    "boss8_air": [
+     58
+    ],
+    "boss8_wind": [
+     59
+    ],
+    "boss8_fire": [
+     60
+    ],
+    "boss8_recover": [
+     62,
+     59
+    ],
+    "boss9_idle": [
+     63,
+     68
+    ],
+    "boss9_walk": [
+     64,
+     65,
+     64,
+     63
+    ],
+    "boss9_air": [
+     65
+    ],
+    "boss9_wind": [
+     66
+    ],
+    "boss9_fire": [
+     67
+    ],
+    "boss9_recover": [
+     69,
+     66
+    ],
+    "boss10_idle": [
+     70,
+     75
+    ],
+    "boss10_walk": [
+     71,
+     72,
+     71,
+     70
+    ],
+    "boss10_air": [
+     72
+    ],
+    "boss10_wind": [
+     73
+    ],
+    "boss10_fire": [
+     74
+    ],
+    "boss10_recover": [
+     76,
+     73
+    ],
+    "boss11_idle": [
+     77,
+     82
+    ],
+    "boss11_walk": [
+     78,
+     79,
+     78,
+     77
+    ],
+    "boss11_air": [
+     79
+    ],
+    "boss11_wind": [
+     80
+    ],
+    "boss11_fire": [
+     81
+    ],
+    "boss11_recover": [
+     83,
+     80
+    ]
+   },
+   "live_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83
+   ],
+   "facesRight": false,
+   "posesPerBoss": 7,
+   "masters": [
+    {
+     "file": "Mars_Boss_Atlas_01_Motion_Clean_v0.8.png",
+     "cols": 5,
+     "rows": 4
+    },
+    {
+     "file": "Mars_Boss_Atlas_02_Motion_Clean_v0.8.png",
+     "cols": 5,
+     "rows": 4
+    },
+    {
+     "file": "Mars_Boss_Atlas_03_Motion_Clean_v0.8.png",
+     "cols": 5,
+     "rows": 4
+    }
+   ],
+   "actorOf": {
+    "boss0_idle": "boss0",
+    "boss0_walk": "boss0",
+    "boss0_air": "boss0",
+    "boss0_wind": "boss0",
+    "boss0_fire": "boss0",
+    "boss0_recover": "boss0",
+    "boss1_idle": "boss1",
+    "boss1_walk": "boss1",
+    "boss1_air": "boss1",
+    "boss1_wind": "boss1",
+    "boss1_fire": "boss1",
+    "boss1_recover": "boss1",
+    "boss2_idle": "boss2",
+    "boss2_walk": "boss2",
+    "boss2_air": "boss2",
+    "boss2_wind": "boss2",
+    "boss2_fire": "boss2",
+    "boss2_recover": "boss2",
+    "boss3_idle": "boss3",
+    "boss3_walk": "boss3",
+    "boss3_air": "boss3",
+    "boss3_wind": "boss3",
+    "boss3_fire": "boss3",
+    "boss3_recover": "boss3",
+    "boss4_idle": "boss4",
+    "boss4_walk": "boss4",
+    "boss4_air": "boss4",
+    "boss4_wind": "boss4",
+    "boss4_fire": "boss4",
+    "boss4_recover": "boss4",
+    "boss5_idle": "boss5",
+    "boss5_walk": "boss5",
+    "boss5_air": "boss5",
+    "boss5_wind": "boss5",
+    "boss5_fire": "boss5",
+    "boss5_recover": "boss5",
+    "boss6_idle": "boss6",
+    "boss6_walk": "boss6",
+    "boss6_air": "boss6",
+    "boss6_wind": "boss6",
+    "boss6_fire": "boss6",
+    "boss6_recover": "boss6",
+    "boss7_idle": "boss7",
+    "boss7_walk": "boss7",
+    "boss7_air": "boss7",
+    "boss7_wind": "boss7",
+    "boss7_fire": "boss7",
+    "boss7_recover": "boss7",
+    "boss8_idle": "boss8",
+    "boss8_walk": "boss8",
+    "boss8_air": "boss8",
+    "boss8_wind": "boss8",
+    "boss8_fire": "boss8",
+    "boss8_recover": "boss8",
+    "boss9_idle": "boss9",
+    "boss9_walk": "boss9",
+    "boss9_air": "boss9",
+    "boss9_wind": "boss9",
+    "boss9_fire": "boss9",
+    "boss9_recover": "boss9",
+    "boss10_idle": "boss10",
+    "boss10_walk": "boss10",
+    "boss10_air": "boss10",
+    "boss10_wind": "boss10",
+    "boss10_fire": "boss10",
+    "boss10_recover": "boss10",
+    "boss11_idle": "boss11",
+    "boss11_walk": "boss11",
+    "boss11_air": "boss11",
+    "boss11_wind": "boss11",
+    "boss11_fire": "boss11",
+    "boss11_recover": "boss11"
+   },
+   "frameScale": {
+    "0": 0.6087,
+    "1": 0.6087,
+    "2": 0.6087,
+    "3": 0.6087,
+    "4": 0.6087,
+    "5": 0.6087,
+    "6": 0.6087,
+    "7": 0.60577,
+    "8": 0.60577,
+    "9": 0.60577,
+    "10": 0.60577,
+    "11": 0.60577,
+    "12": 0.60577,
+    "13": 0.60577,
+    "14": 0.60577,
+    "15": 0.60577,
+    "16": 0.60577,
+    "17": 0.60577,
+    "18": 0.60577,
+    "19": 0.60577,
+    "20": 0.60577,
+    "21": 0.60577,
+    "22": 0.60577,
+    "23": 0.60577,
+    "24": 0.60577,
+    "25": 0.60577,
+    "26": 0.60577,
+    "27": 0.60577,
+    "28": 0.60577,
+    "29": 0.60577,
+    "30": 0.60577,
+    "31": 0.60577,
+    "32": 0.60577,
+    "33": 0.60577,
+    "34": 0.60577,
+    "35": 0.61589,
+    "36": 0.61589,
+    "37": 0.61589,
+    "38": 0.61589,
+    "39": 0.61589,
+    "40": 0.61589,
+    "41": 0.61589,
+    "42": 0.60577,
+    "43": 0.60577,
+    "44": 0.60577,
+    "45": 0.60577,
+    "46": 0.60577,
+    "47": 0.60577,
+    "48": 0.60577,
+    "49": 0.60577,
+    "50": 0.60577,
+    "51": 0.60577,
+    "52": 0.60577,
+    "53": 0.60577,
+    "54": 0.60577,
+    "55": 0.60577,
+    "56": 0.61165,
+    "57": 0.61165,
+    "58": 0.61165,
+    "59": 0.61165,
+    "60": 0.61165,
+    "61": 0.61165,
+    "62": 0.61165,
+    "63": 0.61165,
+    "64": 0.61165,
+    "65": 0.61165,
+    "66": 0.61165,
+    "67": 0.61165,
+    "68": 0.61165,
+    "69": 0.61165,
+    "70": 0.6087,
+    "71": 0.6087,
+    "72": 0.6087,
+    "73": 0.6087,
+    "74": 0.6087,
+    "75": 0.6087,
+    "76": 0.6087,
+    "77": 0.70189,
+    "78": 0.70189,
+    "79": 0.70189,
+    "80": 0.70189,
+    "81": 0.70189,
+    "82": 0.70189,
+    "83": 0.70189
+   },
+   "frameSize": {
+    "0": 126,
+    "1": 126,
+    "2": 126,
+    "3": 126,
+    "4": 126,
+    "5": 126,
+    "6": 126,
+    "7": 126,
+    "8": 126,
+    "9": 126,
+    "10": 126,
+    "11": 126,
+    "12": 126,
+    "13": 126,
+    "14": 126,
+    "15": 126,
+    "16": 126,
+    "17": 126,
+    "18": 126,
+    "19": 126,
+    "20": 126,
+    "21": 126,
+    "22": 126,
+    "23": 126,
+    "24": 126,
+    "25": 126,
+    "26": 126,
+    "27": 126,
+    "28": 126,
+    "29": 126,
+    "30": 126,
+    "31": 126,
+    "32": 126,
+    "33": 126,
+    "34": 126,
+    "35": 103,
+    "36": 103,
+    "37": 103,
+    "38": 103,
+    "39": 103,
+    "40": 103,
+    "41": 103,
+    "42": 126,
+    "43": 126,
+    "44": 126,
+    "45": 126,
+    "46": 126,
+    "47": 126,
+    "48": 126,
+    "49": 126,
+    "50": 126,
+    "51": 126,
+    "52": 126,
+    "53": 126,
+    "54": 126,
+    "55": 126,
+    "56": 126,
+    "57": 126,
+    "58": 126,
+    "59": 126,
+    "60": 126,
+    "61": 126,
+    "62": 126,
+    "63": 126,
+    "64": 126,
+    "65": 126,
+    "66": 126,
+    "67": 126,
+    "68": 126,
+    "69": 126,
+    "70": 126,
+    "71": 126,
+    "72": 126,
+    "73": 126,
+    "74": 126,
+    "75": 126,
+    "76": 126,
+    "77": 146,
+    "78": 146,
+    "79": 146,
+    "80": 146,
+    "81": 146,
+    "82": 146,
+    "83": 146
+   },
+   "declaredHeights": {
+    "boss0": {
+     "frame": 0,
+     "height": 126,
+     "intent": 126
+    },
+    "boss1": {
+     "frame": 7,
+     "height": 126,
+     "intent": 126
+    },
+    "boss2": {
+     "frame": 14,
+     "height": 126,
+     "intent": 126
+    },
+    "boss3": {
+     "frame": 21,
+     "height": 126,
+     "intent": 126
+    },
+    "boss4": {
+     "frame": 28,
+     "height": 126,
+     "intent": 126
+    },
+    "boss5": {
+     "frame": 35,
+     "height": 103,
+     "intent": 126
+    },
+    "boss6": {
+     "frame": 42,
+     "height": 126,
+     "intent": 126
+    },
+    "boss7": {
+     "frame": 49,
+     "height": 126,
+     "intent": 126
+    },
+    "boss8": {
+     "frame": 56,
+     "height": 126,
+     "intent": 126
+    },
+    "boss9": {
+     "frame": 63,
+     "height": 126,
+     "intent": 126
+    },
+    "boss10": {
+     "frame": 70,
+     "height": 126,
+     "intent": 126
+    },
+    "boss11": {
+     "frame": 77,
+     "height": 146,
+     "intent": 150
+    }
+   },
+   "cycles": [
+    "boss0_walk",
+    "boss1_walk",
+    "boss2_walk",
+    "boss3_walk",
+    "boss4_walk",
+    "boss5_walk",
+    "boss6_walk",
+    "boss7_walk",
+    "boss8_walk",
+    "boss9_walk",
+    "boss10_walk",
+    "boss11_walk"
+   ]
+  },
+  {
+   "file": "projectiles/projectiles.png",
+   "cols": 12,
+   "rows": 5,
+   "cellW": 48,
+   "cellH": 48,
+   "baseline": 44,
+   "pivotX": 24,
+   "tags": {
+    "pshot0": [
+     0
+    ],
+    "pshot1": [
+     1
+    ],
+    "pshot2": [
+     2
+    ],
+    "pshot3": [
+     3
+    ],
+    "pshot4": [
+     4
+    ],
+    "pshot5": [
+     5
+    ],
+    "pshot6": [
+     6
+    ],
+    "pshot7": [
+     7
+    ],
+    "eshot0": [
+     8
+    ],
+    "eshot1": [
+     9
+    ],
+    "eshot2": [
+     10
+    ],
+    "eshot3": [
+     11
+    ],
+    "eshot4": [
+     12
+    ],
+    "eshot5": [
+     13
+    ],
+    "eshot6": [
+     14
+    ],
+    "eshot7": [
+     15
+    ],
+    "eshot8": [
+     16
+    ],
+    "eshot9": [
+     17
+    ],
+    "eshot10": [
+     18
+    ],
+    "eshot11": [
+     19
+    ],
+    "muzzle0": [
+     20
+    ],
+    "muzzle1": [
+     21
+    ],
+    "muzzle2": [
+     22
+    ],
+    "muzzle3": [
+     23
+    ],
+    "muzzle4": [
+     24
+    ],
+    "muzzle5": [
+     25
+    ],
+    "muzzle6": [
+     26
+    ],
+    "muzzle7": [
+     27
+    ],
+    "impact0": [
+     28,
+     29,
+     30
+    ],
+    "impact1": [
+     31,
+     32,
+     33
+    ],
+    "impact2": [
+     34,
+     35,
+     36
+    ],
+    "impact3": [
+     37,
+     38,
+     39
+    ],
+    "impact4": [
+     40,
+     41,
+     42
+    ],
+    "impact5": [
+     43,
+     44,
+     45
+    ],
+    "impact6": [
+     46,
+     47,
+     48
+    ],
+    "impact7": [
+     49,
+     50,
+     51
+    ]
+   },
+   "live_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "anchor": "center",
+   "allowDetached": true
+  }
+ ],
+ "suppress": [
+  [
+   "CYCLE_FRAME_COUNT",
+   "rook/rook.png",
+   "aimdiagup_run"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "b_trooper_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "b_hound_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "b_turret_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "c_flier_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "c_trooper_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "c_turret_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "d_hound_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "d_trooper_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "d_turret_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "e_flier_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "e_drone_walk"
+  ],
+  [
+   "CYCLE_FRAME_COUNT",
+   "enemies/enemies.png",
+   "e_trooper_walk"
+  ]
+ ]
+}

@@ -1,0 +1,93 @@
+---
+/**
+ * The printable product spec sheet.
+ *
+ * /products/pro/spec and /products/essentials/spec were 121 and 120 lines
+ * running the same ten blocks in the same order. They are now this layout plus
+ * a record each in data/products/.
+ *
+ * Most of the masthead is DERIVED rather than passed, because every part of it
+ * was a restatement of the tier name or the route, and two copies of a name are
+ * two things that can disagree:
+ *
+ *   h1          = "<tier> spec sheet"
+ *   .spx-doc    = "<TIER> · PRODUCT BRIEF & SPECIFICATIONS"
+ *   crumb link  = the route with "/spec" removed
+ *   .spx-stamp  = mersive.com/<route>
+ *
+ * Note the sections here are `.sect tight` with no `reveal`: this page is a
+ * print target, and content that animates in on scroll is content that may not
+ * be there when the print stylesheet runs.
+ *
+ * Three blocks stay as markup in the page, in named slots — the two spec-table
+ * groups because every row carries its own citation and several carry [verify:]
+ * flags, and the upsell band because its argument is specific to the tier.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { mediaBandHtml } from "../lib/blocks";
+import type { SpecSheetData } from "../data/products/types";
+
+type Props = SpecSheetData;
+const { route, tier, dek, overview, specsH2, security } = Astro.props;
+
+const parentHref = "/" + route.replace(/\/spec$/, "");
+const mastDoc = tier.toUpperCase() + " &middot; PRODUCT BRIEF &amp; SPECIFICATIONS";
+---
+
+<BaseLayout route={route}>
+  <div class="spx">
+    <Crumbs route={route} section={tier} sectionHref={parentHref} title="Spec sheet" />
+    <div class="spx-mast" aria-hidden="true"><span class="spx-brand">mersive</span><span class="spx-doc" set:html={mastDoc} /></div>
+    <h1 class="pg">{tier} spec sheet</h1>
+    <p class="dek" set:html={dek} />
+
+    <div class="spx-actions">
+      <button class="btn accent" id="spxPrint" type="button">Print / Save as PDF</button>
+      <p class="note">Prints as a clean white datasheet with a date stamp on every page. This page is the living version: share the link, not the file.</p>
+    </div>
+
+    <Fragment set:html={mediaBandHtml("pod", tier)} />
+
+    <section class="sect tight">
+      <div class="kicker">Overview</div>
+      <h2 set:html={overview.h2} />
+      <p class="sdek" set:html={overview.sdek} />
+      <div class="prdgrid">
+        {overview.caps.map((c) => (
+          <div class="prdcap"><div class="ic"><Fragment set:html={c.ic} /></div><h3 set:html={c.h} /><p set:html={c.p} /></div>
+        ))}
+      </div>
+    </section>
+
+    <slot name="upsell" />
+
+    <section class="sect tight spx-break">
+      <div class="kicker">Specifications</div>
+      <h2 set:html={specsH2} />
+      <slot name="spec-tables" />
+    </section>
+
+    <section class="sect tight">
+      <div class="kicker">Security</div>
+      <h2>The device is tested too, by someone else.</h2>
+      <p class="sdek" set:html={security} />
+    </section>
+
+    <section class="sect tight">
+      <div class="kicker">Choosing a tier</div>
+      <h2>Essentials and Pro, side by side</h2>
+      <slot name="tier-table" />
+      <p class="note">The full platform picture, Launch and the hybrid add-ons included: <a href="/products/family">the Polaris family</a>.</p>
+    </section>
+
+    <p class="note">&copy;2026 Mersive Technologies, Inc. &middot; 1667 Cole Blvd. Suite 225, Lakewood, Colorado &middot; mersive.com</p>
+
+    <div class="spx-stamp" aria-hidden="true">Saved <span class="spx-date"></span> from mersive.com/{route} &middot; the page is the living version</div>
+  </div>
+
+  <script>
+    import { initSpecSheet } from "../scripts/pages/spec";
+    initSpecSheet();
+  </script>
+</BaseLayout>

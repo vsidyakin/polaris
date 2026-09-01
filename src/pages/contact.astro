@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CNVIC } from "../data/icons";
+import { crumbs } from "../lib/blocks";
+---
+
+<BaseLayout route="contact">
+  <Fragment set:html={crumbs("contact","Contact us")} />
+    <div class="pageinfo"><span class="tag t-tpl">CTA</span><span class="tag t-open">OPEN</span></div>
+    <h1 class="pg">Tell us <span class="warm">what you need</span>.</h1>
+    <p class="dek">Real people, at a company owned by the people who run it. Three doors below. Pick the right one and your message lands with someone who can actually do something about it.</p>
+
+    <div class="cnv-doors reveal">
+      <h2 class="sr-only">Ways to reach us</h2>
+      <a class="cnv-door" href="/demo"><div class="ic"><Fragment set:html={CNVIC.sales} /></div><div class="rk">Door one</div><h3>Sales &amp; demos</h3><p>Pricing, product questions, demos, trials. Routed to the sales team. When your account already has a partner attached, they&rsquo;re looped in from the first reply.</p><span class="go">Get a demo →</span></a>
+      <a class="cnv-door" href="https://documentation.mersive.com" target="_blank" rel="noopener"><div class="ic"><Fragment set:html={CNVIC.support} /></div><div class="rk">Door two</div><h3>Support</h3><p>Documentation is open at documentation.mersive.com: no login, no forms. Can&rsquo;t find it there? File a ticket and it goes to engineers, not a deflection queue. [Ticket-system link placeholder.]</p><span class="go">documentation.mersive.com ↗</span></a>
+      <a class="cnv-door" href="/partners/program"><div class="ic"><Fragment set:html={CNVIC.partner} /></div><div class="rk">Door three</div><h3>Partners</h3><p>Deal registration, program questions, MDF, becoming a partner. Straight to the channel team: the people who run the business that moves through you.</p><span class="go">Partner program →</span></a>
+    </div>
+
+    <div class="cnv-form reveal">
+      <h3>Or just write to us</h3><div id="hs-contact"></div>
+      <p>The topic selector drives routing, and messages from registered partner domains are flagged to the channel team automatically, whatever topic you pick. (Form mock; nothing is sent in this POC.)</p>
+      <div class="cnv-fgrid">
+        <div class="cnv-field"><label>Name</label><input type="text" placeholder="Alex Chen"></div>
+        <div class="cnv-field"><label>Company</label><input type="text" placeholder="Northfield ISD"></div>
+        <div class="cnv-field"><label>Work email</label><input type="email" placeholder="achen@northfield.k12.us"></div>
+        <div class="cnv-field"><label>Topic</label><select><option>Sales &amp; demos</option><option>Technical support</option><option>Partner program</option><option>Press &amp; everything else</option></select></div>
+        <div class="cnv-field full"><label>Message</label><textarea placeholder="What do you need?"></textarea></div>
+      </div>
+      <button class="btn accent big" onclick="cnvSubmit('contact message')">Send it</button>
+    </div>
+
+    <section class="sect reveal flush">
+      <div class="kicker">Prefer a phone</div>
+      <h2>Call us. It rings somewhere real.</h2>
+      <div class="cnv-offices">
+        <div class="cnv-office"><b>Sales &middot; all regions</b><a href="mailto:sales@mersive.com">sales@mersive.com</a><br><span class="tel">[phone placeholder]</span><br>Mon&ndash;Fri, business hours per region</div>
+        <div class="cnv-office"><b>Support</b><a href="mailto:support@mersive.com">support@mersive.com</a><br><span class="tel">[phone placeholder]</span><br>Documentation is open at documentation.mersive.com</div>
+        <div class="cnv-office"><b>Headquarters &middot; Lakewood, Colorado</b>1667 Cole Blvd, Suite 225<br>Lakewood, CO 80401<br><span class="tel">[phone placeholder]</span></div>
+        <div class="cnv-office"><b>EMEA &middot; Pozna&#324;, Poland</b>[email placeholder &mdash; EMEA.Sales@mersive.com to be provisioned]<br><span class="tel">[phone placeholder]</span></div>
+      </div>
+      <p class="note">[Phone numbers pending ops sign-off; EMEA.Sales@mersive.com still to be created. Publishing a real direct line follows the best practice in this category: the number sits on the public page, not behind a form.]</p>
+    </section>
+</BaseLayout>
+
+<script>
+  import "../scripts/pages/forms";
+</script>

@@ -1,0 +1,35 @@
+---
+import { href } from "../data/routes";
+
+interface Props {
+  /** Short owner/category label shown above the heading. */
+  lbl: string;
+  h: string;
+  d: string;
+  /** Optional route the "Explore →" link points at. */
+  link?: string;
+}
+const { lbl, h, d, link } = Astro.props;
+---
+
+{/* h2, not h3. Each placeholder IS a top-level section of its page, so an h3 here
+    put every placeholder page's outline at h1 -> h3 with a level missing.
+
+    NOTE FOR WHOEVER EDITS THIS NEXT: there are TWO implementations of this block —
+    this component and `phBlock()` in src/lib/blocks.ts, which builds the same
+    markup as a string for the pages that render via set:html. They must stay in
+    step. Fixing only one is exactly how this defect survived its first fix: the
+    string version was corrected, the outline check still failed on eight pages,
+    and this file was why. */}
+<div class="ph">
+  <span class="lbl">placeholder · {lbl}</span>
+  <h2 set:html={h} />
+  <p set:html={d} />
+  {
+    link && (
+      <p>
+        <a href={href(link)}>Explore →</a>
+      </p>
+    )
+  }
+</div>

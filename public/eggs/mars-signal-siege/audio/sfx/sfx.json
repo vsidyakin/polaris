@@ -1,0 +1,281 @@
+{
+ "fire0": {
+  "source": "famistudio",
+  "sourceFile": "fire_pulse.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 81.8,
+  "peak": 0.62,
+  "oggBytes": 4407
+ },
+ "fire1": {
+  "source": "famistudio",
+  "sourceFile": "fire_stream.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 47.6,
+  "peak": 0.62,
+  "oggBytes": 4032
+ },
+ "fire2": {
+  "source": "famistudio",
+  "sourceFile": "fire_spread.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 92.7,
+  "peak": 0.62,
+  "oggBytes": 4525
+ },
+ "fire3": {
+  "source": "famistudio",
+  "sourceFile": "fire_wave.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 147.5,
+  "peak": 0.62,
+  "oggBytes": 4992
+ },
+ "fire4": {
+  "source": "stable-audio",
+  "sourceFile": "freeze.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 450.0,
+  "peak": 0.62,
+  "oggBytes": 7680
+ },
+ "fire5": {
+  "source": "stable-audio",
+  "sourceFile": "fire5_thermal.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 450.0,
+  "peak": 0.62,
+  "oggBytes": 7176
+ },
+ "fire6": {
+  "source": "famistudio",
+  "sourceFile": "fire_guided.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 147.4,
+  "peak": 0.62,
+  "oggBytes": 4998
+ },
+ "fire7": {
+  "source": "stable-audio",
+  "sourceFile": "fire7_barrier.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 450.0,
+  "peak": 0.62,
+  "oggBytes": 7518
+ },
+ "enemyFire0": {
+  "source": "famistudio",
+  "sourceFile": "enemy_fire.wav",
+  "category": "weapon",
+  "semitoneShift": 0,
+  "ms": 114.5,
+  "peak": 0.62,
+  "oggBytes": 4707
+ },
+ "enemyFire1": {
+  "source": "famistudio",
+  "sourceFile": "enemy_fire.wav",
+  "category": "weapon",
+  "semitoneShift": 5,
+  "ms": 85.8,
+  "peak": 0.62,
+  "oggBytes": 4483
+ },
+ "enemyFire2": {
+  "source": "famistudio",
+  "sourceFile": "enemy_fire.wav",
+  "category": "weapon",
+  "semitoneShift": -4,
+  "ms": 144.3,
+  "peak": 0.62,
+  "oggBytes": 5008
+ },
+ "jump": {
+  "source": "famistudio",
+  "sourceFile": "jump.wav",
+  "category": "body",
+  "semitoneShift": 0,
+  "ms": 99.2,
+  "peak": 0.72,
+  "oggBytes": 4559
+ },
+ "land": {
+  "source": "stable-audio",
+  "sourceFile": "land.wav",
+  "category": "body",
+  "semitoneShift": 0,
+  "ms": 767.4,
+  "peak": 0.72,
+  "oggBytes": 9480
+ },
+ "pickup": {
+  "source": "famistudio",
+  "sourceFile": "pickup.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 231.5,
+  "peak": 0.7,
+  "oggBytes": 5956
+ },
+ "freeze": {
+  "source": "stable-audio",
+  "sourceFile": "freeze.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 1300.0,
+  "peak": 0.78,
+  "oggBytes": 14942
+ },
+ "shield": {
+  "source": "stable-audio",
+  "sourceFile": "shield.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 785.2,
+  "peak": 0.78,
+  "oggBytes": 9578
+ },
+ "playerHit": {
+  "source": "stable-audio",
+  "sourceFile": "playerHit.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 516.7,
+  "peak": 0.78,
+  "oggBytes": 8023
+ },
+ "death": {
+  "source": "stable-audio",
+  "sourceFile": "death.wav",
+  "category": "body",
+  "semitoneShift": 0,
+  "ms": 1600.0,
+  "peak": 0.72,
+  "oggBytes": 17365
+ },
+ "enemyHit": {
+  "source": "stable-audio",
+  "sourceFile": "enemyHit.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 67.7,
+  "peak": 0.78,
+  "oggBytes": 4442
+ },
+ "enemyDown": {
+  "source": "stable-audio",
+  "sourceFile": "enemyDown.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 1300.0,
+  "peak": 0.78,
+  "oggBytes": 16028
+ },
+ "bossHit": {
+  "source": "stable-audio",
+  "sourceFile": "bossHit.wav",
+  "category": "impact",
+  "semitoneShift": 0,
+  "ms": 635.8,
+  "peak": 0.78,
+  "oggBytes": 8320
+ },
+ "bossDown": {
+  "source": "stable-audio",
+  "sourceFile": "bossDown.wav",
+  "category": "sting",
+  "semitoneShift": 0,
+  "ms": 2716.6,
+  "peak": 0.82,
+  "oggBytes": 26544
+ },
+ "uiMove": {
+  "source": "famistudio",
+  "sourceFile": "ui_move.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 80.6,
+  "peak": 0.7,
+  "oggBytes": 4449
+ },
+ "uiConfirm": {
+  "source": "famistudio",
+  "sourceFile": "ui_confirm.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 164.0,
+  "peak": 0.7,
+  "oggBytes": 5121
+ },
+ "deny": {
+  "source": "famistudio",
+  "sourceFile": "ui_deny.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 197.9,
+  "peak": 0.7,
+  "oggBytes": 5614
+ },
+ "pause": {
+  "source": "famistudio",
+  "sourceFile": "pause.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 162.9,
+  "peak": 0.7,
+  "oggBytes": 5149
+ },
+ "resume": {
+  "source": "famistudio",
+  "sourceFile": "resume.wav",
+  "category": "ui",
+  "semitoneShift": 0,
+  "ms": 163.7,
+  "peak": 0.7,
+  "oggBytes": 5125
+ },
+ "respawn": {
+  "source": "famistudio",
+  "sourceFile": "resume.wav",
+  "category": "ui",
+  "semitoneShift": -3,
+  "ms": 194.7,
+  "peak": 0.7,
+  "oggBytes": 5374
+ },
+ "deploy": {
+  "source": "famistudio",
+  "sourceFile": "deploy.wav",
+  "category": "sting",
+  "semitoneShift": 0,
+  "ms": 321.8,
+  "peak": 0.82,
+  "oggBytes": 6540
+ },
+ "clear": {
+  "source": "famistudio",
+  "sourceFile": "clear_sting.wav",
+  "category": "sting",
+  "semitoneShift": 0,
+  "ms": 448.0,
+  "peak": 0.82,
+  "oggBytes": 7832
+ },
+ "gameover": {
+  "source": "famistudio",
+  "sourceFile": "gameover_sting.wav",
+  "category": "sting",
+  "semitoneShift": 0,
+  "ms": 1147.8,
+  "peak": 0.82,
+  "oggBytes": 14966
+ }
+}

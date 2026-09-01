@@ -1,0 +1,358 @@
+---
+/**
+ * The cinematic product page: film, pinned stage, word-by-word headline,
+ * capability grid, security strip, price panel, inline specs, documentation.
+ *
+ * /products/pro and /products/essentials were two files of 488 and 525 lines
+ * running the same eleven sections in the same order with the same class names.
+ * They are now this layout plus a record each in data/products/. Content that
+ * is identical on both pages is written HERE, once — the chip row, the security
+ * heading and caveat, the "Open specs" heading, the documentation kicker, the
+ * closing CTA — because a string in one place cannot drift out of step with
+ * itself. Everything that differs is a prop; see data/products/types.ts.
+ *
+ * Two things stay as markup in the page rather than becoming data:
+ *
+ *   spec-tables — eight hand-written <details class="mtbl"> blocks of roughly
+ *     14,000 characters, dense with [verify:] flags and per-row citations.
+ *     Modelling them as data would mean retyping every ruled fact on the page,
+ *     which is the one thing CLAUDE.md forbids.
+ *   upsell — the .g3band. Pro's continues Gen 3; Essentials' steps up to Pro.
+ *     Different arguments, not one argument with a variable in it.
+ *
+ * Read the per-section comments below for why each piece is built the way it
+ * is; they were written for pro.astro and moved here with the markup.
+ */
+import BaseLayout from "./BaseLayout.astro";
+import Crumbs from "../components/Crumbs.astro";
+import TierPricing from "../components/TierPricing.astro";
+import CtaBand from "../components/CtaBand.astro";
+import type { ShowcaseData } from "../data/products/types";
+
+type Props = ShowcaseData;
+const { route, hero, zoom, stage, headline, caps, security, tier, specs, docs } =
+  Astro.props;
+
+/* Split for the reveal: each word gets its own mask so the line writes itself
+   left to right rather than fading in as a slab. Split here rather than in the
+   browser so the sentence is one piece of text in the served HTML — a crawler,
+   a reader mode and a copy-paste all get the sentence, not seventeen spans of
+   script output. */
+const WORDS = headline.split(" ");
+
+/* The frame sequence. NOT the masters: those are 3840x2160, and every frame is
+   decoded because the scrub shows all of them — hundreds of MB of bitmap held
+   at once, for a stage 940 px wide. scripts/build-zoom-frames.mjs writes the
+   two widths below; `sizes` then lets a phone take the 720 and never fetch or
+   decode the rest. Re-export the masters and re-run `pnpm images:zoom`.
+
+   Rooted literals, so rebase-html.mjs prefixes them in dist/ the same way it
+   does every href on the site — src and srcset are both in its attribute list.
+
+   The file prefix IS the last segment of the directory, which is how the build
+   script names them; deriving it keeps one name in the record instead of two
+   that have to agree. */
+const ZSIZES = "(min-width: 1300px) 940px, (min-width: 900px) 74vw, 92vw";
+const ZPREFIX = zoom.dir.split("/").pop();
+const ZOOM = Array.from({ length: zoom.count }, (_, i) => {
+  const n = ZPREFIX + "-" + String(i + 1).padStart(2, "0");
+  const set = (ext: string) =>
+    zoom.dir + "/w720/" + n + "." + ext + " 720w, " + zoom.dir + "/w1440/" + n + "." + ext + " 1440w";
+  return { avif: set("avif"), webp: set("webp"), src: zoom.dir + "/w1440/" + n + ".webp" };
+});
+---
+
+<BaseLayout route={route}>
+  {/* The first screen is the film. It runs full-bleed and full-height, the site
+      header floats over it, and the breadcrumb is the only page furniture on the
+      frame — everything else on the page begins below. The pull-up under the
+      sticky header is --hdr-h; see .vhero in pages.css and initVideoHero(). */}
+  {/* Two encodes where two exist, and the SMALL one is the markup src.
+      <source media> is not an option — it was dropped from <video>, and Chrome
+      and Safari ignore it — so the pick is initVideoHero()'s, and whatever is in
+      `src` here is what the browser starts fetching before any script runs.
+      Defaulting to the small file means a phone never begins the large one; the
+      desktop upgrade costs a fetch that is aborted within milliseconds of parse.
+      The other way round, every phone pays for a film it was never going to be
+      shown — which is why the wide encode getting heavier does not change what a
+      phone gets.
+
+      The two attributes are also base-pathed by different mechanisms, which is
+      the split in "The base-path split": `src` is a literal, rewritten in dist/
+      by rebase-html.mjs; `data-src-wide` is not an attribute that pass knows
+      about, so the script puts it through withBase() itself. */}
+  <section class="vhero">
+      <video
+        class="vhero-vid"
+        src={hero.videoSrc}
+        data-src-wide={hero.videoWideSrc}
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-label={hero.videoLabel}></video>
+      <div class="vhero-shade"></div>
+      <Crumbs route={route} />
+
+      {/* The title card. Deliberately NOT a heading beyond the one H1:
+          check-outline.py requires exactly one H1 per page and requires it to be
+          the first heading, so the product name is the H1 here and the display
+          type below it is a <p>. A second H1 over the film, or an H2 above the
+          H1, breaks the outline a crawler reads.
+
+          The rule that binds whatever goes here: a hero may compress a fact, it
+          may not introduce one. Every claim gestured at above is made in full,
+          with its citation, further down the page.
+
+          One mask per line, and the last line takes the sheen: the payoff line
+          is the one that shines. */}
+      <div class="vh-copy">
+        <h1 class="vh-eyebrow">{hero.eyebrow}</h1>
+        <p class="vh-title">
+          {hero.lines.map((l, i) => (
+            <span class="vh-line">
+              {i === hero.lines.length - 1 ? <span class="vh-sheen">{l}</span> : <span>{l}</span>}
+            </span>
+          ))}
+        </p>
+        <p class="vh-dek" set:html={hero.dek} />
+
+        {/* The one route out of the hero, and deliberately the quiet kind: a
+            hairline pill over the film rather than a filled button, because the
+            film is the pitch and a solid CTA on top of it argues with the
+            headline. It is the third way into the spec sheet — the stage panel
+            and the documentation row are the others — and the only one that is
+            reachable without scrolling, which is what an integrator arriving on
+            this page is usually after. Icon and arrow are currentColor, so the
+            whole thing brightens as one on hover. */}
+        <a class="vh-spec" href={hero.specHref}>
+          <svg class="vh-spec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" aria-hidden="true">
+            <path d="M6 3.75h7l5 5V20.25H6z" stroke-linejoin="round" />
+            <path d="M13 3.75v5h5" stroke-linejoin="round" />
+            <path d="M9 13h6M9 16.5h4" stroke-linecap="round" />
+          </svg>
+          <span>Specs</span>
+          <i aria-hidden="true">&rarr;</i>
+        </a>
+      </div>
+
+      <div class="vh-scroll" aria-hidden="true"><span>Scroll</span><i></i></div>
+    </section>
+
+    {/* The pinned stage. One screen of picture, three screens of scroll: see the
+        .stg block in pages.css for the phases and initScrollScene() for what
+        drives them. No heading here either, for the reason given above the title
+        card — the page has one H1 and it is below this. */}
+    <section class="stg" aria-label={stage.ariaLabel}>
+      <div class="stg-pin">
+        <div class="stg-art">
+          <div class="stg-fig">
+            {ZOOM.map((f, i) => (
+              <picture>
+                <source type="image/avif" srcset={f.avif} sizes={ZSIZES} />
+                <source type="image/webp" srcset={f.webp} sizes={ZSIZES} />
+                <img
+                  class:list={["stg-frame", i === 0 && "on"]}
+                  src={f.src}
+                  alt={i === 0 ? stage.alt : ""}
+                  width="1440"
+                  height="810"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            ))}
+          </div>
+        </div>
+
+        <div class="stg-panel">
+          <p class="stg-eyebrow">{stage.eyebrow}</p>
+          <p class="stg-title">{stage.title}</p>
+          <ul class="stg-specs">
+            {stage.rows.map((r) => (
+              <li class="stg-item" data-at={r.at}>
+                <span class="stg-ic"><Fragment set:html={r.ic} /></span>
+                <span><b>{r.k}</b><span>{r.v}</span></span>
+              </li>
+            ))}
+          </ul>
+          <a class="stg-more" data-at="0.9" href={hero.specHref}>The full spec sheet &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="pageinfo pfx"><span class="tag t-tpl">T4</span><span class="tag t-open">OPEN</span><span class="tag t-open">MSRP PUBLIC</span></div>
+
+    {/* The page's opening statement, one word at a time.
+
+        This replaced the product name, its spec-sheet chip, the deck and the
+        placeholder product figure. Two things had to be kept alive while they
+        went. The H1 moved up into the hero title card — same words, same size,
+        same place on screen, now a heading — because a page with no H1 fails
+        check-outline.py and a product page whose H1 does not name the product
+        loses the one heading a search engine weighs most. And the spec sheet
+        keeps two routes in from this page: the stage panel above and the
+        documentation row below. Nothing here is a dead end. */}
+    <h2 class="hln pfx">
+      {/* The trailing space is a sibling of the mask, not a margin on it and not
+          a character inside it: a trailing space inside an inline-block collapses
+          away, and a margin survives the end of a line and knocks the centring
+          off by a quarter em per line. Which means each word is two nodes, hence
+          the Fragment. */}
+      {WORDS.map((w, i) => (
+        <Fragment>
+          <span class="hw" style={"--d:" + i * 45 + "ms"}><span>{w}</span></span>{" "}
+        </Fragment>
+      ))}
+    </h2>
+
+    {/* The capability grid. It keeps the .pfx staged entrance the rest of this
+        page uses — same observer in initScrollScene(), same --pfx-d stagger — but
+        overrides the entrance itself with .capx, which flies the card in from
+        below and behind on a perspective rather than fading it up, then lets the
+        icon spring and the sheen sweep land after it. The sheen and the spotlight
+        are aria-hidden decoration; the reading order is icon, heading, copy,
+        link.
+
+        The cursor spotlight and the tilt are initCapCards(), and they are the one
+        part of this that needs script: everything else, including the rotating
+        border, is CSS and survives with JS off. */}
+    <section class="sect reveal tight">
+      <div class="kicker">{caps.kicker}</div>
+      <h2 class="caphd">{caps.h2}</h2>
+      {caps.sdek && <p class="sdek" set:html={caps.sdek} />}
+      <div class="capgrid">
+        {caps.items.map((c, i) => (
+          <article
+            class="capx pfx"
+            style={"--pfx-d:" + i * 85 + "ms;--capx-w:" + c.w}
+          >
+            <span class="capx-sheen" aria-hidden="true"></span>
+            <span class="capx-glow" aria-hidden="true"></span>
+            <div class="capx-ic"><Fragment set:html={c.ic} /></div>
+            <h3>{c.h}</h3>
+            <p><Fragment set:html={c.p} /></p>
+            <a class="capx-go" href={c.href}>
+              <span>{c.cta}</span><i aria-hidden="true">&rarr;</i>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ── Security ──────────────────────────────────────────────────────────
+        One paragraph of roughly 1,900 characters is a two-sentence lead, four
+        cards and the caveat. Every fact from that paragraph survives — the test
+        dates and what each test did, the severity summary, the device measures,
+        the ISO and SOC 2 lines, the assessor's own caveat, and both [verify]
+        flags with their owners. What went is the connective prose that only
+        existed to chain four unrelated proofs into one sentence. That is the
+        consolidation: the cards are the structure the paragraph was substituting
+        for.
+
+        Its position is a deliberate order change. Security used to be the last
+        argument on the page, below the spec tables and the Gen 3 band, where a
+        reader who stopped at the price never reached it. It now sits between
+        what the product does and what it costs: the capability grid makes the
+        case, this answers the question that case raises for anyone who has to
+        put the thing on a corporate network, and the price follows both. */}
+    <section class="sect reveal tight">
+      <div class="kicker">Security</div>
+      <h2>The device is tested too, by someone else.</h2>
+      <p class="sdek" set:html={security.sdek} />
+
+      {/* Each card has exactly four children, in this order, because
+          .secx-card is a row subgrid: every child lands in the same row as its
+          counterpart in the other three cards, which is what keeps the four
+          icons on one line across the strip when the headings above them run to
+          different depths. Do not wrap them in a div — that collapses the card
+          to a single row and the icons go ragged. */}
+      <div class="secx">
+        {security.items.map((s, i) => (
+          <article class="secx-card pfx" style={"--pfx-d:" + i * 70 + "ms"}>
+            <p class="secx-when">{s.when}</p>
+            <h3>{s.h}</h3>
+            <span class="secx-ic"><Fragment set:html={s.ic} /></span>
+            <p class="secx-p"><Fragment set:html={s.p} /></p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note">
+        Their caveat, which we keep: that does not make compromise impossible, but it would take
+        an adversary of significant skill and effort. The full architecture, every scope statement
+        and the audit findings: <a href="/platform/security">the Trust Center</a>.
+      </p>
+    </section>
+
+    {/* The price panel. Everything it shows — the upfront figure, the effective
+        annual rate, the renewal, what the subscription includes — is the same
+        published MSRP, from the same constants, adjustable by industry, term and
+        room count. See components/TierPricing.astro for why no figure is typed
+        into it, and why the tier is a prop rather than a second copy of the
+        panel. */}
+    <TierPricing tier={tier} />
+
+    <section class="sect reveal flush">
+      <div class="kicker">Open specs: nothing gated</div>
+      <h2>The specification sheet, inline.</h2>
+    {/* ── The data sheet is a FLOOR, not a ceiling ──────────────────────────────
+        Rule set 12 Aug 2026 after this page lost detail to a released spec sheet.
+
+        The Pro and Essentials data sheets are authoritative for what they STATE. They
+        are not authoritative for what they omit. A sheet is a two-page sales document
+        and the PRD, the firmware requirements and the third-party device assessment all
+        carry detail it was never going to print - radio bands, connector generations,
+        CEC, memory type, the secure element.
+
+        So: where the sheet states a fact, cite the sheet. Where the POC has more from
+        another source, KEEP IT, cite that source, and note that the sheet is silent.
+        Silence is not contradiction. Only an actual disagreement between two documents
+        gets resolved downward, and there is currently exactly one of those - the
+        warranty term - which is tracked in Website/Reports/Datasheet reconciliation.
+
+        The failure mode this prevents: replacing "2x USB-A 3.0, host mode" with
+        "2x USB" because the sheet was vaguer, which loses the fact an integrator
+        actually needs and makes the page worse for having read a document. */}
+      <p class="sdek" set:html={specs.sdek} />
+      <slot name="spec-tables" />
+      {specs.notes.map((n) => <p class="note" set:html={n} />)}
+    </section>
+
+    {/* The documentation row. Icon, title, one line, arrow.
+
+        .prdocx is a modifier ON .prddocs rather than a replacement for it: the
+        base component is still on four other pages (solstice, cloud, security,
+        firmware) and on the builder in lib/blocks.ts, none of which pass icons.
+        Every rule in the variant is written as `.prddocs.prdocx …` for a reason
+        that is not style — global.css @imports pages.css at line 2, so pages.css
+        loses every same-specificity tie to it. Two classes beat one, and the
+        variant wins wherever it is written. */}
+    <div class="kicker" style="margin-top:8px">Documentation: open, one click</div>
+    <div class="prddocs prdocx reveal">
+      {docs.map((d, i) => (
+        <a class="pfx" style={"--pfx-d:" + i * 80 + "ms"} href={d.href}>
+          <span class="pdoc-ic"><Fragment set:html={d.ic} /></span>
+          <span class="pdoc-tx"><b>{d.h}</b><span>{d.p}</span></span>
+          <i class="pdoc-go" aria-hidden="true">&rarr;</i>
+        </a>
+      ))}
+    </div>
+
+    <slot name="upsell" />
+
+    <CtaBand />
+
+  <script>
+    import { initVideoHero } from "../scripts/pages/video-hero";
+    import { initScrollScene } from "../scripts/pages/scroll-scene";
+    import { initCapCards } from "../scripts/pages/cap-cards";
+    import { initPriceCalc } from "../scripts/pages/price-calc";
+    initVideoHero();
+    initScrollScene();
+    initCapCards();
+    initPriceCalc();
+  </script>
+</BaseLayout>

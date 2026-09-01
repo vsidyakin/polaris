@@ -1,0 +1,161 @@
+---
+/**
+ * The Polaris price calculator, for either subscription tier.
+ *
+ * Replaces the old .prdmsrp block — a pill toggle, one centred figure and a
+ * three-row table — with a single panel that answers the question a buyer
+ * actually arrives with: what does this cost for *my* rooms, on *my* terms.
+ *
+ * It was written for Pro and named for it. When /products/essentials took the
+ * same layout it took this panel too, so the tier is now a prop: the only
+ * things that differ between the two are the label above the heading, the one
+ * line naming the device, and which member of `PRICING` goes into the
+ * `data-prices` attribute the script reads. Nothing about the arithmetic or the
+ * controls is tier-specific, and a second copy of this file would have been a
+ * second place for the MSRP presentation to drift.
+ *
+ * Three things are load-bearing here.
+ *
+ * 1. **No price is typed into this file.** Every figure comes from
+ *    `data/pricing.ts` as a number and is formatted in the browser, which is
+ *    what lets the same numbers be multiplied by a room count without a second
+ *    copy of them existing anywhere. See the header of that file.
+ *
+ * 2. **"On request" is a first-class value, not a missing one.** Education
+ *    subscription pricing and the corporate perpetual licence are quoted per
+ *    deal. Those cells say so and the panel raises a sales link, rather than
+ *    rendering a zero or an empty box.
+ *
+ * 3. **The panel is complete with JavaScript off.** The markup ships with the
+ *    corporate 3-year, one-room figures already in it — the same numbers the
+ *    old block showed — so a reader with no script gets the published MSRP,
+ *    just not the ability to change it. `initPriceCalc()` only takes over
+ *    what is already correct.
+ *
+ * The counting animation is in `scripts/pages/price-calc.ts`; the styling is
+ * the `.pcalc-` family in `styles/pages.css`.
+ */
+import { PRICING, TERM_YEARS, usd } from "../data/pricing";
+import { PRICE_SUBLINE, PRICE_PARTNER } from "../lib/blocks";
+
+interface Props {
+  /** Which subscription tier's published MSRP this panel prices. */
+  tier: "essentials" | "pro";
+}
+
+const { tier } = Astro.props;
+const prices = PRICING[tier];
+const name = tier === "pro" ? "Pro" : "Essentials";
+
+/* The no-script defaults: corporate, 3-year, one room. Computed rather than
+   written out, so the served HTML cannot drift from the JSON beside it. */
+const base = prices.corp["3"];
+const years = TERM_YEARS["3"] as number;
+const upfront = base.upfront as number;
+const renew = base.renew as number;
+
+const IND = [
+  ["corp", "Corporate"],
+  ["edu", "Education"],
+] as const;
+
+const TERM = [
+  ["3", "3-year"],
+  ["5", "5-year"],
+  ["p", "Perpetual"],
+] as const;
+---
+
+<section class="pcalc reveal" aria-labelledby="pcalc-h" data-prices={JSON.stringify(prices)}>
+  <span class="pcalc-glow" aria-hidden="true"></span>
+
+  {/* ── the controls ─────────────────────────────────────────────────────── */}
+  <div class="pcalc-side">
+    <p class="pcalc-eyebrow">Polaris {name} &middot; MSRP 2026</p>
+    <h2 class="pcalc-h" id="pcalc-h">Price the room.</h2>
+
+    <div class="pcalc-field">
+      <span class="pcalc-lbl" id="pcalc-ind-l">Industry</span>
+      {/* --n is the segment count, --i the index of the active one: the pill is
+          one nth of the track wide and slides by whole multiples of itself, so
+          nothing has to be measured and a resize cannot desynchronise it. */}
+      <div class="pcalc-seg" role="group" aria-labelledby="pcalc-ind-l" data-seg="ind" style={`--n:${IND.length};--i:0`}>
+        <span class="pcalc-pill" aria-hidden="true"></span>
+        {IND.map(([v, label], i) => (
+          <button type="button" data-val={v} aria-pressed={i === 0 ? "true" : "false"}>{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="pcalc-field">
+      <span class="pcalc-lbl" id="pcalc-term-l">Term</span>
+      <div class="pcalc-seg" role="group" aria-labelledby="pcalc-term-l" data-seg="term" style={`--n:${TERM.length};--i:0`}>
+        <span class="pcalc-pill" aria-hidden="true"></span>
+        {TERM.map(([v, label], i) => (
+          <button type="button" data-val={v} aria-pressed={i === 0 ? "true" : "false"}>{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="pcalc-field">
+      <span class="pcalc-lbl" id="pcalc-rooms-l">Rooms</span>
+      <div class="pcalc-rooms">
+        <button class="pcalc-stepbtn" type="button" data-step="-1" aria-label="One room fewer">&minus;</button>
+        <span class="pcalc-roomn" data-fig="rooms">1</span>
+        <button class="pcalc-stepbtn" type="button" data-step="1" aria-label="One room more">+</button>
+        <input
+          class="pcalc-range"
+          type="range"
+          min="1"
+          max="100"
+          step="1"
+          value="1"
+          aria-labelledby="pcalc-rooms-l"
+        />
+      </div>
+      <p class="pcalc-hw">One Polaris {name} device per room, included in the price.</p>
+    </div>
+  </div>
+
+  {/* ── the readout ──────────────────────────────────────────────────────── */}
+  <div class="pcalc-main">
+    <div class="pcalc-lead">
+      <p class="pcalc-k" data-cap="leadk">Billed upfront</p>
+      <p class="pcalc-big" data-fig="upfront">{usd(upfront)}</p>
+      <p class="pcalc-c" data-cap="upfront">{years}-year term &middot; 1 room</p>
+    </div>
+
+    <div class="pcalc-duo">
+      <div class="pcalc-cell">
+        <p class="pcalc-k">Per room, per year</p>
+        <p class="pcalc-v" data-fig="year">{usd(upfront / years)}</p>
+        <p class="pcalc-c" data-cap="year">Effective rate across the term</p>
+      </div>
+      <div class="pcalc-cell">
+        <p class="pcalc-k">Annual renewal</p>
+        <p class="pcalc-v" data-fig="renew">{usd(renew)}</p>
+        <p class="pcalc-c" data-cap="renew">From year {years + 1} &middot; 1 room</p>
+      </div>
+    </div>
+
+    {/* Raised whenever a selected combination is quoted rather than published.
+        Hidden in the served HTML because the default combination is published. */}
+    <p class="pcalc-ask" data-ask hidden>
+      That combination is quoted per deal rather than published.
+      <a href="/contact">Talk to sales &rarr;</a>
+    </p>
+
+    {/* The figures are read by eye as they count; this is what a screen reader
+        is told, once, after they settle. */}
+    <p class="sr-only" data-live aria-live="polite"></p>
+  </div>
+
+  <div class="pcalc-foot">
+    <Fragment set:html={PRICE_SUBLINE} />
+    <p class="pcalc-note">
+      Current MSRP, effective 2026, in US dollars, per room. Totals are an estimate at list price,
+      not a quote. [Published-pricing presentation: legal review pending.]
+    </p>
+    <Fragment set:html={PRICE_PARTNER} />
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import { REG_SPINE } from "../../data/industries";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indSpine, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/healthcare">
+  <Fragment set:html={indHead("solutions/healthcare","Healthcare","Collaboration for the spaces care runs on.","Tumor boards, telehealth consults, admin conference rooms, and the education spaces in between, with the security posture your CISO requires, and the data-path story told in the open.")} />
+    <Fragment set:html={indPains("Clinical spaces can't gamble. Admin spaces can't sprawl.","Two estates, one network policy, and a vendor-review process measured in months. Here's what breaks first.",[
+      ["Case reviews on consumer casting","A tumor board can't stall on a dongle hunt, and can't run on consumer casting gear with an undocumented data path.","Purpose-built room devices on a Linux-hardened OS, with the data path published in the open. [Data-path claim placeholder — verify with security team before publishing.]"],
+      ["Networks segmented by mandate","Clinical, guest, biomed/IoT, and corp networks are isolated by policy, and sharing tools assume one flat network.","Cross-network sharing keeps the isolation intact and still lands every source on the same workspace, no exceptions filed."],
+      ["The vendor review takes a quarter","Every device that touches a hospital network answers a security questionnaire the size of a chart.","The Trust Center is the pre-filled answer: architecture, controls, update policy: public, readable, citable."],
+      ["Two estates, two toolsets","Boardrooms and huddle rooms on one side; consult, education, and conference spaces on the other, usually two vendors and two dashboards.","One platform, one pane: Essentials in admin spaces, Pro where conferencing and segmentation demand it."]
+    ])} />
+    <Fragment set:html={indStack("Pro for clinical, Essentials for admin.","Match the tier to the space, keep the whole estate on one portal and one security story.",[
+      {hot:true,name:"Polaris Pro",tfor:"Clinical & segmented spaces",pts:["True wireless BYOM for tele-consult and hybrid case review","HDMI input and dual 4K60 output for case-review displays","802.1x / EAP-TLS on the hospital NAC","Web-join for visiting clinicians: zero network access granted"],msrp:"from $575.86",msub:"/ room / year · warranty included for life of the subscription",link:"products/pro",lbl:"See Pro"},
+      {name:"Polaris Essentials",tfor:"Administrative meeting rooms",pts:["Full workspace + web-join for the admin estate","Same hardened platform, same portal","Steps up to Pro with a license"],msrp:"from $287.86",msub:"/ room / year",link:"products/essentials",lbl:"See Essentials"}
+    ],"MSRP public on product pages; health-system and GPO purchasing routes through partners. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Why health systems pick Polaris","The security story, in the open.","What the CISO's office, clinical engineering, and the AV team each get, without an NDA.",[
+      {ic:XIC.shieldx,h:"HIPAA safeguards inside the audit opinion",p:"Not a self-assessment and not a separate letter: our SOC 2 Type 2 opinion covers controls implemented to meet 45 C.F.R. \u00a7164.308, the HIPAA Security Rule administrative safeguards. Ask for the report and read the paragraph. The same report maps our controls to HITRUST CSF v11.5, so your questionnaire reads across without translation \u2014 a mapping inside the SOC 2, not a HITRUST certification, and we will not blur the two. Alongside both: ISO/IEC 27001:2022 certification with no nonconformities raised at the June 2026 surveillance audit. [2026 SOC 2 Type 2: confirm the HIPAA paragraph and the HITRUST mapping carry forward - CISO]"},{ic:XIC.shieldx,h:"A data path you can show the CISO",p:"What transits, what stays local, what never happens: the candid data-path inventory ships on the public page, not in a gated PDF. [Data-path claims placeholder — verify with security team before publishing; no PHI-related claims until reviewed.]",link:"platform/security",lbl:"The Trust Center"},
+      {ic:XIC.crossnet,h:"Segmentation stays intact",p:"Sources publish, displays subscribe: clinical and guest networks never route to each other, and the guest device gets zero network access. The workspace is the only shared surface.",link:"platform/cross-network",lbl:"The architecture"},
+      {ic:XIC.cloudx,h:"One pane across the campus",p:"Every conference room, education space, and idle-display sign across the medical campus: health, firmware, and usage from one portal, sized for a lean clinical-engineering team.",link:"platform/cloud",lbl:"Polaris Cloud"},
+      {ic:XIC.cloudx,h:"Updates that fit change control",p:"Bulk config with templates, staged firmware, and health alerts routed to whoever carries the pager: one operational plane for clinical and admin spaces alike. Editing a template re-applies it to every device assigned to it, so a room that was changed locally comes back to the approved profile.",link:"platform/cloud",lbl:"Polaris Cloud"}
+    ])} />
+    <Fragment set:html={indSpine("The compliance spine","Shared with every regulated industry.","The same six commitments cited across government, healthcare, and finance: one story, no forks.",REG_SPINE)} />
+    <Fragment set:html={indProof("[Deployment reference quote — placeholder]","[Named health system — placeholder]","CISO or IT Director · [system, room count placeholder]",[["[n]","clinical spaces deployed [placeholder]"],["0","network exceptions filed [placeholder]"],["1","security story for the whole estate"]],"[CONTENT GATE: this page requires a minimum of one named healthcare deployment reference before launch — it does not publish without it. Quote and figures are placeholders.]")} />
+    <Fragment set:html={indRes([
+      ["Trust Center","Architecture, controls, update policy: the review board's first read.","platform/security"],
+      ["Compliance matrix","Controls mapped to your questionnaire framework. [placeholder]","resources/docs"],
+      ["Get a demo","Thirty minutes, your use case, a live workspace.","demo"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

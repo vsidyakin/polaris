@@ -1,0 +1,31 @@
+---
+import ProductPage from "../../layouts/ProductPage.astro";
+---
+
+<ProductPage
+  route="products/selector"
+  tpl="T3"
+  title={"Which Mersive Polaris is <span class=\"warm\">right</span>?"}
+  dek={"The same questions our engineers ask. Answer four; get a straight recommendation. <em>(Placeholder logic: final questions come from the sales-triage capture.)</em>"}
+  cta={false}
+>
+    <div class="selq"><b>1. Do your rooms need to host video calls (Teams/Zoom/Meet/Webex) with room camera and mic?</b>
+      <label><input type="radio" name="q1" value="0" onchange="selCalc()"> No: sharing to the display is the job</label>
+      <label><input type="radio" name="q1" value="1" onchange="selCalc()"> Yes: conferencing is core</label></div>
+    <div class="selq"><b>2. Do people need to share across networks: guest devices, other VLANs, other buildings?</b>
+      <label><input type="radio" name="q2" value="0" onchange="selCalc()"> No: everyone's on one network</label>
+      <label><input type="radio" name="q2" value="1" onchange="selCalc()"> Yes: our network is segmented / guests present often</label></div>
+    <div class="selq"><b>3. How many rooms are you outfitting?</b>
+      <label><input type="radio" name="q3" value="0" onchange="selCalc()"> 1–25</label>
+      <label><input type="radio" name="q3" value="1" onchange="selCalc()"> 25+</label></div>
+    <div class="selq"><b>4. Who runs your AV?</b>
+      <label><input type="radio" name="q4" value="0" onchange="selCalc()"> IT does everything</label>
+      <label><input type="radio" name="q4" value="1" onchange="selCalc()"> Dedicated AV team / integrator partner</label></div>
+    <div id="selout"></div>
+    <p class="note">[Internal note, remove before launch: the recommendation doubles as the reseller qualification script (same questions, same routing).]</p>
+</ProductPage>
+
+
+<script>
+  import "../../scripts/pages/selector";
+</script>

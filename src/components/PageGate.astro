@@ -1,0 +1,150 @@
+---
+/**
+ * Password gate for the GitHub Pages preview.
+ *
+ * READ THIS BEFORE TRUSTING IT. This is a speed bump, not access control.
+ * GitHub Pages has no server-side auth: it hands the full page — copy, compare
+ * matrix, TCO pricing, bundles — to anyone who requests the URL. This gate only
+ * hides that content from the rendered view. View Source, devtools, or `curl`
+ * read straight past it in seconds. It stops crawlers, casual link-sharing and
+ * anyone who won't open devtools. It stops nobody who will. If the content ever
+ * genuinely must not leak, it needs a host that authenticates before serving
+ * (see the Deployment notes in AGENTS.md).
+ *
+ * The password itself is not in the build — only a salted SHA-256 of it — so a
+ * leaked deploy does not hand over a password someone may have reused.
+ *
+ * Renders nothing unless SITE_PASSWORD is set at build time. The markup, CSS and
+ * script are all `is:inline` so Astro leaves them inside this conditional rather
+ * than hoisting them into the shared bundles — `pnpm build` output is unchanged.
+ */
+import { createHash } from "node:crypto";
+
+/** Fixed, public — it only stops a plain rainbow-table lookup of a weak password. */
+const SALT = "polaris-preview-v1";
+
+const password = process.env.SITE_PASSWORD ?? "";
+const hash = password ? createHash("sha256").update(SALT + password).digest("hex") : "";
+
+/* BaseLayout stamps data-gate="locked" on <html> at build time, so the page is
+   hidden before first paint and stays hidden if JS is off. The script below is
+   what removes it. */
+const CSS = `
+html[data-gate="locked"]{overflow:hidden}
+html[data-gate="locked"] body>*:not(.gate){display:none!important}
+.gate{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px;background:#0b0a13}
+html[data-gate="locked"] .gate{display:flex}
+.gate-box{width:100%;max-width:380px;padding:32px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.04)}
+.gate-kicker{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9d8cff}
+.gate-h{margin:0 0 10px;font-size:26px;font-weight:700;color:#fff}
+.gate-dek{margin:0 0 20px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.62)}
+.gate-box input{width:100%;padding:11px 13px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(0,0,0,.35);color:#fff;font:inherit;font-size:15px}
+.gate-box input:focus{outline:none;border-color:#9d8cff}
+.gate-box button{width:100%;margin-top:12px;padding:11px 13px;border:0;border-radius:9px;background:#6d5bb8;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.gate-box button:hover{background:#7d6bc9}
+.gate-err{margin:12px 0 0;font-size:13px;color:#ff8f8f}
+`;
+---
+
+{
+  hash && (
+    <>
+      <style is:inline set:html={CSS} />
+
+      <div class="gate">
+        <form class="gate-box" id="gate-form" autocomplete="off" aria-label="Pre-launch preview: review password required">
+          <p class="gate-kicker">Mersive Polaris</p>
+          <p class="gate-h">Pre-launch preview</p>
+          <p class="gate-dek">
+            This build is not public yet. Enter the review password to continue.
+          </p>
+          <input
+            id="gate-input"
+            type="password"
+            name="preview-password"
+            placeholder="Password"
+            aria-label="Review password"
+            autocomplete="current-password"
+            required
+          />
+          <button type="submit">Continue</button>
+          <p class="gate-err" id="gate-err" role="alert" hidden />
+        </form>
+      </div>
+
+      <script is:inline define:vars={{ hash, salt: SALT }}>
+        (function () {
+          var KEY = "polaris-preview-auth";
+          var root = document.documentElement;
+
+          /* Already unlocked in this browser? Drop the attribute before the rest
+             of <body> parses, so there is no flash of the gate. */
+          try {
+            if (localStorage.getItem(KEY) === hash) root.removeAttribute("data-gate");
+          } catch (e) {
+            /* Storage blocked (private mode, cookies off). Fall through to the
+               prompt rather than leaving the page stuck behind a broken gate. */
+          }
+
+          async function digest(value) {
+            var bytes = new TextEncoder().encode(salt + value);
+            var buf = await crypto.subtle.digest("SHA-256", bytes);
+            return Array.from(new Uint8Array(buf))
+              .map(function (b) {
+                return b.toString(16).padStart(2, "0");
+              })
+              .join("");
+          }
+
+          function fail(err, input, message) {
+            err.textContent = message;
+            err.hidden = false;
+            input.select();
+          }
+
+          function wire() {
+            var form = document.getElementById("gate-form");
+            var input = document.getElementById("gate-input");
+            var err = document.getElementById("gate-err");
+            if (!form || !input || !err) return false;
+
+            if (root.getAttribute("data-gate") === "locked") input.focus();
+
+            form.addEventListener("submit", async function (ev) {
+              ev.preventDefault();
+              err.hidden = true;
+
+              /* crypto.subtle needs a secure context: https, or localhost for
+                 `pnpm preview:pages`. Anything else and the gate cannot verify. */
+              if (!window.crypto || !crypto.subtle) {
+                fail(err, input, "This browser cannot verify the password over an insecure connection.");
+                return;
+              }
+
+              if ((await digest(input.value)) !== hash) {
+                fail(err, input, "That password is not right.");
+                return;
+              }
+
+              try {
+                localStorage.setItem(KEY, hash);
+              } catch (e) {
+                /* Unlock this page view anyway; the next one will re-prompt. */
+              }
+              root.removeAttribute("data-gate");
+            });
+
+            return true;
+          }
+
+          /* Wire immediately. This script tag sits after the form in the DOM, so
+             the form already exists — waiting for DOMContentLoaded would leave a
+             window where submitting does a native GET, which puts the password
+             in the URL and browser history. Keep the event as a fallback only if
+             the element genuinely is not there yet. */
+          if (!wire()) document.addEventListener("DOMContentLoaded", wire);
+        })();
+      </script>
+    </>
+  )
+}

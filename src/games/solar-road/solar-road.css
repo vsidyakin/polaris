@@ -1,0 +1,41 @@
+/* SOLAR CIRCUIT — the shell.
+ *
+ * Two elements and almost no opinions. The shell fills whatever box the overlay
+ * gives it and lets Phaser letterbox the 800x600 logical canvas inside, exactly
+ * as .egg9-mount does for Polaris-Man: Phaser is already running Scale.FIT with
+ * CENTER_BOTH and does the ratio correctly, so the shell must not also try —
+ * aspect-ratio plus max-width/max-height silently breaks when the max on one
+ * axis bites and the browser clamps that axis alone.
+ *
+ * Imported by index.ts, so it is code-split with the game: a page that never
+ * opens Mercury never fetches it.
+ */
+
+.sr-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: #06040e;
+  border-radius: 10px;
+  overflow: hidden;
+  /* The shell takes focus on mount so the arrows work straight away; that
+     focus ring is ours, not the browser's default halo round a div. */
+  outline: none;
+}
+
+.sr-root:focus-visible {
+  box-shadow: inset 0 0 0 2px #5ef0ff;
+}
+
+.sr-mount {
+  position: absolute;
+  inset: 0;
+}
+
+/* Phaser writes its own inline width/height onto the canvas; these only stop it
+   inheriting a stray display or vertical-align rule from the page. */
+.sr-mount canvas {
+  display: block;
+  image-rendering: pixelated;
+}

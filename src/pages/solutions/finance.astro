@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import { REG_SPINE } from "../../data/industries";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indPains, indStack, indHooks, indSpine, indProof, indRes } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/finance">
+  <Fragment set:html={indHead("solutions/finance","Financial Services","Segmented networks are the norm here.<br>So is Polaris.","Trading floors, boardrooms, client rooms, in buildings where corp, front-office, and guest networks never touch by design. Cross-network sharing was built for exactly this floor plan.")} />
+    <Fragment set:html={indPains("Four rooms every firm recognizes.","Regulated segmentation plus high-stakes meetings: the environment where casting toys fail loudest.",[
+      ["The floor doesn't route to the boardroom","Front-office, corp, and guest networks are firewalled apart by policy and regulator expectation. Every receiver in our compare matrix segments: three network interfaces on one, four isolated network domains on another, dual NICs on a third. What almost none of them do is let you share across the segments - on one, the documented answer to guest isolation is a second receiver.","Cross-network sharing: sources publish, displays subscribe, isolation holds by architecture. No VPN, no flat-network waiver."],
+      ["Client rooms are first impressions","The pitch stalls while a guest hunts guest-Wi-Fi credentials or waits on a dongle, in front of the client.","Web-join: the client shares from their own browser in under a minute, with zero access to your network."],
+      ["Compliance reads everything","New room tech means information-security review, data-path questions, and vendor-risk paperwork before a single pod ships.","The Trust Center puts the architecture and data paths on the open page. Second-line review starts today, not after an NDA."],
+      ["Market hours don't pause for maintenance","Firmware windows near the trading floor are measured in minutes, not weekends.","Polaris Cloud stages rollouts room-by-room, off-hours, in windows you define, and health alerts surface problems before people do. Edit a room template and it re-applies to every room assigned to it, so a profile is restored rather than chased."]
+    ])} />
+    <Fragment set:html={indStack("Pro on the floor, Essentials in the back office.","Pro carries the segmented, client-facing, and conferencing spaces; Essentials covers internal team rooms, one portal over all of it.",[
+      {hot:true,name:"Polaris Pro",tfor:"Trading floors · boardrooms · client suites",pts:["True wireless BYOM for any-platform client calls","HDMI input and dual 4K60 output for boardroom AV","802.1x / EAP-TLS · dual-network posture","Web-join for clients and counterparties: zero network access granted"],msrp:"from $575.86",msub:"/ room / year · warranty included for life of the subscription",link:"products/pro",lbl:"See Pro"},
+      {name:"Polaris Essentials",tfor:"Internal huddle & team rooms",pts:["Full workspace + web-join on flat internal segments","Same platform, same pane, same security story","Steps up to Pro with a license"],msrp:"from $287.86",msub:"/ room / year",link:"products/essentials",lbl:"See Essentials"}
+    ],"MSRP public on product pages; enterprise agreements route through partners. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Why it lands here hardest","Two capabilities the floor plan demands.","Segmentation is non-negotiable in this industry. These are the two features built for that fact.",[
+      {ic:XIC.crossnet,h:"Cross-network sharing: the flagship",p:"A dashboard from the trading floor, a deck from corp, a counterparty on LTE: one workspace, isolation intact, no VPN, no UC call. Checked against twelve competitors in August 2026 against their own published documentation: only one documents an off-LAN path, and it needs two ephemeral port ranges and signalling in Azure West Europe. The vendors are named and sourced on the compare matrix. [Publish the vendor list, sources and retrieval dates alongside this claim.]",link:"platform/cross-network",lbl:"The architecture"},
+      {ic:XIC.webjoin,h:"The client room, browser-first",p:"Clients share from their own device in under a minute: browser tab, no install, no credentials handed across the table, zero access to your network. The meeting starts on time, in front of the people it's for.",link:"platform/how",lbl:"How web-join works"}
+    ])} />
+    <Fragment set:html={indSpine("The compliance spine","Shared with every regulated industry.","The same six commitments cited across government, healthcare, and finance: one story, no forks.",REG_SPINE)} />
+    <Fragment set:html={indProof("Being in the financial industry, data security and centralized management are paramount. We sought the right wireless solution to create a clean, easy and inclusive working environment.","Antonio Amoroso","Technical Architect · BNL Gruppo BNP Paribas",[["150","Mersive Solstice Pods across three BNL buildings"],["75,000 m&sup2;","Rome headquarters, up to 3,300 workstations"],["100+","rooms sharing on the corporate network"]],"[Gen 3-era proof from the published BNL Gruppo BNP Paribas case study, in the <a href='/resources/cases'>case-study library</a>. 2019 vintage; refresh check-in tracked in the launch workbooks.]")} />
+    <Fragment set:html={indRes([
+      ["Trust Center","Architecture, data paths, update policy, for second-line review.","platform/security"],
+      ["Cross-network deep-dive","The signaling architecture and the honest data-path inventory.","platform/cross-network"],
+      ["Get a demo","Thirty minutes, your floor plan, a live workspace.","demo"]
+    ])} />
+    <section class="sect reveal flush">
+      <div class="kicker">For the vendor review</div>
+      <h2>Audited, and specific about what we hold.</h2>
+      <p class="sdek">ISO/IEC 27001:2022 certified &mdash; and the June 2026 surveillance audit raised no nonconformities, with every clause and the Annex A control testing assessed as design and operating effectiveness met. SOC 2 Type 2 attested for the Polaris cloud on security, confidentiality and availability &mdash; 46 controls across 11 families examined, with a single exception in the whole report, on the HR control covering annual performance evaluations. Nothing in access control, encryption, logging, change management or incident response was excepted, and management&rsquo;s response is published in the report rather than rounded away. Room names, session names and device metadata are classified Confidential under the data-management policy the auditors reviewed. [2026 SOC 2 Type 2: swap in the period and opinion date when the auditors issue - CISO]</p>
+    </section>
+
+    <CtaBand />
+</BaseLayout>

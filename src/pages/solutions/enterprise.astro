@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import { RS_CAP } from "../../data/taxonomy";
+import CtaBand from "../../components/CtaBand.astro";
+import { roomScene, indHead, indPains, indStack, indHooks, indProof, indRes, mtrBand } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/enterprise">
+  <Fragment set:html={indHead("solutions/enterprise","Enterprise","Built for the deep end.","Segmented networks, security review boards, thousand-room fleets. Scale is where the demo stops mattering. Polaris Pro was built for exactly these rooms, these networks, and these reviewers.")} />
+    <Fragment set:html={indPains("Scale is where the demo stops mattering.","The failure modes below aren't edge cases at enterprise scale — they're Tuesday.",[
+      ["Casting dies at the VLAN boundary","Corp, guest, AV, and OT networks that must never route to each other, so AirPlay can't find the display and the dongle can't cross the subnet.","Cross-network sharing lands every source on the same workspace: no VPN, no flat-network project, no firewall exceptions filed."],
+      ["The security review is the sale","Six weeks of questionnaires, because the answers are scattered across a network guide, a firmware release note and a spec-sheet footnote - and the one document that would settle it is behind a vendor login. On at least one major wireless-presentation platform, the security whitepaper sits behind a vendor account login.","The Trust Center puts the architecture, data paths, and update policy on the open page. Your review board can start reading today."],
+      ["A fleet too big to touch","A thousand rooms means a firmware update is a summer of ladder work, unless it's templates and staged rollouts.","Polaris Cloud: define a room profile once, apply it fleet-wide, stage rollouts, and watch every room's health from one pane."],
+      ["Guests at enterprise scale","Board members, auditors, agency partners: every day, in every building, on devices you don't manage and can't touch.","Web-join: the browser is the client. Zero installs, zero admin rights, zero network access granted to the guest."]
+    ])} />
+    <Fragment set:html={indStack("Pro at the core, Essentials at the edge.","Pro is the estate standard for conferencing and segmented spaces; Essentials covers standard rooms on flat segments, all on one management plane.",[
+      {hot:true,name:"Polaris Pro",tfor:"The estate standard",pts:["True wireless BYOM: multi-user, no cable on the table","HDMI input and dual 4K60 output: wired sources, two displays","802.1x / EAP-TLS · dual-network posture, isolated by architecture","Full workspace + web-join for guests"],msrp:"from $575.86",msub:"/ room / year · warranty included for life of the subscription",link:"products/pro",lbl:"See Pro"},
+      {name:"Polaris Essentials",tfor:"Standard rooms, flat segments",pts:["Full workspace + web-join: same platform, same pane","Right-sized for huddle and team rooms","Steps up to Pro without re-architecting the room"],msrp:"from $287.86",msub:"/ room / year",link:"products/essentials",lbl:"See Essentials"},
+      {name:"Hybrid additions",pre:true,tfor:"The pod hosts the call, then the whole meeting",pts:["Link: the pod hosts the call, with camera, mic, and compute on the room","Host: the room hosts with native Teams/Zoom/Webex/Meet clients","Extend any Pro estate when they launch"],msrp:"[Pricing TBD]",msub:"pre-launch · names pending Q12 workshop",link:"products/hybrid",lbl:"The hybrid path"}
+    ],"MSRP public on product pages; partner and volume pricing in the portal. [Figures pending Q6 committee.]")} />
+    <Fragment set:html={indHooks("Technical hooks","Three reads that clear the review.","What your network team, security board, and AV operations lead each need, on open pages, not gated PDFs.",[
+      {ic:XIC.crossnet,h:"Cross-network sharing: the flagship",p:"Sources publish, displays subscribe, and network isolation holds by architecture: subnets, VLANs, guest Wi-Fi, LTE: one workspace, no VPN, no UC call. Checked in August 2026 against twelve named vendors and their own published documentation; sources and dates on the compare matrix. [Claim pending canonical matrix + legal.]",link:"platform/cross-network",lbl:"The architecture"},
+      {ic:XIC.shieldx,h:"The security review pack",p:"Trust Center in the open: secure boot on a TAA-compliant supply chain, Linux-hardened OS, 802.1x / EAP-TLS, TLS in transit, public update policy. ISO/IEC 27001:2022 certified with no nonconformities at the June 2026 surveillance audit, SOC 2 Type 2 attested for the Polaris cloud, and the room device assessed by a third party in its own right. The July 2026 application assessment returned no critical and no high-severity findings.",link:"platform/security",lbl:"The Trust Center"},
+      {ic:XIC.cloudx,h:"Fleet operations at estate scale",p:"Bulk config with templates, staged firmware, health alerts routed to whoever carries the pager, for meeting rooms and idle-display signage alike.",link:"platform/cloud",lbl:"Polaris Cloud"},
+      {ic:XIC.persist,h:"Meeting parity across time zones",p:"The workspace on the display is mirrored live to app.mersive.com: everyone in the meeting sees the same content on their own screen, in the room or eleven time zones away. No second-class seats.",link:"platform/how",lbl:"How it works"}
+    ])} />
+    <Fragment set:html={mtrBand("Certified room systems are polished, and they cost an enterprise three ways. Count them before you sign the fleet away.")} />
+    <section class="sect reveal flush">
+      <div class="kicker">Where the estate is heading</div>
+      <h2>The room that hosts the meeting.</h2>
+      <p class="sdek">The endgame for enterprise rooms: walk in with nothing: the room starts, controls, and shares the call with the real Teams/Zoom/Webex/Meet client, chosen per meeting, locked to none.</p>
+      <figure class="rs-card rs-hot ind-scene"><span class="rs-k">BYOM+: the room hosts</span><Fragment set:html={roomScene(3)} /><figcaption class="rs-cap"><b>No laptop is load-bearing.</b> <Fragment set:html={RS_CAP[3]} /></figcaption></figure>
+      <p class="note" style="text-align:center">Pro ships the wireless-BYOM rung today; Link and Host (pre-launch) climb to Hosted by the room (BYOM+). <a href="/products/hybrid">The hybrid path →</a></p>
+    </section>
+    <Fragment set:html={indProof("The cross-network demo ended a two-year argument between AV and network security in about four minutes.","[Named enterprise customer — placeholder]","VP, Digital Workplace · [company, 1,200 rooms placeholder]",[["1,200","rooms on one pane [placeholder]"],["0","firewall exceptions filed [placeholder]"],["6→1","weeks of security review [placeholder]"]],"[Proof slot — named enterprise logo + IT-titled quote + verified stats required before launch; figures shown are illustrative placeholders.]")} />
+    <Fragment set:html={indRes([
+      ["Security whitepaper + Trust Center","The ten-minute read your review board wants, in the open. [placeholder]","platform/security"],
+      ["Deployment guide","Ports, 802.1x setup, VLAN guidance, SSO, ungated. [placeholder]","resources/docs"],
+      ["Firmware & release notes","Every release publicly logged: the update-policy receipt.","resources/firmware"]
+    ])} />
+    <CtaBand />
+</BaseLayout>

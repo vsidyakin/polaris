@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { XIC } from "../../data/icons";
+import CtaBand from "../../components/CtaBand.astro";
+import { indHead, indSpine, indRouter, indProof } from "../../lib/blocks";
+---
+
+<BaseLayout route="solutions/education">
+  <Fragment set:html={indHead("solutions/education","Education","Two worlds, one platform.","The Chromebook classroom and the thousand-room campus have almost nothing in common, except the display at the front of the room, and the lean team keeping it alive. Pick your world.")} />
+    <Fragment set:html={indRouter([
+      {link:"solutions/k12",k:"Districts · the Chromebook classroom",h:"K-12",p:"Roughly 60% of student devices are Chromebooks [placeholder], and Chromebooks don't Miracast. Web-join and native Google Cast put every student device on the display, Route gives teachers the room, and the district office gets one pane.",go:"Teach to the display"},
+      {link:"solutions/highered",k:"Campuses · the thousand-room estate",h:"Higher Education",p:"Lecture halls, labs, libraries, seminar rooms, across buildings, VLANs, and decades of renovation budgets, run by an AV team you can count on one hand. Cross-network reach and fleet operations at campus scale.",go:"Run the whole campus"}
+    ])} />
+    <Fragment set:html={indSpine("The shared spine","What both worlds get.","District or campus, the platform brings the same three things to every classroom.",[
+      [XIC.workspace,"Route &amp; Engage: the teaching layer <span class='tag t-ship al-flag'>SHIPS Q1 2027</span>","Route sends any student's screen to any display and moderates what reaches it from the teacher's device. Engage runs the polls, anonymous or named, reviewable afterward.","products/route"],
+      [XIC.webjoin,"Web-join on managed devices","No app to package, push, or privacy-review: Chromebooks, locked-down laptops, and lab machines share from the browser. MDM stays untouched.","platform/how"],
+      [XIC.cloudx,"One district or campus pane","Every classroom, lecture hall, and idle-display sign managed from Polaris Cloud: one login for the district office or the campus AV team.","platform/cloud"]
+    ])} />
+    <Fragment set:html={indProof("Behind every display in this building, there is a Mersive Solstice Pod. It's supporting the teaching and learning here, the meeting rooms and conference rooms, and the informal spaces outside of the classrooms.","Crystal Clemons, M.Ed","Director, Classroom and Lab Technologies · George Mason University",[["165","Mersive Solstice Pods across Horizon Hall at George Mason"],["600+","learning spaces on one cloud tenant at Texas A&amp;M"],["100+","AV projects Texas A&amp;M completed in one year"]],"[Gen 3-era proof from published case studies: six campus and school stories live in the <a href='/resources/cases'>case-study library</a>.]")} />
+    <CtaBand />
+</BaseLayout>

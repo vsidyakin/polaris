@@ -1,0 +1,80 @@
+{
+  "_README": [
+    "Documented suppressions for the pixel-art QA checks.",
+    "",
+    "A validator that reports 278 findings of which most are false is worse than no",
+    "validator, because the next person learns to ignore it. Every entry here is a",
+    "case where the check's assumption does not hold for that sprite, with the reason",
+    "and the evidence. Suppressing a finding requires naming the line of engine code",
+    "that makes the check inapplicable — if you cannot, it is a real defect.",
+    "",
+    "Add to 'sprites' to silence specific codes for one sprite.",
+    "Add to 'shadowed_by_override' to declare that a store's copy of a sprite never",
+    "renders because a later store overrides it."
+  ],
+
+  "anchors": {
+    "_README": [
+      "Sprites the engine draws CENTRED rather than from the top-left. For these,",
+      "frames of differing size are legitimate — the art grows symmetrically about",
+      "the centre — so E1 and A1 do not apply."
+    ],
+    "centre": {
+      "inv_bolt": "runtime.ts:1997 drawSpr(x,img,b.x-img.width/2,b.y-img.height/2) — and the afterglow at :1995 uses the same centre. The 5x5/5x7/5x9/5x7 frame ladder is a deliberate throb that pulses outward from a fixed core.",
+      "inv_dart": "same draw call at runtime.ts:1997.",
+      "missile": "runtime.ts:1988 drawImage(mimg,-mimg.width/2,-mimg.height/2) inside a rotate()."
+    }
+  },
+
+  "shadowed_by_override": {
+    "_README": [
+      "eggPx6() at runtime.ts:5254 replaces SPR/SPRF/SPRW for every key present in",
+      "EART6. Where a name exists in both stores the EGG_ART copy never reaches the",
+      "screen, so its palette and readability numbers describe art that is not shown.",
+      "Report the EART6 figure as the live one."
+    ],
+    "store": "EGG_ART",
+    "overridden_by": "EART6"
+  },
+
+  "sprites": {
+    "inv_bolt": {
+      "suppress": ["E1", "A1"],
+      "reason": "Centre-drawn: see anchors.centre. The frame-size ladder is the animation, not a defect."
+    },
+    "inv_dart": {
+      "suppress": ["A1"],
+      "reason": "Centre-drawn."
+    },
+    "capsule": {
+      "suppress": ["P3", "P4"],
+      "reason": "Composited, not standalone. The capsule is a window frame and the engine draws a pk_* icon inside it at x+1,y+1 (docblock at runtime.ts:2871), so the dark interior is the aperture the icon shows through. Contrast has to be measured on the composite, which the checks do not model."
+    },
+    "explosion": {
+      "suppress": ["A1", "A3"],
+      "reason": "An expanding effect. Bounding-box growth and a swing in opaque pixel count are what an explosion IS; the foot-slide and crop-error checks assume a body with feet."
+    },
+    "dust": {
+      "suppress": ["A1", "A3"],
+      "reason": "Same as explosion: a dissipating particle puff."
+    },
+    "e_spark": {
+      "suppress": ["A1", "A3"],
+      "reason": "Effect sprite, expands and fades."
+    },
+    "player_death": {
+      "suppress": ["A1", "A3"],
+      "reason": "A dissolve, per the docblock at runtime.ts:2865. The silhouette is meant to break up."
+    }
+  },
+
+  "known_real_defects": {
+    "_README": [
+      "Recorded so they are not silently re-suppressed later. These are open, not excused."
+    ],
+    "e_bulb@EART6": "The 16-bit pass narrowed its luminance spread from 1.000 to 0.801. e_bulb is a light source; it should hold the widest spread in its zone, not a narrower one. Regression introduced by the pass, not inherited.",
+    "e_moth@EART6": "Lost a colour in the 16-bit pass, 5 -> 4. Only sprite of the 82 to regress on colour count.",
+    "e_p_down/e_p_side/e_p_up@EART6": "Four-frame walk cycles with only three unique frames (f0 == f2). Costs nine redundant compiled canvases at init. Harmless to rendering, wasteful, and it means the walk has a hitch rather than a true 4-beat cycle. Changing the frame count touches animation timing, so it needs a gameplay decision before it is fixed.",
+    "e_d_floor": "Best colour in the tile reaches only 1.60:1 on the void. Same class of defect as the cave floor fixed on 12 Aug 2026 — the dungeon floor is the next one to redraw."
+  }
+}

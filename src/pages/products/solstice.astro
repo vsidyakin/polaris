@@ -1,0 +1,42 @@
+---
+import ProductPage from "../../layouts/ProductPage.astro";
+---
+
+<ProductPage
+  route="products/solstice"
+  tpl="T4"
+  title={"Mersive Solstice Gen 3: support status &amp; <span class=\"warm\">what's next</span>."}
+  dek={"You own Mersive Solstice. This page is where Gen 3 stands: support dates, documentation, software policy, and the road ahead."}
+  crumb={"Mersive Solstice — Gen 3"}
+  cta={false}
+>
+
+    <div class="fx-status reveal">
+      <div class="fx-stat ok"><span class="k">Today</span><b>Supported &amp; documented</b><p>Mersive Solstice Gen 3 rooms are supported, Mersive Solstice Cloud runs, and the documentation stays public. Nothing about this page is an emergency.</p></div>
+      <div class="fx-stat"><span class="k">Feature releases</span><b>v6.4</b><p>Improved Mac client. Further feature releases are planned beyond 6.4. [Release contents and dates from the published Mersive Solstice release notes.]</p></div>
+      <div class="fx-stat"><span class="k">Security &amp; maintenance</span><b>2029</b><p>Security and maintenance updates continue through 2029. [Exact date from the published Mersive Solstice EOL policy — /solstice-eol-policy/.]</p></div>
+      <div class="fx-stat"><span class="k">End of support</span><b>2029</b><p>Final year for support requests on Mersive Solstice Gen 3. [Exact date from the published Mersive Solstice EOL policy — /solstice-eol-policy/.]</p></div>
+    </div>
+    <p class="note">[Production pulls the exact support dates verbatim from the published Mersive Solstice EOL policy page.]</p>
+
+    <div class="kicker" style="margin-top:20px">Mersive Solstice Gen 3 resources: staying reachable is the point</div>
+    <div class="prddocs reveal">
+      <a href="https://documentation.mersive.com/en/solstice/about-solstice.html" target="_blank" rel="noopener"><b>Mersive Solstice Gen 3 documentation ↗</b>Deployment guides, admin manuals, and Mersive Solstice Cloud docs, public at documentation.mersive.com.</a>
+      <a href="https://documentation.mersive.com/en/solstice/solstice-release-notes.html" target="_blank" rel="noopener"><b>Mersive Solstice Gen 3 release notes ↗</b>The full firmware history (6.x through the latest 6.3.2) for the estate you run today.</a>
+      <a href="/resources/docs"><b>Documentation hub</b>Both platforms (Mersive Solstice Gen 3 and Polaris) fronted from one page, nothing gated.</a>
+    </div>
+
+    <h2 class="sr-only">Mersive Solstice software access</h2>
+    <div class="mdna reveal vis"><h3>The software-access policy, in plain language</h3>
+      <p>If a Mersive Solstice subscription lapses, the rooms don't brick: <b>installed software keeps working exactly as installed.</b> What stops is what the subscription funds: new updates, security patches, and support. Reinstate the subscription and updates resume. That's the whole policy, and it lives in public where your procurement team can cite it.</p>
+      <div class="concede">[Wording placeholder — verify this summary against the published software-access policy before launch; the published policy text is canonical, this page paraphrases it.]</div>
+    </div>
+
+    <div class="clmband reveal">
+      <div class="kicker" style="color:#7ce3a8">The road ahead</div>
+      <h2>Polaris Pro continues your line.</h2>
+      <p>Mersive Solstice Gen 3 grew into Polaris: same mission, same lineage, and both generations supported side by side while you move. Your rooms have a mapped upgrade path with a swap program in motion, your workflows carry forward, and Mersive Solstice Cloud and Polaris Cloud stay linked: one starting point for the whole estate while you migrate. On your schedule, with your reseller.</p>
+      <div class="chips"><span>✓ Supported until published dates</span><span>✓ Trade-in program in motion</span><span>✓ One starting point through the migration</span></div>
+      <p style="margin-top:16px"><a class="btn accent" href="/products/transition">The Mersive Solstice Gen 3 → Polaris path →</a> &nbsp; <a class="btn accent" href="/platform/lineage">Why Polaris continues Mersive Solstice →</a></p>
+    </div>
+</ProductPage>

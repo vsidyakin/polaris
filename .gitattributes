@@ -1,0 +1,15 @@
+# Normalize line endings: LF in the repo, native in the working tree.
+* text=auto
+
+# Keep the archived POC byte-stable across Windows/Mac/Linux checkouts.
+archive/*.html -text
+
+
+# Keep the archived POC byte-stable across Windows/Mac/Linux checkouts.
+archive/*.html -text
+
+# Generated; collapse in diffs and exclude from language stats.
+pnpm-lock.yaml linguist-generated=true -diff
+src/data/media.ts linguist-generated=true -diff
+src/data/logos.ts linguist-generated=true -diff
+src/scripts/eggs/data.ts linguist-generated=true -diff
