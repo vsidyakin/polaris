@@ -65,14 +65,17 @@ jobs:
           project_id: ${{ vars.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
 
       - name: Deploy to Firebase Hosting
         if: github.event_name != 'pull_request'
         env:
           FIREBASE_HOSTING_UPLOAD_CONCURRENCY: "10"
         run: |
-          npx --yes firebase-tools@15.28.1 deploy \
+          npx --yes firebase-tools@15.22.1 deploy \
             --only hosting \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --non-interactive \
-            --message "GitHub Actions ${GITHUB_SHA}"
+            --message "GitHub Actions ${GITHUB_SHA}" \
+            --debug
